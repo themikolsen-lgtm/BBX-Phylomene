@@ -3308,13 +3308,51 @@ window.BBXBk=(function(){
   }
   $('msTorch').addEventListener('click',camTorch); $('msFocus').addEventListener('click',camFocus); $('msVideo').addEventListener('click',camFocus);
   function stopCam(){
-    clearInterval(sc.timer); sc.timer=0; clearInterval(sc.timer2); sc.timer2=0; const v=$('msVideo'); try{ v.srcObject=null; }catch(e){}
+    clearInterval(sc.timer); sc.timer=0; clearInterval(sc.timer2); sc.timer2=0; sc.wasmOn=false; const v=$('msVideo'); try{ v.srcObject=null; }catch(e){}
     if(cam.stream){ cam.stream.getVideoTracks().forEach(t=>{ t.enabled=false; }); clearTimeout(cam.idle); cam.idle=setTimeout(releaseCam,7200000); }
   }
   function closeScan(){ stopCam(); $('mealScan').classList.remove('show'); }
   function loadZX(){
     return new Promise((res,rej)=>{ if(window.ZXing) return res(); const x=document.createElement('script'); x.src='zxing.min.js'; x.onload=res; x.onerror=rej; document.head.appendChild(x); });
   }
+  // Lecteur principal : ZXing‑C++ (WebAssembly), embarqué dans l'appli, bien plus performant que l'ancien lecteur JS
+  // variantes d'image pour retenter la lecture : netteté, éclairage inégal, inclinaison
+  function bcSharpen(id,amt){ const w=id.width,h=id.height,s=id.data,o=new Uint8ClampedArray(s.length); for(let y=1;y<h-1;y++) for(let x=1;x<w-1;x++){ const i=(y*w+x)*4; const c=s[i], v=c*(1+4*amt)-amt*(s[i-4]+s[i+4]+s[i-w*4]+s[i+w*4]); o[i]=o[i+1]=o[i+2]=v<0?0:v>255?255:v; o[i+3]=255; } return new ImageData(o,w,h); }
+  function bcNormalize(cv){   // gris / flou large : supprime les ombres et dégradés de lumière
+    const w=cv.width,h=cv.height, a=document.createElement('canvas'); a.width=w; a.height=h; const x=a.getContext('2d',{willReadFrequently:true}); x.filter='blur('+Math.max(8,Math.round(h/10))+'px)'; x.drawImage(cv,0,0); const bl=x.getImageData(0,0,w,h).data, src=cv.getContext('2d',{willReadFrequently:true}).getImageData(0,0,w,h), s=src.data;
+    for(let i=0;i<s.length;i+=4){ const g=0.299*s[i]+0.587*s[i+1]+0.114*s[i+2], b=0.299*bl[i]+0.587*bl[i+1]+0.114*bl[i+2]+1, v=g/b*190; s[i]=s[i+1]=s[i+2]=v>255?255:v; s[i+3]=255; } return src;
+  }
+  function bcRotate(cv,deg){ const t=deg*Math.PI/180, w=cv.width,h=cv.height, nw=Math.round(Math.abs(w*Math.cos(t))+Math.abs(h*Math.sin(t))), nh=Math.round(Math.abs(w*Math.sin(t))+Math.abs(h*Math.cos(t))), o=document.createElement('canvas'); o.width=nw; o.height=nh; const x=o.getContext('2d',{willReadFrequently:true}); x.fillStyle='#fff'; x.fillRect(0,0,nw,nh); x.translate(nw/2,nh/2); x.rotate(t); x.drawImage(cv,-w/2,-h/2); return x.getImageData(0,0,nw,nh); }
+  const BCV=['orig','sharp','norm','r25','r-25','sharp2'];
+  function bcVariant(cv,name){ const x=cv.getContext('2d',{willReadFrequently:true}); switch(name){
+    case 'sharp': return bcSharpen(x.getImageData(0,0,cv.width,cv.height),1.2);
+    case 'sharp2': return bcSharpen(x.getImageData(0,0,cv.width,cv.height),2.4);
+    case 'norm': return bcNormalize(cv);
+    case 'r25': return bcRotate(cv,25); case 'r-25': return bcRotate(cv,-25);
+    default: return x.getImageData(0,0,cv.width,cv.height); } }
+  let wasmP=null;
+  function loadWasm(){
+    if(!wasmP) wasmP=new Promise((ok,ko)=>{ if(window.ZXingWASM) return ok(); const x=document.createElement('script'); x.src='zxing-wasm.js'; x.onload=()=>{ try{ ZXingWASM.setZXingModuleOverrides({locateFile:(f,pre)=>/\.wasm$/.test(f)?'zxing_reader.wasm':pre+f}); ok(); }catch(e){ ko(e); } }; x.onerror=ko; document.head.appendChild(x); }).catch(e=>{ wasmP=null; throw e; });
+    return wasmP;
+  }
+  const WOPT={formats:['EAN-13','EAN-8','UPC-A','UPC-E'],tryHarder:true,tryRotate:true,tryInvert:false,tryDownscale:true,maxNumberOfSymbols:1};
+  async function wasmRead(src){ const rs=await ZXingWASM.readBarcodes(src,WOPT); const r=rs.find(x=>x.isValid&&x.text); return r?r.text:null; }
+  function startWasm(v){
+    sc.wasmOn=true; let k=0; const cv=document.createElement('canvas'), cx=cv.getContext('2d',{willReadFrequently:true});
+    const loop=async()=>{
+      if(sc.done||!sc.wasmOn||!sc.stream) return;
+      try{ if(v.readyState>=2&&v.videoWidth){
+        const vw=v.videoWidth, vh=v.videoHeight, mode=k++%3;   // image entière, puis zone centrale à pleine résolution, etc.
+        let sx=0,sy=0,sw=vw,sh=vh;
+        if(mode!==0){ sw=Math.round(vw*0.8); sh=Math.round(vh*0.5); sx=Math.round((vw-sw)/2); sy=Math.round((vh-sh)*0.45); }
+        const f=Math.min(1,1400/Math.max(sw,sh)); cv.width=Math.round(sw*f); cv.height=Math.round(sh*f); cx.drawImage(v,sx,sy,sw,sh,0,0,cv.width,cv.height);
+        const SEQ=['orig','orig','norm','sharp','r25','r-25','norm'], vn=SEQ[(k-1)%SEQ.length]; const t=await wasmRead(bcVariant(cv,vn)); if(t) camCode(t);
+      } }catch(e){}
+      if(sc.wasmOn&&!sc.done) setTimeout(loop,20);
+    };
+    loop();
+  }
+  function startWasmOrZX(v){ loadWasm().then(()=>{ if(!sc.done&&sc.stream) startWasm(v); }).catch(()=>{ loadZX().then(()=>{ if(!sc.done&&sc.stream) startZX(v); }).catch(()=>{ st('Lecteur indisponible. Tape le code-barres ci-dessous.'); }); }); }
   function startZX(v){
     const Z=window.ZXing, hints=new Map();
     hints.set(Z.DecodeHintType.POSSIBLE_FORMATS,[Z.BarcodeFormat.EAN_13,Z.BarcodeFormat.EAN_8,Z.BarcodeFormat.UPC_A,Z.BarcodeFormat.UPC_E]);
@@ -3330,6 +3368,12 @@ window.BBXBk=(function(){
     },110);
   }
   async function decodeImage(file){
+    try{ await loadWasm(); const url0=URL.createObjectURL(file); try{
+        const img=await new Promise((res,rej)=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=rej; im.src=url0; });
+        for(const maxW of [2000,1200,800,2800]){ const f=Math.min(1,maxW/Math.max(img.naturalWidth,img.naturalHeight)), w=Math.round(img.naturalWidth*f), h=Math.round(img.naturalHeight*f);
+          const c=document.createElement('canvas'); c.width=w; c.height=h; const x=c.getContext('2d',{willReadFrequently:true}); x.drawImage(img,0,0,w,h);
+          for(const vn of ['orig','norm','sharp','r25','r-25','sharp2']){ const t=await wasmRead(bcVariant(c,vn)); if(t) return t; } }
+      } finally{ URL.revokeObjectURL(url0); } }catch(e){}
     await loadZX(); const Z=window.ZXing, hints=new Map();
     hints.set(Z.DecodeHintType.POSSIBLE_FORMATS,[Z.BarcodeFormat.EAN_13,Z.BarcodeFormat.EAN_8,Z.BarcodeFormat.UPC_A,Z.BarcodeFormat.UPC_E]); hints.set(Z.DecodeHintType.TRY_HARDER,true);
     const reader=new Z.MultiFormatReader(); reader.setHints(hints); const url=URL.createObjectURL(file);
@@ -3367,11 +3411,11 @@ window.BBXBk=(function(){
     let det=null;
     if('BarcodeDetector' in window){ try{ det=new window.BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e']}); }catch(e){ det=null; } }
     if(det){
-      loadZX().then(()=>{ if(!sc.done&&sc.stream) startZX(v); }).catch(()=>{});   // lecteur de secours en parallèle : certains Android déclarent BarcodeDetector sans qu'il lise
+      startWasmOrZX(v);   // lecteur de secours en parallèle : certains Android déclarent BarcodeDetector sans qu'il lise
       let busy=false;
       sc.timer=setInterval(async()=>{ if(busy||sc.done||v.readyState<2) return; busy=true; try{ const rs=await det.detect(v); if(rs&&rs.length) camCode(rs[0].rawValue); }catch(e){} busy=false; },220);
     }else{
-      try{ await loadZX(); startZX(v); }catch(e){ st('Lecteur indisponible. Tape le code-barres ci-dessous.'); }
+      startWasmOrZX(v);
     }
   }
   async function lookup(code){
