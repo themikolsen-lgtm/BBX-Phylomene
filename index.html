@@ -2520,6 +2520,23 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 .m-toast{ z-index:9700 !important; }
 .sr-go.added{ background:#3E9B2A !important; color:#fff !important; }
 </style>
+<style id="contrastFix">
+.mf-chip.on,.mfs-chip.on,.mc-plus,#mealView .my-hbtn.add{ color:var(--mx,#fff) !important; }
+#mealView .my-mk b{ color:var(--md,var(--mc)) !important; }
+.cm-seg .on,.cm-seg .on *{ color:#15171C !important; }
+.cm-seg button:not(.on) span,.cm-seg button:not(.on){ color:#4B5563 !important; }
+.my-empty,.my-empty *{ color:#5F6672 !important; }
+#idRem small,#idRem{ color:#5F6672 !important; }
+#mnK{ color:#2F7D12 !important; } #mnP{ color:#08707D !important; } #mnF{ color:#9A5200 !important; }
+[id^="mymt"]{ color:#565E6C !important; } #mnC{ color:#C41E34 !important; }
+.nav-pill button:not(.on){ color:#5F6672 !important; }
+.nav-pill[data-v="meal"] #navMeal.on{ color:#15171C !important; }
+.ex-row .ex-sets .ex-wt,.ex-sets .ex-wt{ color:#CFC3C8 !important; }
+#mealView .my-card .my-mh > .my-mt > span{ color:#565E6C !important; }
+#mealView h1{ color:#3F9A22 !important; }
+#mealView{ --mu:#565E6C !important; }
+.my-brand + * .ml-sub, #mealView h1 span{ }
+</style>
 </head>
 <body>
 
@@ -2744,6 +2761,10 @@ window.BBXBk=(function(){
   const MC={'Petit-déjeuner':['#F59E0B','rgba(245,158,11,.15)'],'Déjeuner':['#16A34A','rgba(22,163,74,.13)'],'Snack':['#8B5CF6','rgba(139,92,246,.13)'],'Shaker':['#0EA5E9','rgba(14,165,233,.14)'],'Dîner':['#E5173A','rgba(229,23,58,.11)']};
   const PAL=[['#0D9488','rgba(13,148,136,.13)'],['#DB2777','rgba(219,39,119,.12)'],['#4F46E5','rgba(79,70,229,.12)'],['#65A30D','rgba(101,163,13,.14)'],['#EA580C','rgba(234,88,12,.13)'],['#0891B2','rgba(8,145,178,.13)']];
   const mcol=t=>{ const m=MEALS.find(x=>x[0]===t); if(m&&m[3]!=null) return Array.isArray(m[3])?m[3]:PAL[m[3]%PAL.length]; return MC[t]||PAL[0]; };
+  const hexL=h=>{ const c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255).map(v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)); return .2126*c[0]+.7152*c[1]+.0722*c[2]; };
+  const crW=h=>1.05/(hexL(h)+.05);
+  const mcx=t=>{ const h=mcol(t)[0]; return /^#[0-9a-f]{6}$/i.test(h)&&crW(h)<3.6?'#15171C':'#fff'; };   // texte lisible sur la couleur du repas
+  const mcd=t=>{ let h=mcol(t)[0]; if(!/^#[0-9a-f]{6}$/i.test(h)) return h; for(let k=0;k<12&&crW(h)<4.5;k++){ h='#'+[1,3,5].map(i=>Math.round(parseInt(h.slice(i,i+2),16)*0.88).toString(16).padStart(2,'0')).join(''); } return h; };   // version foncée pour du texte sur fond clair
   const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const SK='phy-meals', CI=2*Math.PI*52;
   const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
@@ -2793,7 +2814,7 @@ window.BBXBk=(function(){
     S.v=5; save();
   }
   function build(){
-    $('mlMeals').innerHTML=MEALS.map(([t,ic,items],m)=>`<section class="my-card" data-m="${m}" style="--mc:${mcol(t)[0]};--mt:${mcol(t)[1]}"><div class="my-mh"><div class="my-mi">${ic}</div><div class="my-mt"><b>${t}</b><span id="mymp${m}"></span></div><div class="my-mk"><b id="mymk${m}"></b><small>kcal</small></div><div class="my-hb"><button class="my-hbtn idea" onclick="BBXMeal.ideas(${m})" aria-label="Idées pour ${t}" title="Idées adaptées à tes restes du jour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 18h5.6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.1V16h5v-.1c0-.8.4-1.6 1.1-2.1A6 6 0 0 0 12 3z"/></svg></button><button class="my-hbtn scan" onclick="BBXMeal.scan(${m})" aria-label="Scanner un code-barres"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M7 12h10"/></svg></button><button class="my-hbtn plus" onclick="BBXMeal.search(${m})" aria-label="Ajouter un produit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div><label class="my-ck all" title="Tout cocher"><input type="checkbox" id="mlall${m}" aria-label="Tout cocher : ${t}"><span></span></label></div>`+
+    $('mlMeals').innerHTML=MEALS.map(([t,ic,items],m)=>`<section class="my-card" data-m="${m}" style="--mc:${mcol(t)[0]};--mx:${mcx(t)};--md:${mcd(t)};--mt:${mcol(t)[1]}"><div class="my-mh"><div class="my-mi">${ic}</div><div class="my-mt"><b>${t}</b><span id="mymp${m}"></span></div><div class="my-mk"><b id="mymk${m}"></b><small>kcal</small></div><div class="my-hb"><button class="my-hbtn idea" onclick="BBXMeal.ideas(${m})" aria-label="Idées pour ${t}" title="Idées adaptées à tes restes du jour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 18h5.6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.1V16h5v-.1c0-.8.4-1.6 1.1-2.1A6 6 0 0 0 12 3z"/></svg></button><button class="my-hbtn scan" onclick="BBXMeal.scan(${m})" aria-label="Scanner un code-barres"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M7 12h10"/></svg></button><button class="my-hbtn plus" onclick="BBXMeal.search(${m})" aria-label="Ajouter un produit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div><label class="my-ck all" title="Tout cocher"><input type="checkbox" id="mlall${m}" aria-label="Tout cocher : ${t}"><span></span></label></div>`+
       items.map((it,i)=>`<div class="my-it" id="myit${m}-${i}"><div class="my-row" data-m="${m}" data-i="${i}"><div class="my-th">${it[7]}</div><div class="my-nm"><b>${it[0]}</b><span id="mymt${m}-${i}"></span></div><div class="my-kc"><b id="mykc${m}-${i}"></b><small>kcal</small></div><label class="my-ck"><input type="checkbox" id="mlk${m}-${i}" ${S.d[key(m,i)]?'checked':''}><span></span></label></div>
         <div class="my-edit"><div class="my-st"><button data-d="-1" aria-label="Moins">−</button><input type="number" inputmode="decimal" min="0" step="any" id="mlc${m}-${i}" value="${r2(W(m,i,it)/it[2])}"><button data-d="1" aria-label="Plus">+</button></div><span class="my-u">${it[1]}</span>
         <div class="my-wf"><input type="number" inputmode="decimal" min="0" step="any" id="mlw${m}-${i}" value="${r1(W(m,i,it))}"><span class="my-u">${it[6]}</span></div>
@@ -2845,6 +2866,7 @@ window.BBXBk=(function(){
     $('mealView').classList.add('show'); meal=true;
     if(meal && (!wasShown || !mealFocused)){ mealFocused=true; setTimeout(focusMeal,30); }
     try{ localStorage.setItem('phy-view',v); }catch(e){}
+    try{ document.querySelector('.nav-pill').dataset.v=v; }catch(e){}
   }
   // ---------- repas courant : affiché juste sous « Progression » à l'ouverture ----------
   let mealFocused=false, hiddenAt=0, focusT=0, focusUser=false;
@@ -2875,7 +2897,7 @@ window.BBXBk=(function(){
   function refresh(){ saveDef(); save(); build(); calc(); renderCfg(); }
   function renderCfg(){
     applyMode(); if(window.BBXBk) BBXBk.refresh(); { const d=$('cmDesc'); if(d) d.textContent=MODE==='fab'?'Bouton central : comptage automatique, sans case. Un seul bouton ＋ en bas de l’écran propose le repas de l’heure (modifiable), puis Idées, Scanner, Rechercher ou Récurrent. Chaque nouveau jour, les repas repartent vides.':AUTO?'Sans case : chaque produit présent dans un repas est compté tout de suite (kcal et macros). Supprime-le pour le retirer du total. Chaque nouveau jour, les repas repartent vides (l’historique est gardé) : le bouton Récurrent remet tes produits habituels en un geste.':'Avec cases : tu coches un produit pour le compter dans ta journée.'; }
-    $('mcList').innerHTML=MEALS.map(([t,ic,items],m)=>`<section class="mc-meal" style="--mc:${mcol(t)[0]};--mt:${mcol(t)[1]}"><div class="mc-mh"><span class="mc-mi">${esc(ic)}</span><b>${esc(t)}</b><button class="mc-sm" onclick="BBXMeal.renameMeal(${m})" aria-label="Renommer ${esc(t)}">✎</button><button class="mc-sm del" onclick="BBXMeal.delMeal(${m})" aria-label="Supprimer le repas ${esc(t)}">🗑</button><button class="mc-plus" onclick="BBXMeal.add(${m})" aria-label="Ajouter à ${esc(t)}">＋</button></div>`+
+    $('mcList').innerHTML=MEALS.map(([t,ic,items],m)=>`<section class="mc-meal" style="--mc:${mcol(t)[0]};--mx:${mcx(t)};--md:${mcd(t)};--mt:${mcol(t)[1]}"><div class="mc-mh"><span class="mc-mi">${esc(ic)}</span><b>${esc(t)}</b><button class="mc-sm" onclick="BBXMeal.renameMeal(${m})" aria-label="Renommer ${esc(t)}">✎</button><button class="mc-sm del" onclick="BBXMeal.delMeal(${m})" aria-label="Supprimer le repas ${esc(t)}">🗑</button><button class="mc-plus" onclick="BBXMeal.add(${m})" aria-label="Ajouter à ${esc(t)}">＋</button></div>`+
       (items.length?items.map((it,i)=>{ const q=per100(it); return `<div class="mc-it"><span class="mc-th">${esc(it[7])}</span><div class="mc-nm"><b>${esc(it[0])}</b><span>${r(q.k)} kcal · ${r1(q.p)} g prot.${q.f!=null&&q.c!=null?' · '+r1(q.f)+' g lip. · '+r1(q.c)+' g gluc.':''} / 100 ${it[6]}</span></div><div class="mc-acts"><button onclick="BBXMeal.move(${m},${i},-1)" ${i===0?'disabled':''} aria-label="Monter">▲</button><button onclick="BBXMeal.move(${m},${i},1)" ${i===items.length-1?'disabled':''} aria-label="Descendre">▼</button><button onclick="BBXMeal.edit(${m},${i})" aria-label="Modifier">✎</button><button class="del" onclick="BBXMeal.del(${m},${i})" aria-label="Supprimer">🗑</button></div></div>`; }).join(''):'<div class="mc-empty">Aucun produit dans ce repas</div>')+`</section>`).join('');
   }
   function dropState(m,i){ const k=key(m,i); delete S.w[k]; delete S.d[k]; }
@@ -3198,7 +3220,7 @@ window.BBXBk=(function(){
   }
   function openForm(mode,m,i,pref){
     pref=pref||{}; fm.code=pref.code||null; $('mfOcrBtn').classList.remove('pulse','busy'); fm.h=mode==='edit'?null:pref.h; renderHealth(mode==='edit'?hlGet(MEALS[m][2][i][0]):(pref.h||hlGet(pref.name||'')));
-    $('mfChips').innerHTML=MEALS.map(([t,ic],x)=>`<button type="button" class="mf-chip" style="--mc:${mcol(t)[0]};--mt:${mcol(t)[1]}" onclick="BBXMeal.setMeal(${x})">${esc(ic)} ${esc(t)}</button>`).join('');
+    $('mfChips').innerHTML=MEALS.map(([t,ic],x)=>`<button type="button" class="mf-chip" style="--mc:${mcol(t)[0]};--mx:${mcx(t)};--md:${mcd(t)};--mt:${mcol(t)[1]}" onclick="BBXMeal.setMeal(${x})">${esc(ic)} ${esc(t)}</button>`).join('');
     fm.mode=mode; fm.serving=pref.serving||0;
     $('mfInfo').className='mf-info';
     if(mode==='edit'){
