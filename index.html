@@ -2423,6 +2423,59 @@ body:has(#mealView.show) .nav-pill button.on{ background:#7DD957; color:#fff; bo
 #mealView:not(.cm-auto) .my-hbtn{ width:40px !important; height:40px !important; }
 @media (max-width:380px){ #mealView:not(.cm-auto) .my-hbtn{ width:37px !important; height:40px !important; } }
 @media (min-width:406px){ #mealView:not(.cm-auto) .my-hbtn{ width:46px !important; height:42px !important; } }
+
+/* ===== Polish pages Meal : tailles, lisibilité et style alignés sur l'accueil ===== */
+.mc-ov{ padding-left:16px; padding-right:16px; }
+.mc-head{ margin:6px 0 16px !important; }
+.mc-head b{ font-size:28px !important; letter-spacing:-.01em; }
+.mc-x{ width:46px !important; height:46px !important; font-size:17px !important; box-shadow:0 6px 14px -8px rgba(20,24,40,.35); }
+.sr-bar{ gap:10px !important; margin-bottom:12px !important; }
+.sr-bar input{ height:56px !important; border-radius:18px !important; font-size:18px !important; padding:0 18px !important; border:1.5px solid #D5DAE1 !important; box-shadow:0 6px 14px -10px rgba(20,24,40,.35); }
+.sr-bar button{ width:58px; height:56px !important; border-radius:18px !important; padding:0 !important; display:grid; place-items:center; box-shadow:0 8px 16px -8px rgba(91,190,72,.8) !important; }
+.sr-bar button svg{ width:26px; height:26px; fill:none; stroke:currentColor; stroke-width:2.6; stroke-linecap:round; }
+.sr-acts{ gap:10px !important; margin:0 0 14px !important; }
+.sr-acts button{ height:72px !important; flex-direction:column !important; gap:5px !important; border-radius:20px !important; font-size:14px !important; border:1.5px solid #E1E4EA !important; box-shadow:0 8px 16px -12px rgba(20,24,40,.4); }
+.sr-acts button svg{ width:26px !important; height:26px !important; }
+.sr-meal{ font-size:14px !important; letter-spacing:.03em !important; color:#374151 !important; margin:6px 2px 12px !important; }
+.sr-sec{ font-size:14px !important; letter-spacing:.03em !important; color:#374151 !important; margin:20px 2px 10px !important; display:flex; align-items:center; gap:8px; }
+.sr-sec::before{ content:""; width:9px; height:9px; border-radius:50%; background:#7DD957; flex:none; }
+.sr-note{ font-size:15px !important; line-height:1.45; }
+.sr-row{ gap:10px !important; margin-bottom:12px !important; }
+.sr-it, .hb-it{ padding:14px 14px !important; border-radius:22px !important; gap:14px !important; border:1px solid #E6E9EE !important; background:#fff !important; box-shadow:0 10px 20px -16px rgba(20,24,40,.45); }
+.sr-th{ width:54px !important; height:54px !important; font-size:28px !important; border-radius:18px !important; }
+.sr-nm b{ font-size:17px !important; line-height:1.25; color:#111827; }
+.sr-nm span{ font-size:14px !important; line-height:1.4 !important; color:#4B5563 !important; }
+.id-n{ font-size:14.5px !important; } .id-n .vv{ font-size:15.5px; }
+.id-c span{ font-size:12.5px !important; padding:4px 9px !important; }
+.sr-go{ width:48px !important; height:44px !important; border-radius:22px !important; font-size:24px !important; font-weight:800; box-shadow:0 8px 16px -8px rgba(91,190,72,.85) !important; }
+.sr-del{ flex:0 0 46px !important; width:46px !important; height:46px !important; font-size:16px !important; }
+.sr-manual{ min-height:56px; border-radius:20px !important; font-size:16px !important; }
+.mf-sec{ font-size:16px !important; margin:22px 2px 10px !important; }
+.mf-f label, .mf-f > span, .mf-pair label{ font-size:14.5px !important; font-weight:800; color:#374151; }
+.mf-in{ height:58px !important; border-radius:18px !important; padding:0 16px !important; border:1.5px solid #D5DAE1 !important; }
+.mf-in input{ font-size:22px !important; }
+.mf-in i{ font-size:15px !important; }
+.mf-name input{ height:58px !important; border-radius:18px !important; font-size:18px !important; }
+.mf-chip{ height:48px !important; padding:0 18px !important; font-size:15px !important; }
+.mf-seg button{ height:48px !important; font-size:15px !important; }
+.mf-info{ font-size:15px !important; }
+.mf-btns .mc-big.ib{ width:62px !important; height:62px !important; }
+.mc-hint{ font-size:14px !important; line-height:1.45; color:#4B5563 !important; }
+.mc-meal .mc-mh b{ font-size:18px; }
+.mc-nm b{ font-size:16px !important; } .mc-nm span{ font-size:13.5px !important; }
+.mc-it button, .mc-sm{ min-width:44px; min-height:44px; }
+.hb-sub, .hb-ok{ font-size:14.5px !important; line-height:1.45; }
+.pg-cards button{ padding:14px 12px !important; border-radius:20px !important; }
+.pg-cards button b{ font-size:15px !important; } .pg-cards button span, .pg-cards button small{ font-size:13px !important; line-height:1.35; }
+.pl-sec, .wg-sec{ font-size:16px !important; }
+.ht-seg button, .pl-seg button{ height:48px !important; font-size:15px !important; }
+.mc-head{ gap:10px; } .mc-head b{ font-size:clamp(20px,6.3vw,26px) !important; min-width:0; line-height:1.1; }
+.sr-acts button, .sr-acts button span{ font-size:14px !important; }
+.sr-acts button span{ font-weight:800; }
+.id-n{ font-size:13.5px !important; } .id-n .vv{ font-size:14.5px !important; }
+#idSub{ font-size:14.5px !important; line-height:1.4; color:#374151 !important; }
+#idRem span{ font-size:14px !important; padding:6px 12px !important; } #idRem small{ font-size:13px !important; }
+@media (max-width:370px){ .sr-th{ width:44px !important; height:44px !important; font-size:23px !important; } .sr-it,.hb-it{ gap:10px !important; padding:12px !important; } .sr-go{ width:42px !important; height:40px !important; } .sr-del{ flex:0 0 40px !important; width:40px !important; height:40px !important; } .sr-row{ gap:6px !important; } .sr-nm b{ font-size:16px !important; } .sr-nm span{ font-size:13px !important; } }
 </style>
 </head>
 <body>
