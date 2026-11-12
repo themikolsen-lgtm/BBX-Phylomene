@@ -2723,10 +2723,12 @@ window.BBXBk=(function(){
 <div id="mealScan" class="mc-scan" aria-label="Scanner">
   <video id="msVideo" playsinline muted></video>
   <div class="ms-frame"><i></i></div>
+  <div id="msCtl" class="ms-ctl"><button id="msFocus" type="button" aria-label="Refaire la mise au point">◎ Net</button><label id="msFocL" hidden>Netteté<input id="msFocR" type="range"></label><label id="msZoomL" hidden>Zoom<input id="msZoomR" type="range"></label></div>
   <div class="ms-top"><b>Scanner un code-barres</b><button onclick="BBXMeal.closeScan()" aria-label="Fermer">✕</button></div>
   <div class="ms-bot"><div id="msStatus">Démarrage de la caméra…</div><button class="ms-tab" onclick="BBXMeal.scanTable()" aria-label="Photographier le tableau nutritionnel" title="Photographier le tableau nutritionnel"><span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M4 9.5h16M4 14.5h16M12 9.5V20"/></svg></span><em>Tableau nutritionnel</em></button><input type="file" id="msFile" accept="image/*" capture="environment" hidden><div class="ms-row"><input id="msCode" type="text" inputmode="numeric" placeholder="Ou tape le code-barres"><button onclick="BBXMeal.manual()">OK</button></div></div>
 </div>
 
+<style>.ms-ctl{position:absolute;left:12px;right:12px;bottom:calc(205px + env(safe-area-inset-bottom));display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;z-index:3}.ms-ctl button,.ms-ctl label{background:rgba(0,0,0,.55);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:9px 14px;font:600 14px system-ui;display:flex;align-items:center;gap:8px}.ms-ctl input{width:110px;accent-color:#fff}.ms-ctl [hidden]{display:none}</style>
 <script>
 (function(){
   const $=id=>document.getElementById(id), r=n=>Math.round(n), r1=n=>Math.round(n*10)/10, r2=n=>Math.round(n*100)/100;
@@ -3255,9 +3257,24 @@ window.BBXBk=(function(){
   async function getCam(){
     clearTimeout(cam.idle);
     if(cam.stream&&cam.stream.getVideoTracks().some(t=>t.readyState==='live')){ cam.stream.getVideoTracks().forEach(t=>{ t.enabled=true; }); return cam.stream; }
-    cam.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}},audio:false});
+    cam.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});
     return cam.stream;
   }
+  async function camFocus(){   // mise au point : un coup (au toucher), puis retour en continu
+    const tr=cam.stream&&cam.stream.getVideoTracks()[0]; if(!tr) return; let cp={}; try{ cp=tr.getCapabilities?tr.getCapabilities():{}; }catch(e){}
+    const fm=cp.focusMode||[]; try{ if(fm.includes('single-shot')){ await tr.applyConstraints({advanced:[{focusMode:'single-shot'}]}); await new Promise(r=>setTimeout(r,900)); }
+      else if(fm.includes('manual')&&fm.includes('continuous')){ await tr.applyConstraints({advanced:[{focusMode:'manual'}]}); await new Promise(r=>setTimeout(r,250)); }
+      if(fm.includes('continuous')) await tr.applyConstraints({advanced:[{focusMode:'continuous'}]}); }catch(e){}
+    st('Mise au point refaite : approche ou recule le code-barres (≈ 15 cm).');
+  }
+  function camFocusSetup(){
+    const tr=cam.stream&&cam.stream.getVideoTracks()[0]; if(!tr) return; let cp={}; try{ cp=tr.getCapabilities?tr.getCapabilities():{}; }catch(e){}
+    try{ if((cp.focusMode||[]).includes('continuous')) tr.applyConstraints({advanced:[{focusMode:'continuous'}]}); }catch(e){}
+    const fr=$('msFocR'), zr=$('msZoomR'), ss=tr.getSettings?tr.getSettings():{};
+    if(cp.focusDistance&&cp.focusDistance.max>cp.focusDistance.min){ fr.min=cp.focusDistance.min; fr.max=cp.focusDistance.max; fr.step=cp.focusDistance.step||((cp.focusDistance.max-cp.focusDistance.min)/50); fr.value=ss.focusDistance!=null?ss.focusDistance:cp.focusDistance.min; $('msFocL').hidden=false; fr.oninput=()=>{ try{ tr.applyConstraints({advanced:[{focusMode:'manual',focusDistance:+fr.value}]}); }catch(e){} }; } else $('msFocL').hidden=true;
+    if(cp.zoom&&cp.zoom.max>cp.zoom.min){ zr.min=cp.zoom.min; zr.max=cp.zoom.max; zr.step=cp.zoom.step||0.1; zr.value=ss.zoom||cp.zoom.min; $('msZoomL').hidden=false; zr.oninput=()=>{ try{ tr.applyConstraints({advanced:[{zoom:+zr.value}]}); }catch(e){} }; } else $('msZoomL').hidden=true;
+  }
+  $('msFocus').addEventListener('click',camFocus); $('msVideo').addEventListener('click',camFocus);
   function stopCam(){
     clearInterval(sc.timer); sc.timer=0; clearInterval(sc.timer2); sc.timer2=0; const v=$('msVideo'); try{ v.srcObject=null; }catch(e){}
     if(cam.stream){ cam.stream.getVideoTracks().forEach(t=>{ t.enabled=false; }); clearTimeout(cam.idle); cam.idle=setTimeout(releaseCam,7200000); }
@@ -3311,7 +3328,7 @@ window.BBXBk=(function(){
     catch(e){ st('Accès à la caméra refusé. Autorise-la dans les réglages, ou tape le code-barres ci-dessous.'); return; }
     const v=$('msVideo'); v.srcObject=sc.stream; v.muted=true; v.setAttribute('playsinline','');
     try{ await v.play(); }catch(e){}
-    try{ const tr=sc.stream.getVideoTracks()[0], cp=tr.getCapabilities?tr.getCapabilities():{}; if(cp.focusMode&&cp.focusMode.includes('continuous')) await tr.applyConstraints({advanced:[{focusMode:'continuous'}]}); }catch(e){}   // mise au point continue (Android)
+    camFocusSetup();
     st('Place le code-barres dans le cadre');
     let det=null;
     if('BarcodeDetector' in window){ try{ det=new window.BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e']}); }catch(e){ det=null; } }
