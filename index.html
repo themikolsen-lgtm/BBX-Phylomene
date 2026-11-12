@@ -3232,6 +3232,14 @@ window.BBXBk=(function(){
   if(!Array.isArray(FAV)){   // première fois : mes produits = ceux déjà présents dans mes repas
     FAV=[]; MEALS.forEach(([t,ic,items])=>items.forEach(it=>{ if(FAV.some(f=>f.name===it[0])) return; const q=per100(it); FAV.push({name:it[0],kcal:q.k,prot:q.p,fat:q.f,carb:q.c,serving:it[2]>0?it[2]:0,label:it[1],emoji:it[7],unit:it[6]}); })); saveFav();
   }
+  // Phylomene démarre sans produit : on retire une seule fois les produits d'exemple de BBX déjà enregistrés sur cet appareil (sans toucher à tes propres produits)
+  try{ if(!localStorage.getItem('bb9-phy-clean')){
+    const OLD=[["Flocons d’avoine complets bio (Bjorg)","tasse",166.7,130,4.6],["Yaourt nature (Deli Light)","pot",125,113,9],["Beurre de cacahuète 100 % (Menguy’s)","portion de 100 g",100,366,16],["Date Deglet Noor","datte",7,99,0.7],["Blanc de poulet –25 % de sel (Fleury Michon)","portion",40,82,8],["Riz basmati (Picard)","portion",225,297,7],["Skyr (Danone)","portion",140,80,15],["Banane","banane",105,100,1.2],["Banane","banane",105,124,1.5],["Sablés citron yuzu sans sucres (Gerblé)","sablé",11,187,3.5],["Lait demi-écrémé","verre",160,166,8],["Whey vanille (Decathlon)","mesure",30,116,24],["Créatine","dose de 3 g",3,0,0],["Haricots verts extra-fins (Cora)","portion",100,70,4],["Steak haché 5 %","steak",120,156,24],["Carré frais (Elle & Vire)","portion",25,48,1.8],["Wasa Proteins+","tranche",14.2,113,6],["Skyr myrtilles (Arma)","pot",100,72,9],["Pomme Golden","pomme",100,70.2,0.39],["Chocolat 90 % excellence (Lindt)","carré",10,59,1.2]], same=(it,o)=>it[0]===o[0]&&it[1]===o[1]&&Math.abs(it[2]-o[2])<1e-6&&Math.abs(it[4]-o[3])<1e-6&&Math.abs(it[5]-o[4])<1e-6;
+    let ch=false; MEALS.forEach(m=>{ const n=m[2].length; m[2]=m[2].filter(it=>!OLD.some(o=>same(it,o))); if(m[2].length!==n) ch=true; });
+    const nf=FAV.length; FAV=FAV.filter(f=>!OLD.some(o=>o[0]===f.name&&(f.serving||0)===o[2]&&f.label===o[1])); if(FAV.length!==nf) ch=true;
+    if(ch){ localStorage.setItem('bb9-mealdef',JSON.stringify(MEALS)); saveFav(); }
+    localStorage.setItem('bb9-phy-clean','1');
+  } }catch(e){}
   function upsertFav(it,portions){
     const q=per100(it), f={name:it[0],kcal:q.k,prot:q.p,fat:q.f,carb:q.c,serving:it[2]>0?it[2]:0,label:it[1],emoji:it[7],unit:it[6],portions:portions||[]};
     FAV=FAV.filter(x=>normS(x.name)!==normS(f.name)); FAV.unshift(f); if(FAV.length>500) FAV.length=500; saveFav();
