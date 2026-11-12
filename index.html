@@ -2511,6 +2511,10 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 .cm-seg.cm3{ grid-template-columns:repeat(3,1fr); }
 .cm-seg.cm3 button{ flex-direction:column; gap:3px; min-height:58px; font-size:12px; padding:4px 2px; }
 .cm-seg.cm3 button svg{ width:22px; height:22px; }
+
+/* appui prolongé sur un repas : Ajouter un repas (au-dessus de Supprimer) */
+.m-addpill{ bottom:calc(182px + env(safe-area-inset-bottom,0px)); background:#7DD957; color:#143008; box-shadow:0 16px 32px -10px rgba(91,190,72,.7); }
+.m-addpill svg{ width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:3; stroke-linecap:round; flex:none; }
 </style>
 </head>
 <body>
@@ -2546,11 +2550,12 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
   <div id="pastSum" hidden></div>
   </div>
   </div>
-  <div class="my-hint">Touche un produit pour modifier sa quantité, balaie-le vers la droite pour le supprimer. Maintiens le titre d’un repas appuyé pour le déplacer ou le supprimer.</div>
+  <div class="my-hint">Touche un produit pour modifier sa quantité, balaie-le vers la droite pour le supprimer. Maintiens le titre d’un repas appuyé pour le déplacer, ajouter un repas ou le supprimer.</div>
   <div id="mlMeals"></div>
   <div id="mealPast" hidden></div>
-  <button class="my-addmeal" onclick="BBXMeal.addMeal()" aria-label="Ajouter un repas" title="Ajouter un repas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+
 </div>
+<button id="mealAddPill" class="m-delpill m-addpill" type="button" aria-label="Ajouter un repas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><b>Ajouter un repas</b></button>
 <button id="mealDelPill" class="m-delpill" type="button" aria-label="Supprimer le repas"><span>🗑</span><b id="mealDelTxt">Supprimer</b></button>
 <div id="mealIdeas" class="mc-ov mc-sheet" style="z-index:9250" aria-label="Idées">
   <div class="mc-head"><b>Idées</b><button class="mc-x" onclick="BBXMeal.closeIdeas()" aria-label="Fermer">✕</button></div>
@@ -3523,7 +3528,7 @@ window.BBXBk=(function(){
   // ---------- repas : créer / renommer / supprimer / déplacer ----------
   const mn={mode:'add',m:0};
   function openName(mode,m){
-    mn.mode=mode; mn.m=m; $('mnInfo').textContent='';
+    mn.mode=mode; mn.m=m; mn.after=-1; $('mnInfo').textContent='';
     if(mode==='edit'){ $('mnTitle').textContent='Renommer le repas'; $('mnOk').setAttribute('aria-label','Enregistrer'); $('mnName').value=MEALS[m][0]; $('mnEmoji').value=MEALS[m][1]; }
     else{ $('mnTitle').textContent='Nouveau repas'; $('mnOk').setAttribute('aria-label','Créer le repas'); $('mnName').value=''; $('mnEmoji').value=''; }
     $('mealName').classList.add('show'); setTimeout(()=>{ try{ $('mnName').focus(); }catch(e){} },200);
@@ -3543,7 +3548,8 @@ window.BBXBk=(function(){
       }
       MEALS[mn.m][1]=emoji;
     }else{
-      MEALS.push([name,emoji,[],MEALS.length%PAL.length]);
+      const nm=[name,emoji,[],MEALS.length%PAL.length];
+      if(mn.after>=0&&mn.after<MEALS.length) MEALS.splice(mn.after+1,0,nm); else MEALS.push(nm);
     }
     $('mealName').classList.remove('show'); refresh();
   }
@@ -3556,10 +3562,10 @@ window.BBXBk=(function(){
   // déplacer un repas : rester appuyé sur son titre, puis glisser
   (function(){
     const box=$('mlMeals'), view=$('mealView'); let d=null;
-    const pill=$('mealDelPill'); let tgt=null, pillT=0;
+    const pill=$('mealDelPill'), apill=$('mealAddPill'); let tgt=null, pillT=0;
     const overPill=(x,y)=>{ if(!pill.classList.contains('show')) return false; const r=pill.getBoundingClientRect(); return x>=r.left-14&&x<=r.right+14&&y>=r.top-14&&y<=r.bottom+14; };
-    function showPill(mm){ tgt=mm; $('mealDelTxt').textContent='Supprimer « '+mm[0]+' »'; pill.classList.remove('hot'); pill.classList.add('show'); clearTimeout(pillT); pillT=setTimeout(hidePill,8000); }
-    function hidePill(){ clearTimeout(pillT); pill.classList.remove('show','hot'); tgt=null; }
+    function showPill(mm){ tgt=mm; $('mealDelTxt').textContent='Supprimer « '+mm[0]+' »'; pill.classList.remove('hot'); pill.classList.add('show'); apill.classList.add('show'); clearTimeout(pillT); pillT=setTimeout(hidePill,8000); }
+    function hidePill(){ clearTimeout(pillT); pill.classList.remove('show','hot'); apill.classList.remove('show'); tgt=null; }
     function delTarget(){
       const mm=tgt; hidePill(); if(!mm) return; const m=MEALS.indexOf(mm); if(m<0) return;
       const rec={mm:mm,m:m,st:mm[2].map(it=>{ const k=mm[0]+'|'+it[0]; return [k,S.d[k],S.w[k]]; }),hab:HAB[mm[0]]};
@@ -3571,7 +3577,8 @@ window.BBXBk=(function(){
       });
     }
     pill.addEventListener('click',delTarget);
-    const away=e=>{ if(pill.classList.contains('show')&&!(d&&d.on)&&!e.target.closest('#mealDelPill')) hidePill(); };
+    apill.addEventListener('click',()=>{ const mm=tgt, at=mm?MEALS.indexOf(mm):-1; hidePill(); openName('add'); mn.after=at; });
+    const away=e=>{ if(pill.classList.contains('show')&&!(d&&d.on)&&!e.target.closest('#mealDelPill,#mealAddPill')) hidePill(); };
     document.addEventListener('touchstart',away,{passive:true}); document.addEventListener('mousedown',away);
     const pt=e=>(e.touches&&e.touches[0])||(e.changedTouches&&e.changedTouches[0])||e;
     function begin(e){
