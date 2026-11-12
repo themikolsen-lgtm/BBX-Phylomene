@@ -2636,6 +2636,12 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
       <button data-m="fab" onclick="BBXMeal.setMode('fab')" aria-label="Automatique : un bouton central" title="Automatique : un bouton central"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M8 12h8"/></svg><span>Bouton central</span></button>
     </div>
     <div class="cm-d" id="cmDesc"></div></div>
+  <div class="cm-box" style="margin-top:12px"><div class="cm-t">Scanner un code-barres</div>
+    <div class="cm-seg" id="mcSm" role="group" aria-label="Mode du scanner">
+      <button data-sm="live" onclick="BBXMeal.scanMode('live');BBXMeal.scanDesc()" aria-label="Caméra en direct" title="Caméra en direct"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M7 12h10"/></svg><span>Caméra directe</span></button>
+      <button data-sm="photo" onclick="BBXMeal.scanMode('photo');BBXMeal.scanDesc()" aria-label="Photo sans autorisation" title="Photo sans autorisation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.2l1.3-2h6l1.3 2h1.2A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5v-8z"/><circle cx="12" cy="12.5" r="3.3"/></svg><span>Photo</span></button>
+    </div>
+    <div class="cm-d" id="mcSmD"></div></div>
     <div class="mc-hint">Change les produits de chaque repas : ▲▼ pour l’ordre, ✎ pour modifier ou changer de repas, 🗑 pour supprimer.</div>
   <div id="mcList"></div>
   <div class="ib-row"><button class="mc-big ib ibt red" onclick="BBXMeal.addMeal()" aria-label="Ajouter un repas" title="Ajouter un repas"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><em>Repas</em></button></div>
@@ -3182,8 +3188,8 @@ window.BBXBk=(function(){
     if(code){ stopCam(); sc.done=false; onCode(code); } else{ $('mealScan').classList.add('show'); st('Code-barres non lu. Rapproche-toi, évite les reflets, ou tape le code ci-dessous.'); }
   });
   const SCANKEY='phy-scanmode'; let scanMode='live';
-  try{ localStorage.removeItem(SCANKEY); }catch(e){}   // plus de mode « photo » : la caméra en direct est toujours utilisée
-  function renderScanMode(){ document.querySelectorAll('#mcSm [data-sm]').forEach(b=>b.classList.toggle('on',b.dataset.sm===scanMode)); }
+  try{ if(localStorage.getItem(SCANKEY)==='photo') scanMode='photo'; }catch(e){}   // « photo » : appareil photo du téléphone, sans demande d'autorisation
+  function renderScanMode(){ document.querySelectorAll('#mcSm [data-sm]').forEach(b=>{ const on=b.dataset.sm===scanMode; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on); }); const d=$('mcSmD'); if(d) d.textContent=scanMode==='photo'?'Photo : ouvre l’appareil photo du téléphone (iPhone : aucune demande d’autorisation à chaque fois). Prends le code-barres en photo, l’appli le lit toute seule.':'Caméra directe : scan instantané, mais iPhone redemande l’autorisation de la caméra à chaque ouverture de l’appli (limite d’iOS).'; }
   function setScanMode(m){ scanMode=m==='photo'?'photo':'live'; try{ localStorage.setItem(SCANKEY,scanMode); }catch(e){} if(scanMode==='photo') releaseCam(); renderScanMode(); }
   function photoMode(){ setScanMode('photo'); stopCam(); $('msFile').click(); }
   async function startCam(){
@@ -4100,7 +4106,7 @@ window.BBXBk=(function(){
     saveForm:saveForm, closeForm:()=>$('mealForm').classList.remove('show'),
     ideas:openIdeas, closeIdeas:()=>$('mealIdeas').classList.remove('show'), ideaPick:ideaPick,
     ocr:()=>$('mealPick').classList.add('show'), closePick:()=>$('mealPick').classList.remove('show'), pickCam:()=>{ $('mealPick').classList.remove('show'); $('mfOcrFile').click(); }, pickGal:()=>{ $('mealPick').classList.remove('show'); $('mfOcrGal').click(); },
-    scanTable:()=>{ const t=sc.target; stopCam(); closeScan(); openForm('add',t,null,{info:'Prends en photo le tableau nutritionnel du produit, ou choisis une image dans ta galerie.'}); $('mealPick').classList.add('show'); }, scan:scanOpen, closeScan:closeScan, manual:manual, scanMode:setScanMode, photoMode:photoMode,
+    scanTable:()=>{ const t=sc.target; stopCam(); closeScan(); openForm('add',t,null,{info:'Prends en photo le tableau nutritionnel du produit, ou choisis une image dans ta galerie.'}); $('mealPick').classList.add('show'); }, scan:scanOpen, closeScan:closeScan, manual:manual, scanMode:setScanMode, scanDesc:renderScanMode, photoMode:photoMode,
     addWeigh:()=>openWeigh('add'), goalWeigh:openPlan, closePlan:()=>$('mealPlan').classList.remove('show'), savePlan:savePlan, plRender:renderPlan, plProg:plProg,
     plLevel:v=>{ pl.level=v; renderPlan(); }, plSex:v=>{ pl.sex=v; renderPlan(); }, plUnit:u=>{ const w=durWeeks(); pl.unit=u; $('plDur').value=String(Math.max(1,Math.round(u==='days'?w*7:u==='months'?w*12/52:w))); renderPlan(); },
     plTarget:d=>{ const v=num($('plTarget').value)||num($('plCur').value)||70; $('plTarget').value=fk(Math.max(20,Math.round((v+d)*10)/10)); renderPlan(); }, plDur:d=>{ const v=num($('plDur').value)||0; $('plDur').value=String(Math.max(1,Math.round(v+d))); renderPlan(); },
