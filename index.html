@@ -5,39 +5,39 @@
 /* Sauvegarde automatique : copie des données (bb9*) dans IndexedDB à chaque changement + restauration si le navigateur efface le stockage */
 (function(){
   var LS; try{ LS=window.localStorage; }catch(e){ return; }
-  var DB='bbx-safe', ST='kv', KEEP=7, timer=0, last=0, persisted=null;
+  var DB='phy-safe', ST='kv', KEEP=7, timer=0, last=0, persisted=null;
   function idb(){ return new Promise(function(ok,ko){ try{ var q=indexedDB.open(DB,1); q.onupgradeneeded=function(){ q.result.createObjectStore(ST); }; q.onsuccess=function(){ ok(q.result); }; q.onerror=function(){ ko(q.error); }; }catch(e){ ko(e); } }); }
   function put(k,v){ return idb().then(function(d){ return new Promise(function(ok,ko){ var t=d.transaction(ST,'readwrite'); t.objectStore(ST).put(v,k); t.oncomplete=function(){ ok(); }; t.onerror=function(){ ko(t.error); }; }); }); }
   function get(k){ return idb().then(function(d){ return new Promise(function(ok,ko){ var r=d.transaction(ST).objectStore(ST).get(k); r.onsuccess=function(){ ok(r.result); }; r.onerror=function(){ ko(r.error); }; }); }); }
   function keys(){ return idb().then(function(d){ return new Promise(function(ok,ko){ var r=d.transaction(ST).objectStore(ST).getAllKeys(); r.onsuccess=function(){ ok(r.result); }; r.onerror=function(){ ko(r.error); }; }); }); }
   function del(k){ return idb().then(function(d){ return new Promise(function(ok){ var t=d.transaction(ST,'readwrite'); t.objectStore(ST).delete(k); t.oncomplete=function(){ ok(); }; }); }); }
-  function data(){ var o={}; try{ for(var i=0;i<LS.length;i++){ var k=LS.key(i); if(k&&k.indexOf('bb9')===0) o[k]=LS.getItem(k); } }catch(e){} return o; }
+  function data(){ var o={}; try{ for(var i=0;i<LS.length;i++){ var k=LS.key(i); if(k&&k.indexOf('phy')===0) o[k]=LS.getItem(k); } }catch(e){} return o; }
   function ymd(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
   function snap(){
     var d=data(); if(!Object.keys(d).length) return Promise.resolve();
     var rec={t:Date.now(),data:d};
-    return put('cur',rec).then(function(){ last=rec.t; try{ LS.setItem('bbx-lastsave',String(last)); }catch(e){} return put('d-'+ymd(),rec); })
+    return put('cur',rec).then(function(){ last=rec.t; try{ LS.setItem('phy-lastsave',String(last)); }catch(e){} return put('d-'+ymd(),rec); })
       .then(function(){ return keys(); }).then(function(ks){ var days=ks.filter(function(k){ return String(k).indexOf('d-')===0; }).sort(); while(days.length>KEEP) del(days.shift()); }).catch(function(){});
   }
   function later(){ clearTimeout(timer); timer=setTimeout(snap,500); }
   // chaque écriture de données déclenche une copie (sans toucher au comportement de localStorage)
   try{
     var P=Storage.prototype, s0=P.setItem, r0=P.removeItem, c0=P.clear;
-    P.setItem=function(k,v){ var r=s0.apply(this,arguments); if(this===LS&&String(k).indexOf('bb9')===0) later(); return r; };
-    P.removeItem=function(k){ var r=r0.apply(this,arguments); if(this===LS&&String(k).indexOf('bb9')===0) later(); return r; };
+    P.setItem=function(k,v){ var r=s0.apply(this,arguments); if(this===LS&&String(k).indexOf('phy')===0) later(); return r; };
+    P.removeItem=function(k){ var r=r0.apply(this,arguments); if(this===LS&&String(k).indexOf('phy')===0) later(); return r; };
   }catch(e){}
   document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='hidden'){ clearTimeout(timer); snap(); } });
   window.addEventListener('pagehide',function(){ clearTimeout(timer); snap(); });
   // stockage persistant demandé au navigateur
   try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().then(function(v){ persisted=v; }); }catch(e){}
   // restauration automatique si les données ont disparu (effacement par le navigateur)
-  var empty=false; try{ empty=['bb9-meals','bb9-mealdef','bb9-hist','bb9-favs','bb9-weight','bb9-habits'].every(function(k){ return LS.getItem(k)===null; }); }catch(e){}
-  var tried=false; try{ tried=sessionStorage.getItem('bbx-restored')==='1'; }catch(e){}
+  var empty=false; try{ empty=['phy-meals','phy-mealdef','phy-hist','phy-favs','phy-weight','phy-habits'].every(function(k){ return LS.getItem(k)===null; }); }catch(e){}
+  var tried=false; try{ tried=sessionStorage.getItem('phy-restored')==='1'; }catch(e){}
   if(empty&&!tried){
     get('cur').then(function(rec){
-      if(!rec||!rec.data||!Object.keys(rec.data).some(function(k){ return /^bb9-(meals|mealdef|hist|favs|weight|habits)$/.test(k); })) return;
+      if(!rec||!rec.data||!Object.keys(rec.data).some(function(k){ return /^phy-(meals|mealdef|hist|favs|weight|habits)$/.test(k); })) return;
       Object.keys(rec.data).forEach(function(k){ if(LS.getItem(k)===null) LS.setItem(k,rec.data[k]); });
-      try{ sessionStorage.setItem('bbx-restored','1'); }catch(e){}
+      try{ sessionStorage.setItem('phy-restored','1'); }catch(e){}
       location.reload();
     }).catch(function(){});
   } else if(!empty){ setTimeout(snap,2500); }
@@ -46,7 +46,7 @@
     status:function(){ return Promise.all([get('cur').catch(function(){return null;}), (navigator.storage&&navigator.storage.persisted)?navigator.storage.persisted().catch(function(){return null;}):Promise.resolve(null)]).then(function(a){ return {t:a[0]&&a[0].t||0, persisted:a[1]}; }); },
     now:snap,
     json:function(){ return JSON.stringify({app:'BBX',v:1,data:data()}); },
-    restore:function(txt){ var j=JSON.parse(String(txt).trim()); if(!j||j.app!=='BBX'||!j.data) throw new Error('format'); Object.keys(j.data).forEach(function(k){ if(k.indexOf('bb9')===0) LS.setItem(k,j.data[k]); }); return snap().then(function(){ location.reload(); }); }
+    restore:function(txt){ var j=JSON.parse(String(txt).trim()); if(!j||j.app!=='BBX'||!j.data) throw new Error('format'); Object.keys(j.data).forEach(function(k){ if(k.indexOf('phy')===0) LS.setItem(k,j.data[k]); }); return snap().then(function(){ location.reload(); }); }
   };
 })();
 </script>
@@ -2680,16 +2680,16 @@ window.BBXBk=(function(){
   ["Shaker","🥤",[]],
   ["Dîner","🥩",[]]];
   let MEALS=JSON.parse(JSON.stringify(DEF_MEALS));
-  try{ const c=JSON.parse(localStorage.getItem('bb9-mealdef')||'null'); if(Array.isArray(c)&&c.length&&c.every(x=>Array.isArray(x)&&x.length>=3&&Array.isArray(x[2]))) MEALS=c; }catch(e){}
+  try{ const c=JSON.parse(localStorage.getItem('phy-mealdef')||'null'); if(Array.isArray(c)&&c.length&&c.every(x=>Array.isArray(x)&&x.length>=3&&Array.isArray(x[2]))) MEALS=c; }catch(e){}
   const MC={'Petit-déjeuner':['#F59E0B','rgba(245,158,11,.15)'],'Déjeuner':['#16A34A','rgba(22,163,74,.13)'],'Snack':['#8B5CF6','rgba(139,92,246,.13)'],'Shaker':['#0EA5E9','rgba(14,165,233,.14)'],'Dîner':['#E5173A','rgba(229,23,58,.11)']};
   const PAL=[['#0D9488','rgba(13,148,136,.13)'],['#DB2777','rgba(219,39,119,.12)'],['#4F46E5','rgba(79,70,229,.12)'],['#65A30D','rgba(101,163,13,.14)'],['#EA580C','rgba(234,88,12,.13)'],['#0891B2','rgba(8,145,178,.13)']];
   const mcol=t=>{ const m=MEALS.find(x=>x[0]===t); if(m&&m[3]!=null) return Array.isArray(m[3])?m[3]:PAL[m[3]%PAL.length]; return MC[t]||PAL[0]; };
   const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  const SK='bb9-meals', CI=2*Math.PI*52;
+  const SK='phy-meals', CI=2*Math.PI*52;
   const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
   let S={w:{},d:{},kg:2500,pg:140,fg:0,cg:0,day:today()};
   // ---------- historique des jours (Suivi) ----------
-  const HKEY='bb9-hist';
+  const HKEY='phy-hist';
   let HIST={}; try{ HIST=JSON.parse(localStorage.getItem(HKEY)||'{}')||{}; }catch(e){ HIST={}; }
   const saveHist=()=>{ try{ localStorage.setItem(HKEY,JSON.stringify(HIST)); }catch(e){} };
   function recordToday(K,P,F,C,HM,HI){
@@ -2704,7 +2704,7 @@ window.BBXBk=(function(){
   if(S.day!==today()){ S.d={}; S.day=today(); }   // les coches repartent à zéro chaque jour
   const save=()=>{ try{ localStorage.setItem(SK,JSON.stringify(S)); }catch(e){} };
   // mode de comptage : 'chk' = avec cases à cocher (historique) · 'auto' = sans case, tout produit présent est compté
-  let AUTO=false; try{ AUTO=localStorage.getItem('bb9-cmode')!=='chk'; }catch(e){}
+  let AUTO=false; try{ AUTO=localStorage.getItem('phy-cmode')!=='chk'; }catch(e){}
   const isDn=(m,i)=>AUTO||!!S.d[key(m,i)];
   function applyMode(){ const v=document.getElementById('mealView'); if(v) v.classList.toggle('cm-auto',AUTO); document.querySelectorAll('#cmSeg button').forEach(b=>{ const on=(b.dataset.m==='auto')===AUTO; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on); }); }
   const fitCarb=()=>{ S.cg=Math.max(0,Math.round((S.kg-4*S.pg-9*S.fg)/4)); };
@@ -2782,7 +2782,7 @@ window.BBXBk=(function(){
     let meal=v==='meal'; const wasShown=$('mealView').classList.contains('show');
     $('mealView').classList.add('show'); meal=true;
     if(meal && (!wasShown || !mealFocused)){ mealFocused=true; setTimeout(focusMeal,30); }
-    try{ localStorage.setItem('bb9-view',v); }catch(e){}
+    try{ localStorage.setItem('phy-view',v); }catch(e){}
   }
   // ---------- repas courant : affiché juste sous « Progression » à l'ouverture ----------
   let mealFocused=false, hiddenAt=0, focusT=0, focusUser=false;
@@ -2806,7 +2806,7 @@ window.BBXBk=(function(){
   // à partir de 17 h, chaque jour : la page Sport s'affiche en premier (avant 17 h : Meal)
   function autoView(){ setView('meal'); }
   // ---------- Réglages Meal : modifier / ajouter / scanner ----------
-  const DEFKEY='bb9-mealdef';
+  const DEFKEY='phy-mealdef';
   const saveDef=()=>{ try{ localStorage.setItem(DEFKEY,JSON.stringify(MEALS)); }catch(e){} };
   const per100=it=>{ const g=it[2]*it[3]; return g>0?{k:it[4]/g*100,p:it[5]/g*100,f:it[8]!=null?it[8]/g*100:null,c:it[9]!=null?it[9]/g*100:null}:{k:0,p:0,f:null,c:null}; };
   const num=v=>parseFloat(String(v).replace(',','.'));
@@ -2855,7 +2855,7 @@ window.BBXBk=(function(){
     $('mfQty').value=r1(Math.max(1,q+dir*step)); fmPrev();
   }
   // ---------- produit inconnu : lecture du tableau nutritionnel par photo (OCR) + codes-barres mémorisés ----------
-  const CODEKEY='bb9-codes'; let CODES={}; try{ CODES=JSON.parse(localStorage.getItem(CODEKEY)||'{}')||{}; }catch(e){ CODES={}; }
+  const CODEKEY='phy-codes'; let CODES={}; try{ CODES=JSON.parse(localStorage.getItem(CODEKEY)||'{}')||{}; }catch(e){ CODES={}; }
   const saveCodes=()=>{ try{ localStorage.setItem(CODEKEY,JSON.stringify(CODES)); }catch(e){} };
   function parseNutri(raw){
     const T=String(raw||'').replace(/\r/g,'');
@@ -3131,7 +3131,7 @@ window.BBXBk=(function(){
     let code=null; try{ code=await decodeImage(f); }catch(err){}
     if(code){ stopCam(); sc.done=false; onCode(code); } else{ $('mealScan').classList.add('show'); st('Code-barres non lu. Rapproche-toi, évite les reflets, ou tape le code ci-dessous.'); }
   });
-  const SCANKEY='bb9-scanmode'; let scanMode='live';
+  const SCANKEY='phy-scanmode'; let scanMode='live';
   try{ localStorage.removeItem(SCANKEY); }catch(e){}   // plus de mode « photo » : la caméra en direct est toujours utilisée
   function renderScanMode(){ document.querySelectorAll('#mcSm [data-sm]').forEach(b=>b.classList.toggle('on',b.dataset.sm===scanMode)); }
   function setScanMode(m){ scanMode=m==='photo'?'photo':'live'; try{ localStorage.setItem(SCANKEY,scanMode); }catch(e){} if(scanMode==='photo') releaseCam(); renderScanMode(); }
@@ -3286,20 +3286,12 @@ window.BBXBk=(function(){
     if(pq>0&&pq>(out[0]?out[0].g:0)*1.2){ const pk=g.find(x=>x.g>=pq*0.8&&x.g<=pq*1.25); out.push({label:pk?pk.label:packLabel(name),g:pq}); }
     return mergePortions(out[0],out.slice(1),name);
   }
-  const FAVKEY='bb9-favs';
+  const FAVKEY='phy-favs';
   let FAV=null; try{ FAV=JSON.parse(localStorage.getItem(FAVKEY)||'null'); }catch(e){}
   const saveFav=()=>{ try{ localStorage.setItem(FAVKEY,JSON.stringify(FAV)); }catch(e){} };
   if(!Array.isArray(FAV)){   // première fois : mes produits = ceux déjà présents dans mes repas
     FAV=[]; MEALS.forEach(([t,ic,items])=>items.forEach(it=>{ if(FAV.some(f=>f.name===it[0])) return; const q=per100(it); FAV.push({name:it[0],kcal:q.k,prot:q.p,fat:q.f,carb:q.c,serving:it[2]>0?it[2]:0,label:it[1],emoji:it[7],unit:it[6]}); })); saveFav();
   }
-  // Phylomene démarre sans produit : on retire une seule fois les produits d'exemple de BBX déjà enregistrés sur cet appareil (sans toucher à tes propres produits)
-  try{ if(!localStorage.getItem('bb9-phy-clean')){
-    const OLD=[["Flocons d’avoine complets bio (Bjorg)","tasse",166.7,130,4.6],["Yaourt nature (Deli Light)","pot",125,113,9],["Beurre de cacahuète 100 % (Menguy’s)","portion de 100 g",100,366,16],["Date Deglet Noor","datte",7,99,0.7],["Blanc de poulet –25 % de sel (Fleury Michon)","portion",40,82,8],["Riz basmati (Picard)","portion",225,297,7],["Skyr (Danone)","portion",140,80,15],["Banane","banane",105,100,1.2],["Banane","banane",105,124,1.5],["Sablés citron yuzu sans sucres (Gerblé)","sablé",11,187,3.5],["Lait demi-écrémé","verre",160,166,8],["Whey vanille (Decathlon)","mesure",30,116,24],["Créatine","dose de 3 g",3,0,0],["Haricots verts extra-fins (Cora)","portion",100,70,4],["Steak haché 5 %","steak",120,156,24],["Carré frais (Elle & Vire)","portion",25,48,1.8],["Wasa Proteins+","tranche",14.2,113,6],["Skyr myrtilles (Arma)","pot",100,72,9],["Pomme Golden","pomme",100,70.2,0.39],["Chocolat 90 % excellence (Lindt)","carré",10,59,1.2]], same=(it,o)=>it[0]===o[0]&&it[1]===o[1]&&Math.abs(it[2]-o[2])<1e-6&&Math.abs(it[4]-o[3])<1e-6&&Math.abs(it[5]-o[4])<1e-6;
-    let ch=false; MEALS.forEach(m=>{ const n=m[2].length; m[2]=m[2].filter(it=>!OLD.some(o=>same(it,o))); if(m[2].length!==n) ch=true; });
-    const nf=FAV.length; FAV=FAV.filter(f=>!OLD.some(o=>o[0]===f.name&&(f.serving||0)===o[2]&&f.label===o[1])); if(FAV.length!==nf) ch=true;
-    if(ch){ localStorage.setItem('bb9-mealdef',JSON.stringify(MEALS)); saveFav(); }
-    localStorage.setItem('bb9-phy-clean','1');
-  } }catch(e){}
   function upsertFav(it,portions){
     const q=per100(it), f={name:it[0],kcal:q.k,prot:q.p,fat:q.f,carb:q.c,serving:it[2]>0?it[2]:0,label:it[1],emoji:it[7],unit:it[6],portions:portions||[]};
     FAV=FAV.filter(x=>normS(x.name)!==normS(f.name)); FAV.unshift(f); if(FAV.length>500) FAV.length=500; saveFav();
@@ -3360,12 +3352,12 @@ window.BBXBk=(function(){
     finally{ clearTimeout(to); }
   }
   const errText=e=>e&&e.http?'erreur '+e.http:(e&&e.name==='AbortError'?'délai dépassé':(e&&e.message)||'inaccessible');
-  // ---------- quantité habituelle mémorisée par aliment (bb9-qty) ----------
-  const QTYKEY='bb9-qty'; let QTY={}; try{ QTY=JSON.parse(localStorage.getItem(QTYKEY)||'{}')||{}; }catch(e){ QTY={}; }
+  // ---------- quantité habituelle mémorisée par aliment (phy-qty) ----------
+  const QTYKEY='phy-qty'; let QTY={}; try{ QTY=JSON.parse(localStorage.getItem(QTYKEY)||'{}')||{}; }catch(e){ QTY={}; }
   const saveQty=()=>{ try{ localStorage.setItem(QTYKEY,JSON.stringify(QTY)); }catch(e){} };
   const memQty=(name,unit)=>{ const m=QTY[hlKey(name||'')]; return m&&m.g>0&&m.u===unit?m.g:0; };
-  // ---------- évaluation santé mémorisée pour mes produits (bb9-health) + mise à jour automatique ----------
-  const HLKEY='bb9-health'; let HL={}; try{ HL=JSON.parse(localStorage.getItem(HLKEY)||'{}')||{}; }catch(e){ HL={}; }
+  // ---------- évaluation santé mémorisée pour mes produits (phy-health) + mise à jour automatique ----------
+  const HLKEY='phy-health'; let HL={}; try{ HL=JSON.parse(localStorage.getItem(HLKEY)||'{}')||{}; }catch(e){ HL={}; }
   const saveHL=()=>{ try{ localStorage.setItem(HLKEY,JSON.stringify(HL)); }catch(e){} };
   const hlKey=n=>normS(String(n).replace(/\s*\(\d+\)\s*$/,''));
   const hlGet=n=>{ const h=HL[hlKey(n)]; return h&&!h.miss&&(h.ns||h.nova)?h:null; };
@@ -3668,7 +3660,7 @@ window.BBXBk=(function(){
   function clearHist(){ if(!confirm('Effacer tout l’historique des jours ?')) return; HIST={}; saveHist(); recordTodayNow(); renderHist(); }
   function recordTodayNow(){ calc(); }
   // ---------- poids : pesée du lundi, objectif détaillé, coach qui s'adapte ----------
-  const WKEY='bb9-weight';
+  const WKEY='phy-weight';
   let WT={log:{},goal:null,plan:null,prof:{},cal:{auto:true,log:[]},waist:{}};
   try{ const x=JSON.parse(localStorage.getItem(WKEY)||'null'); if(x&&typeof x==='object'){ WT.log=x.log||{}; WT.goal=x.goal||null; WT.plan=x.plan||null; WT.prof=x.prof||{}; WT.cal=Object.assign({auto:true,log:[]},x.cal||{}); WT.waist=x.waist||{}; } }catch(e){}
   const saveWT=()=>{ try{ localStorage.setItem(WKEY,JSON.stringify(WT)); }catch(e){} };
@@ -3943,7 +3935,7 @@ window.BBXBk=(function(){
     return h+'<div class="cc-note">Repères généraux (≈ 7 700 kcal par kg), pas un avis médical.</div></div>';
   }
   // ---------- habitudes : produits que je mange d'habitude, repas par repas ----------
-  const HABKEY='bb9-habits';
+  const HABKEY='phy-habits';
   let HAB=null; try{ HAB=JSON.parse(localStorage.getItem(HABKEY)||'null'); }catch(e){}
   const saveHab=()=>{ try{ localStorage.setItem(HABKEY,JSON.stringify(HAB)); }catch(e){} };
   if(!HAB||typeof HAB!=='object'){ HAB={}; MEALS.forEach(([t,ic,items])=>{ HAB[t]={}; items.forEach(it=>{ HAB[t][it[0]]={n:1,g:Math.round(it[2]*it[3]*10)/10,t:0,d:''}; }); saveHab(); }); }
@@ -4037,7 +4029,7 @@ window.BBXBk=(function(){
       HAB[title]=JSON.parse(snap); saveHab(); refresh(); });
   }
   window.BBXMeal={
-    setMode:v=>{ AUTO=v==='auto'; try{ localStorage.setItem('bb9-cmode',AUTO?'auto':'chk'); }catch(e){} applyMode(); calc(); renderCfg(); },
+    setMode:v=>{ AUTO=v==='auto'; try{ localStorage.setItem('phy-cmode',AUTO?'auto':'chk'); }catch(e){} applyMode(); calc(); renderCfg(); },
     openCfg:()=>{ renderCfg(); $('mealCfg').classList.add('show'); }, closeCfg:()=>$('mealCfg').classList.remove('show'),
     add:m=>openForm('add',m), edit:(m,i)=>openForm('edit',m,i), del:delItem, move:moveItem, resetDef:resetDef,
     saveForm:saveForm, closeForm:()=>$('mealForm').classList.remove('show'),
