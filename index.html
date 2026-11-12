@@ -1,6 +1,55 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<script id="bbxSafe">
+/* Sauvegarde automatique : copie des données (bb9*) dans IndexedDB à chaque changement + restauration si le navigateur efface le stockage */
+(function(){
+  var LS; try{ LS=window.localStorage; }catch(e){ return; }
+  var DB='bbx-safe', ST='kv', KEEP=7, timer=0, last=0, persisted=null;
+  function idb(){ return new Promise(function(ok,ko){ try{ var q=indexedDB.open(DB,1); q.onupgradeneeded=function(){ q.result.createObjectStore(ST); }; q.onsuccess=function(){ ok(q.result); }; q.onerror=function(){ ko(q.error); }; }catch(e){ ko(e); } }); }
+  function put(k,v){ return idb().then(function(d){ return new Promise(function(ok,ko){ var t=d.transaction(ST,'readwrite'); t.objectStore(ST).put(v,k); t.oncomplete=function(){ ok(); }; t.onerror=function(){ ko(t.error); }; }); }); }
+  function get(k){ return idb().then(function(d){ return new Promise(function(ok,ko){ var r=d.transaction(ST).objectStore(ST).get(k); r.onsuccess=function(){ ok(r.result); }; r.onerror=function(){ ko(r.error); }; }); }); }
+  function keys(){ return idb().then(function(d){ return new Promise(function(ok,ko){ var r=d.transaction(ST).objectStore(ST).getAllKeys(); r.onsuccess=function(){ ok(r.result); }; r.onerror=function(){ ko(r.error); }; }); }); }
+  function del(k){ return idb().then(function(d){ return new Promise(function(ok){ var t=d.transaction(ST,'readwrite'); t.objectStore(ST).delete(k); t.oncomplete=function(){ ok(); }; }); }); }
+  function data(){ var o={}; try{ for(var i=0;i<LS.length;i++){ var k=LS.key(i); if(k&&k.indexOf('bb9')===0) o[k]=LS.getItem(k); } }catch(e){} return o; }
+  function ymd(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
+  function snap(){
+    var d=data(); if(!Object.keys(d).length) return Promise.resolve();
+    var rec={t:Date.now(),data:d};
+    return put('cur',rec).then(function(){ last=rec.t; try{ LS.setItem('bbx-lastsave',String(last)); }catch(e){} return put('d-'+ymd(),rec); })
+      .then(function(){ return keys(); }).then(function(ks){ var days=ks.filter(function(k){ return String(k).indexOf('d-')===0; }).sort(); while(days.length>KEEP) del(days.shift()); }).catch(function(){});
+  }
+  function later(){ clearTimeout(timer); timer=setTimeout(snap,500); }
+  // chaque écriture de données déclenche une copie (sans toucher au comportement de localStorage)
+  try{
+    var P=Storage.prototype, s0=P.setItem, r0=P.removeItem, c0=P.clear;
+    P.setItem=function(k,v){ var r=s0.apply(this,arguments); if(this===LS&&String(k).indexOf('bb9')===0) later(); return r; };
+    P.removeItem=function(k){ var r=r0.apply(this,arguments); if(this===LS&&String(k).indexOf('bb9')===0) later(); return r; };
+  }catch(e){}
+  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='hidden'){ clearTimeout(timer); snap(); } });
+  window.addEventListener('pagehide',function(){ clearTimeout(timer); snap(); });
+  // stockage persistant demandé au navigateur
+  try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().then(function(v){ persisted=v; }); }catch(e){}
+  // restauration automatique si les données ont disparu (effacement par le navigateur)
+  var empty=false; try{ empty=['bb9-meals','bb9-mealdef','bb9-hist','bb9-favs','bb9-weight','bb9-habits'].every(function(k){ return LS.getItem(k)===null; }); }catch(e){}
+  var tried=false; try{ tried=sessionStorage.getItem('bbx-restored')==='1'; }catch(e){}
+  if(empty&&!tried){
+    get('cur').then(function(rec){
+      if(!rec||!rec.data||!Object.keys(rec.data).some(function(k){ return /^bb9-(meals|mealdef|hist|favs|weight|habits)$/.test(k); })) return;
+      Object.keys(rec.data).forEach(function(k){ if(LS.getItem(k)===null) LS.setItem(k,rec.data[k]); });
+      try{ sessionStorage.setItem('bbx-restored','1'); }catch(e){}
+      location.reload();
+    }).catch(function(){});
+  } else if(!empty){ setTimeout(snap,2500); }
+  // API pour l'écran Réglages
+  window.BBXSafe={
+    status:function(){ return Promise.all([get('cur').catch(function(){return null;}), (navigator.storage&&navigator.storage.persisted)?navigator.storage.persisted().catch(function(){return null;}):Promise.resolve(null)]).then(function(a){ return {t:a[0]&&a[0].t||0, persisted:a[1]}; }); },
+    now:snap,
+    json:function(){ return JSON.stringify({app:'BBX',v:1,data:data()}); },
+    restore:function(txt){ var j=JSON.parse(String(txt).trim()); if(!j||j.app!=='BBX'||!j.data) throw new Error('format'); Object.keys(j.data).forEach(function(k){ if(k.indexOf('bb9')===0) LS.setItem(k,j.data[k]); }); return snap().then(function(){ location.reload(); }); }
+  };
+})();
+</script>
 <meta charset="UTF-8">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#050505">
@@ -2356,6 +2405,13 @@ body:has(#mealView.show) .nav-pill button.on{ background:#7DD957; color:#fff; bo
 /* logo Phylomene */
 #mealView .my-head .app-logo, #mealView .my-brand .app-logo{ filter:none !important; transform:none !important; opacity:1 !important; height:42px !important; width:auto !important; max-width:150px !important; object-fit:contain; object-position:left center; }
 #mealView .my-brand{ align-items:center !important; }
+
+/* sauvegarde */
+.bk-ta{ width:100%; box-sizing:border-box; margin:0 0 8px; padding:10px 12px; border-radius:12px; border:1px solid #E1E4EA; background:#F7F8FA; color:#111; font:12px/1.35 ui-monospace,Menlo,monospace; resize:vertical; }
+.cm-seg.bk3{ grid-template-columns:repeat(3,1fr); }
+.cm-seg.bk3 button{ flex-direction:column; gap:3px; min-height:54px; font-size:12px; }
+.cm-seg.bk3 button svg{ width:22px; height:22px; }
+.bk-wrap{ margin-top:16px; }
 </style>
 </head>
 <body>
@@ -2465,7 +2521,30 @@ body:has(#mealView.show) .nav-pill button.on{ background:#7DD957; color:#fff; bo
   <div id="mcList"></div>
   <div class="ib-row"><button class="mc-big ib ibt red" onclick="BBXMeal.addMeal()" aria-label="Ajouter un repas" title="Ajouter un repas"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><em>Repas</em></button></div>
   <button class="mc-reset" onclick="BBXMeal.resetDef()" aria-label="Remettre les repas d’origine" title="Remettre les repas d’origine"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5"/><path d="M3.5 3.5v5h5"/></svg></button>
+  <div class="cm-box bk-wrap"><div class="cm-t">Sauvegarde de mes données</div>
+    <div class="cm-d" id="bkStatus" style="margin:0 2px 8px">Vérification…</div>
+    <textarea id="bkTxt" class="bk-ta" rows="2" spellcheck="false" autocapitalize="off" placeholder="Pour restaurer : colle ici ta sauvegarde, puis touche Restaurer."></textarea>
+    <div class="cm-seg bk3" role="group" aria-label="Sauvegarde">
+      <button onclick="BBXBk.copy()" aria-label="Copier ma sauvegarde" title="Copier ma sauvegarde"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="3"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><span>Copier</span></button>
+      <button onclick="BBXBk.file()" aria-label="Télécharger un fichier de sauvegarde" title="Télécharger un fichier de sauvegarde"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg><span>Fichier</span></button>
+      <button onclick="BBXBk.restore()" aria-label="Restaurer une sauvegarde" title="Restaurer une sauvegarde"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5"/><path d="M3.5 3.5v5h5M12 8v4.5l3 1.8"/></svg><span>Restaurer</span></button>
+    </div>
+    <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
+    <div class="cm-d" id="bkMsg"></div></div>
 </div>
+<script>
+window.BBXBk=(function(){
+  var $=function(i){return document.getElementById(i);};
+  function msg(t){ $("bkMsg").textContent=t; }
+  function refresh(){ if(!window.BBXSafe) return; BBXSafe.status().then(function(st){ var h=st.t?new Date(st.t).toLocaleString("fr-FR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"à l’instant"; $("bkStatus").textContent="✓ Copie automatique active (dernière : "+h+")"+(st.persisted===true?" · stockage protégé":(st.persisted===false?" · stockage non protégé par le navigateur : pense à copier une sauvegarde de temps en temps":"")); }); }
+  function copy(){ var t=BBXSafe.json(); $("bkTxt").value=t; var ok=function(){ msg("✓ Sauvegarde copiée. Colle-la dans Notes."); }, fb=function(){ try{ $("bkTxt").focus(); $("bkTxt").select(); document.execCommand("copy"); ok(); }catch(e){ msg("Sélectionne le texte et copie-le dans Notes."); } }; if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok,fb); else fb(); }
+  function file(){ try{ var b=new Blob([BBXSafe.json()],{type:"application/json"}), a=document.createElement("a"), d=new Date(); a.href=URL.createObjectURL(b); a.download="sauvegarde-"+d.toISOString().slice(0,10)+".json"; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },1500); msg("✓ Fichier de sauvegarde téléchargé."); }catch(e){ msg("Téléchargement impossible : utilise Copier."); } }
+  function go(t){ try{ JSON.parse(t); }catch(e){ msg("Sauvegarde non reconnue : colle exactement le texte copié."); return; } if(!confirm("Remplacer les données actuelles par cette sauvegarde ?")) return; msg("Restauration…"); BBXSafe.restore(t).catch(function(){ msg("Sauvegarde non reconnue."); }); }
+  function restore(){ var t=$("bkTxt").value.trim(); if(!t){ $("bkFile").click(); return; } go(t); }
+  $("bkFile").addEventListener("change",function(e){ var f=e.target.files&&e.target.files[0]; e.target.value=""; if(!f) return; var r=new FileReader(); r.onload=function(){ go(String(r.result)); }; r.readAsText(f); });
+  return {refresh:refresh,copy:copy,file:file,restore:restore};
+})();
+</script>
 <div id="mealHabits" class="mc-ov mc-sheet" style="z-index:9160" aria-label="Habitudes">
   <div class="mc-head"><b id="hbTitle">Habitudes</b><button class="mc-x" onclick="BBXMeal.closeHabits()" aria-label="Fermer">✕</button></div>
   <div class="hb-sub" id="hbSub"></div>
@@ -2662,7 +2741,7 @@ body:has(#mealView.show) .nav-pill button.on{ background:#7DD957; color:#fff; bo
   const num=v=>parseFloat(String(v).replace(',','.'));
   function refresh(){ saveDef(); save(); build(); calc(); renderCfg(); }
   function renderCfg(){
-    applyMode(); { const d=$('cmDesc'); if(d) d.textContent=AUTO?'Sans case : chaque produit présent dans un repas est compté tout de suite (kcal et macros). Supprime-le pour le retirer du total.':'Avec cases : tu coches un produit pour le compter dans ta journée.'; }
+    applyMode(); if(window.BBXBk) BBXBk.refresh(); { const d=$('cmDesc'); if(d) d.textContent=AUTO?'Sans case : chaque produit présent dans un repas est compté tout de suite (kcal et macros). Supprime-le pour le retirer du total.':'Avec cases : tu coches un produit pour le compter dans ta journée.'; }
     $('mcList').innerHTML=MEALS.map(([t,ic,items],m)=>`<section class="mc-meal" style="--mc:${mcol(t)[0]};--mt:${mcol(t)[1]}"><div class="mc-mh"><span class="mc-mi">${esc(ic)}</span><b>${esc(t)}</b><button class="mc-sm" onclick="BBXMeal.renameMeal(${m})" aria-label="Renommer ${esc(t)}">✎</button><button class="mc-sm del" onclick="BBXMeal.delMeal(${m})" aria-label="Supprimer le repas ${esc(t)}">🗑</button><button class="mc-plus" onclick="BBXMeal.add(${m})" aria-label="Ajouter à ${esc(t)}">＋</button></div>`+
       (items.length?items.map((it,i)=>{ const q=per100(it); return `<div class="mc-it"><span class="mc-th">${esc(it[7])}</span><div class="mc-nm"><b>${esc(it[0])}</b><span>${r(q.k)} kcal · ${r1(q.p)} g prot.${q.f!=null&&q.c!=null?' · '+r1(q.f)+' g lip. · '+r1(q.c)+' g gluc.':''} / 100 ${it[6]}</span></div><div class="mc-acts"><button onclick="BBXMeal.move(${m},${i},-1)" ${i===0?'disabled':''} aria-label="Monter">▲</button><button onclick="BBXMeal.move(${m},${i},1)" ${i===items.length-1?'disabled':''} aria-label="Descendre">▼</button><button onclick="BBXMeal.edit(${m},${i})" aria-label="Modifier">✎</button><button class="del" onclick="BBXMeal.del(${m},${i})" aria-label="Supprimer">🗑</button></div></div>`; }).join(''):'<div class="mc-empty">Aucun produit dans ce repas</div>')+`</section>`).join('');
   }
