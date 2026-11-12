@@ -2483,6 +2483,34 @@ body:has(#mealView.show) .nav-pill button.on{ background:#7DD957; color:#fff; bo
 @media (max-width:405px){ #mealView.cm-auto .my-hbtn{ width:51px !important; } }
 @media (max-width:380px){ #mealView.cm-auto .my-hbtn{ width:46px !important; } }
 @media (max-width:350px){ #mealView.cm-auto .my-hbtn{ width:44px !important; } }
+
+/* ===== mode bouton central ===== */
+#mealView.cm-fab .my-hb{ display:none !important; }
+#mealFab{ display:none; position:fixed; left:50%; transform:translateX(-50%); bottom:calc(26px + env(safe-area-inset-bottom,0px)); z-index:60; width:72px; height:72px; border-radius:50%; border:0; padding:0; background:#7DD957; color:#143008; place-items:center; cursor:pointer; box-shadow:0 16px 30px -10px rgba(91,190,72,.95), 0 0 0 7px rgba(255,255,255,.75); }
+#mealFab svg{ width:34px; height:34px; fill:none; stroke:currentColor; stroke-width:3; stroke-linecap:round; }
+#mealFab:active{ transform:translateX(-50%) scale(.94); }
+body:has(#mealView.show.cm-fab) #mealFab{ display:grid; }
+body:has(#mealView.show.cm-fab):has(.nav-pill) #mealFab{ bottom:calc(92px + env(safe-area-inset-bottom,0px)); }
+body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#mealFabSheet.show) #mealFab{ display:none !important; }
+#mealView.cm-fab #mlMeals{ padding-bottom:120px; }
+.mfs{ position:fixed; inset:0; z-index:9250; display:none; align-items:flex-end; background:rgba(15,18,25,.42); }
+.mfs.show{ display:flex; }
+.mfs-p{ width:100%; box-sizing:border-box; background:#fff; border-radius:30px 30px 0 0; padding:18px 16px calc(20px + env(safe-area-inset-bottom,0px)); box-shadow:0 -20px 40px -20px rgba(0,0,0,.4); max-height:88vh; overflow-y:auto; color:#15171C; font-family:inherit; }
+.mfs-h{ display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+.mfs-h b{ font-size:24px; font-weight:900; font-style:italic; font-family:"Arial Black",Impact,Arial,sans-serif; text-transform:uppercase; color:#111; }
+.mfs-lab{ font-size:14.5px; font-weight:700; color:#4B5563; line-height:1.4; margin:0 2px 12px; }
+.mfs-chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+.mfs-chip{ display:inline-flex; align-items:center; gap:7px; min-height:48px; padding:0 16px 0 12px; border-radius:999px; border:1.5px solid #DDE0E6; background:#fff; color:#15171C; font-family:inherit; font-weight:800; font-size:15px; cursor:pointer; }
+.mfs-chip span{ font-size:20px; }
+.mfs-chip.on{ background:var(--mc); border-color:var(--mc); color:#fff; box-shadow:0 8px 16px -8px var(--mc); }
+.mfs-acts{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.mfs-acts button{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; min-height:84px; border-radius:22px; border:1.5px solid #E1E4EA; background:#F7F8FA; color:#15171C; font-family:inherit; font-weight:800; font-size:15px; cursor:pointer; }
+.mfs-acts button:first-child, .mfs-acts button:nth-child(3){ background:#F1FBEA; border-color:#CDEFB8; }
+.mfs-acts button svg{ width:30px; height:30px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+.mfs-acts button:active{ transform:scale(.97); }
+.cm-seg.cm3{ grid-template-columns:repeat(3,1fr); }
+.cm-seg.cm3 button{ flex-direction:column; gap:3px; min-height:58px; font-size:12px; padding:4px 2px; }
+.cm-seg.cm3 button svg{ width:22px; height:22px; }
 </style>
 </head>
 <body>
@@ -2532,6 +2560,20 @@ body:has(#mealView.show) .nav-pill button.on{ background:#7DD957; color:#fff; bo
 </div>
 <div id="mealPick" class="m-pick" onclick="if(event.target===this)BBXMeal.closePick()"><div class="m-pick-card"><b>Tableau nutritionnel</b><div class="m-pick-row"><button class="mc-big ib ibt red" onclick="BBXMeal.pickCam()" aria-label="Prendre une photo" title="Prendre une photo"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5h3l1.5-2.5h7L17 8.5h3V19H4z"/><circle cx="12" cy="13.3" r="3.4"/></svg></span><em>Prendre une photo</em></button><button class="mc-big ib ibt" onclick="BBXMeal.pickGal()" aria-label="Choisir dans la galerie" title="Choisir dans la galerie"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17.5l5.2-5 3.8 3.5 2.6-2.4 4.4 4"/></svg></span><em>Galerie</em></button></div></div></div>
 <input type="file" id="mfOcrGal" accept="image/*" hidden>
+<button id="mealFab" onclick="BBXMeal.fab()" aria-label="Ajouter un produit" title="Ajouter un produit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+<div id="mealFabSheet" class="mfs" onclick="if(event.target===this)BBXMeal.fabClose()" aria-label="Ajouter un produit">
+  <div class="mfs-p">
+    <div class="mfs-h"><b>Ajouter à…</b><button class="mc-x" onclick="BBXMeal.fabClose()" aria-label="Fermer">✕</button></div>
+    <div class="mfs-lab" id="mfsLab"></div>
+    <div class="mfs-chips" id="mfsChips"></div>
+    <div class="mfs-acts">
+      <button onclick="BBXMeal.fabGo('ideas')" aria-label="Idées"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 18h5.6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.1V16h5v-.1c0-.8.4-1.6 1.1-2.1A6 6 0 0 0 12 3z"/></svg><span>Idées</span></button>
+      <button onclick="BBXMeal.fabGo('scan')" aria-label="Scanner un code-barres"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M7 12h10"/></svg><span>Scanner</span></button>
+      <button onclick="BBXMeal.fabGo('search')" aria-label="Rechercher un produit"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span>Rechercher</span></button>
+      <button onclick="BBXMeal.fabGo('habits')" aria-label="Produits récurrents"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5"/><path d="M3.5 3.5v5h5M12 8v4.5l3 1.8"/></svg><span>Récurrent</span></button>
+    </div>
+  </div>
+</div>
 <div id="mealToast" class="m-toast" role="status"><span id="toastTxt"></span><button id="toastUndo" aria-label="Annuler" title="Annuler"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h9a6 6 0 0 1 0 12h-3"/></svg></button></div>
 <div id="mealPlan" class="mc-ov mc-sheet" style="z-index:9400" aria-label="Objectif de poids">
   <div class="mc-head"><b>🎯 Objectif</b><button class="mc-x" onclick="BBXMeal.closePlan()" aria-label="Fermer">✕</button></div>
@@ -2583,9 +2625,10 @@ body:has(#mealView.show) .nav-pill button.on{ background:#7DD957; color:#fff; bo
     <button class="mc-big ib ibt " onclick="BBXMeal.add(null)" aria-label="Ajouter à la main" title="Ajouter à la main"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4.2-1L18.3 8.9a2.1 2.1 0 0 0-3-3L5.2 16 4 20z"/><path d="M13.6 7.6l2.8 2.8"/></svg></span><em>Saisie</em></button>
   </div>
   <div class="cm-box"><div class="cm-t">Mode de comptage</div>
-    <div class="cm-seg" id="cmSeg" role="group" aria-label="Mode de comptage">
+    <div class="cm-seg cm3" id="cmSeg" role="group" aria-label="Mode de comptage">
       <button data-m="chk" onclick="BBXMeal.setMode('chk')" aria-label="Avec cases à cocher" title="Avec cases à cocher"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg><span>Cases à cocher</span></button>
-      <button data-m="auto" onclick="BBXMeal.setMode('auto')" aria-label="Sans case : compté automatiquement" title="Sans case : compté automatiquement"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6L13 3z"/></svg><span>Automatique</span></button>
+      <button data-m="auto" onclick="BBXMeal.setMode('auto')" aria-label="Automatique : boutons sur chaque repas" title="Automatique : boutons sur chaque repas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6L13 3z"/></svg><span>Automatique</span></button>
+      <button data-m="fab" onclick="BBXMeal.setMode('fab')" aria-label="Automatique : un bouton central" title="Automatique : un bouton central"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M8 12h8"/></svg><span>Bouton central</span></button>
     </div>
     <div class="cm-d" id="cmDesc"></div></div>
     <div class="mc-hint">Change les produits de chaque repas : ▲▼ pour l’ordre, ✎ pour modifier ou changer de repas, 🗑 pour supprimer.</div>
@@ -2705,9 +2748,10 @@ window.BBXBk=(function(){
   if(S.day!==today()){ S.d={}; S.day=today(); ROLLED=true; }   // les coches repartent à zéro chaque jour
   const save=()=>{ try{ localStorage.setItem(SK,JSON.stringify(S)); }catch(e){} };
   // mode de comptage : 'chk' = avec cases à cocher (historique) · 'auto' = sans case, tout produit présent est compté
-  let AUTO=false; try{ AUTO=localStorage.getItem('phy-cmode')!=='chk'; }catch(e){}
+  let MODE='auto'; try{ const mv=localStorage.getItem('phy-cmode'); if(mv==='chk'||mv==='auto'||mv==='fab') MODE=mv; }catch(e){}
+  let AUTO=MODE!=='chk', FABM=MODE==='fab';
   const isDn=(m,i)=>AUTO||!!S.d[key(m,i)];
-  function applyMode(){ const v=document.getElementById('mealView'); if(v) v.classList.toggle('cm-auto',AUTO); document.querySelectorAll('#cmSeg button').forEach(b=>{ const on=(b.dataset.m==='auto')===AUTO; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on); }); }
+  function applyMode(){ const v=document.getElementById('mealView'); if(v){ v.classList.toggle('cm-auto',AUTO); v.classList.toggle('cm-fab',FABM); } document.querySelectorAll('#cmSeg button').forEach(b=>{ const on=b.dataset.m===MODE; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on); }); }
   const fitCarb=()=>{ S.cg=Math.max(0,Math.round((S.kg-4*S.pg-9*S.fg)/4)); };
   if(!(S.fg>0)) S.fg=Math.round(0.28*S.kg/9);
   if(!(S.cg>0)) fitCarb();
@@ -2813,7 +2857,7 @@ window.BBXBk=(function(){
   const num=v=>parseFloat(String(v).replace(',','.'));
   function refresh(){ saveDef(); save(); build(); calc(); renderCfg(); }
   function renderCfg(){
-    applyMode(); if(window.BBXBk) BBXBk.refresh(); { const d=$('cmDesc'); if(d) d.textContent=AUTO?'Sans case : chaque produit présent dans un repas est compté tout de suite (kcal et macros). Supprime-le pour le retirer du total. Chaque nouveau jour, les repas repartent vides (l’historique est gardé) : le bouton Récurrent remet tes produits habituels en un geste.':'Avec cases : tu coches un produit pour le compter dans ta journée.'; }
+    applyMode(); if(window.BBXBk) BBXBk.refresh(); { const d=$('cmDesc'); if(d) d.textContent=MODE==='fab'?'Bouton central : comptage automatique, sans case. Un seul bouton ＋ en bas de l’écran propose le repas de l’heure (modifiable), puis Idées, Scanner, Rechercher ou Récurrent. Chaque nouveau jour, les repas repartent vides.':AUTO?'Sans case : chaque produit présent dans un repas est compté tout de suite (kcal et macros). Supprime-le pour le retirer du total. Chaque nouveau jour, les repas repartent vides (l’historique est gardé) : le bouton Récurrent remet tes produits habituels en un geste.':'Avec cases : tu coches un produit pour le compter dans ta journée.'; }
     $('mcList').innerHTML=MEALS.map(([t,ic,items],m)=>`<section class="mc-meal" style="--mc:${mcol(t)[0]};--mt:${mcol(t)[1]}"><div class="mc-mh"><span class="mc-mi">${esc(ic)}</span><b>${esc(t)}</b><button class="mc-sm" onclick="BBXMeal.renameMeal(${m})" aria-label="Renommer ${esc(t)}">✎</button><button class="mc-sm del" onclick="BBXMeal.delMeal(${m})" aria-label="Supprimer le repas ${esc(t)}">🗑</button><button class="mc-plus" onclick="BBXMeal.add(${m})" aria-label="Ajouter à ${esc(t)}">＋</button></div>`+
       (items.length?items.map((it,i)=>{ const q=per100(it); return `<div class="mc-it"><span class="mc-th">${esc(it[7])}</span><div class="mc-nm"><b>${esc(it[0])}</b><span>${r(q.k)} kcal · ${r1(q.p)} g prot.${q.f!=null&&q.c!=null?' · '+r1(q.f)+' g lip. · '+r1(q.c)+' g gluc.':''} / 100 ${it[6]}</span></div><div class="mc-acts"><button onclick="BBXMeal.move(${m},${i},-1)" ${i===0?'disabled':''} aria-label="Monter">▲</button><button onclick="BBXMeal.move(${m},${i},1)" ${i===items.length-1?'disabled':''} aria-label="Descendre">▼</button><button onclick="BBXMeal.edit(${m},${i})" aria-label="Modifier">✎</button><button class="del" onclick="BBXMeal.del(${m},${i})" aria-label="Supprimer">🗑</button></div></div>`; }).join(''):'<div class="mc-empty">Aucun produit dans ce repas</div>')+`</section>`).join('');
   }
@@ -4029,8 +4073,21 @@ window.BBXBk=(function(){
       names.forEach(n=>{ const i=MEALS[m][2].findIndex(it=>it[0]===n); if(i>=0){ dropState(m,i); MEALS[m][2].splice(i,1); } });
       HAB[title]=JSON.parse(snap); saveHab(); refresh(); });
   }
+
+  // ---------- mode « bouton central » : un seul ＋ en bas, repas proposé selon l'heure ----------
+  const fab={m:0};
+  function fabRender(){
+    const n=new Date(), hh=('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2);
+    $('mfsLab').textContent='Il est '+hh+' : repas proposé « '+(MEALS[fab.m]?MEALS[fab.m][0]:'')+' ». Touche un autre repas pour changer.';
+    $('mfsChips').innerHTML=MEALS.map((mm,i)=>`<button class="mfs-chip${i===fab.m?' on':''}" style="--mc:${mcol(mm[0])[0]}" onclick="BBXMeal.fabSel(${i})" aria-pressed="${i===fab.m}"><span>${esc(mm[1])}</span>${esc(mm[0])}</button>`).join('');
+  }
+  function fabOpen(){ fab.m=Math.min(curMealIdx(),Math.max(0,MEALS.length-1)); fabRender(); $('mealFabSheet').classList.add('show'); }
+  function fabClose(){ $('mealFabSheet').classList.remove('show'); }
+  function fabSel(i){ if(!MEALS[i]) return; fab.m=i; fabRender(); }
+  function fabGo(a){ const m=fab.m; fabClose(); ({ideas:openIdeas,scan:m=>BBXMeal.scan(m),search:m=>srOpen(m),habits:openHabits})[a](m); }
   window.BBXMeal={
-    setMode:v=>{ AUTO=v==='auto'; try{ localStorage.setItem('phy-cmode',AUTO?'auto':'chk'); }catch(e){} applyMode(); calc(); renderCfg(); },
+    fab:fabOpen, fabClose:fabClose, fabSel:fabSel, fabGo:fabGo,
+    setMode:v=>{ MODE=(v==='auto'||v==='fab')?v:'chk'; AUTO=MODE!=='chk'; FABM=MODE==='fab'; try{ localStorage.setItem('phy-cmode',MODE); }catch(e){} applyMode(); calc(); renderCfg(); },
     openCfg:()=>{ renderCfg(); $('mealCfg').classList.add('show'); }, closeCfg:()=>$('mealCfg').classList.remove('show'),
     add:m=>openForm('add',m), edit:(m,i)=>openForm('edit',m,i), del:delItem, move:moveItem, resetDef:resetDef,
     saveForm:saveForm, closeForm:()=>$('mealForm').classList.remove('show'),
