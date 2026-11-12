@@ -2603,11 +2603,11 @@ window.BBXBk=(function(){
   const $=id=>document.getElementById(id), r=n=>Math.round(n), r1=n=>Math.round(n*10)/10, r2=n=>Math.round(n*100)/100;
   // [nom, unité, poids d'une unité, nb d'unités de base, kcal de base, protéines de base (g, estimées), g ou ml, emoji]
   const DEF_MEALS=[
-  ["Petit-déjeuner","🥣",[["Flocons d’avoine complets bio (Bjorg)","tasse",166.7,.36,130,4.6,"g","🌾"],["Yaourt nature (Deli Light)","pot",125,2,113,9,"g","🥛"],["Beurre de cacahuète 100 % (Menguy’s)","portion de 100 g",100,.6,366,16,"g","🥜"],["Date Deglet Noor","datte",7,5,99,.7,"g","🌴"]]],
-  ["Déjeuner","🍗",[["Blanc de poulet –25 % de sel (Fleury Michon)","portion",40,2,82,8,"g","🍗"],["Riz basmati (Picard)","portion",225,1,297,7,"g","🍚"],["Skyr (Danone)","portion",140,1,80,15,"g","🥣"],["Banane","banane",105,1,100,1.2,"g","🍌"]]],
-  ["Snack","🍫",[["Banane","banane",105,1.2381,124,1.5,"g","🍌"],["Sablés citron yuzu sans sucres (Gerblé)","sablé",11,4,187,3.5,"g","🍪"]]],
-  ["Shaker","🥤",[["Lait demi-écrémé","verre",160,1.5,166,8,"ml","🥛"],["Whey vanille (Decathlon)","mesure",30,1,116,24,"g","💪"],["Créatine","dose de 3 g",3,1,0,0,"g","⚡"]]],
-  ["Dîner","🥩",[["Haricots verts extra-fins (Cora)","portion",100,2,70,4,"g","🫛"],["Steak haché 5 %","steak",120,1,156,24,"g","🥩"],["Carré frais (Elle & Vire)","portion",25,1,48,1.8,"g","🧀"],["Wasa Proteins+","tranche",14.2,2,113,6,"g","🍞"],["Skyr myrtilles (Arma)","pot",100,1,72,9,"g","🫐"],["Pomme Golden","pomme",100,1.3,70.2,.39,"g","🍏"],["Chocolat 90 % excellence (Lindt)","carré",10,1,59,1.2,"g","🍫"]]]];
+  ["Petit-déjeuner","🥣",[]],
+  ["Déjeuner","🍗",[]],
+  ["Snack","🍫",[]],
+  ["Shaker","🥤",[]],
+  ["Dîner","🥩",[]]];
   let MEALS=JSON.parse(JSON.stringify(DEF_MEALS));
   try{ const c=JSON.parse(localStorage.getItem('bb9-mealdef')||'null'); if(Array.isArray(c)&&c.length&&c.every(x=>Array.isArray(x)&&x.length>=3&&Array.isArray(x[2]))) MEALS=c; }catch(e){}
   const MC={'Petit-déjeuner':['#F59E0B','rgba(245,158,11,.15)'],'Déjeuner':['#16A34A','rgba(22,163,74,.13)'],'Snack':['#8B5CF6','rgba(139,92,246,.13)'],'Shaker':['#0EA5E9','rgba(14,165,233,.14)'],'Dîner':['#E5173A','rgba(229,23,58,.11)']};
@@ -2633,7 +2633,7 @@ window.BBXBk=(function(){
   if(S.day!==today()){ S.d={}; S.day=today(); }   // les coches repartent à zéro chaque jour
   const save=()=>{ try{ localStorage.setItem(SK,JSON.stringify(S)); }catch(e){} };
   // mode de comptage : 'chk' = avec cases à cocher (historique) · 'auto' = sans case, tout produit présent est compté
-  let AUTO=false; try{ AUTO=localStorage.getItem('bb9-cmode')==='auto'; }catch(e){}
+  let AUTO=false; try{ AUTO=localStorage.getItem('bb9-cmode')!=='chk'; }catch(e){}
   const isDn=(m,i)=>AUTO||!!S.d[key(m,i)];
   function applyMode(){ const v=document.getElementById('mealView'); if(v) v.classList.toggle('cm-auto',AUTO); document.querySelectorAll('#cmSeg button').forEach(b=>{ const on=(b.dataset.m==='auto')===AUTO; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on); }); }
   const fitCarb=()=>{ S.cg=Math.max(0,Math.round((S.kg-4*S.pg-9*S.fg)/4)); };
