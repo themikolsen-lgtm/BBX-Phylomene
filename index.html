@@ -2917,29 +2917,95 @@ window.BBXBk=(function(){
   // ---------- produit inconnu : lecture du tableau nutritionnel par photo (OCR) + codes-barres mémorisés ----------
   const CODEKEY='phy-codes'; let CODES={}; try{ CODES=JSON.parse(localStorage.getItem(CODEKEY)||'{}')||{}; }catch(e){ CODES={}; }
   const saveCodes=()=>{ try{ localStorage.setItem(CODEKEY,JSON.stringify(CODES)); }catch(e){} };
-  function parseNutri(raw){
+  // ---- lecture OCR du tableau nutritionnel (v2 : plusieurs passes + vote + cohérence énergétique) ----
+  const OCRU={ num:x=>{ const v=parseFloat(String(x).replace(',','.')); return isNaN(v)?null:v; } };
+  function ocrCands(s,g){   // toutes les lectures plausibles d'un nombre (g collé lu comme 9, virgule perdue…), avec une pénalité
+    const out=new Map(), add=(v,p)=>{ if(v==null||!isFinite(v)||v<0||v>100) return; v=Math.round(v*100)/100; if(!out.has(v)||out.get(v)>p) out.set(v,p); };
+    const forms=[]; const dec=(s.split(/[.,]/)[1]||'').length;
+    if(/L/.test(s)){ add(OCRU.num(s.replace('L','.1')),0); add(OCRU.num(s.replace('L','1')),0.9); return [...out].map(([v,p])=>({v,p})); }
+    if(g){ forms.push([s,0]); if(/9$/.test(s)&&s.replace(/\D/g,'').length>=3&&dec!==2) forms.push([s.slice(0,-1).replace(/[.,]$/,''),0.5]); }
+    else if(/9$/.test(s)&&s.replace(/\D/g,'').length>=2){ forms.push([s.slice(0,-1).replace(/[.,]$/,''),dec>=2?0.1:0.4]); forms.push([s,0.9]); }
+    else forms.push([s,0.2]);
+    forms.forEach(([t,p])=>{ if(!t) return; add(OCRU.num(t),p); if(!/[.,]/.test(t)&&t.length>=2){ if(/^0/.test(t)) add(OCRU.num('0.'+t.slice(1)),p+0.5); else { add(OCRU.num(t[0]+'.'+t.slice(1)),p+0.8); if(t.length>=3&&t.length<=4) add(OCRU.num(t.slice(0,2)+'.'+t.slice(2)),p+1.5); } } });
+    return [...out].map(([v,p])=>({v,p}));
+  }
+  function parseNutri2(raw,words){
     const T=String(raw||'').replace(/\r/g,'');
-    const lines=T.split('\n').map(l=>l.replace(/[|¦_]/g,' ').replace(/\s+/g,' ').trim()).filter(Boolean);
-    const num=x=>{ const v=parseFloat(String(x).replace(',','.')); return isNaN(v)?null:v; };
-    const fixO=l=>l.replace(/(?<=\d)[Oo](?=\d|\s*g\b)|(?<=\b)[Oo](?=[.,]\d)/g,'0').replace(/(?<=\d)[lI](?=\s*g\b)/g,'1');
-    const p100=T.search(/(?:pour|per|\/)?\s*100\s*(?:g|ml)/i), pp=T.search(/par\s+portion|per\s+serving|par\s+\d+\s*(?:g|ml)\b|portion/i);
-    const second=(p100>=0&&pp>=0&&pp<p100);
-    const vals=(l,unitRe)=>{ const out=[]; let m; const L=fixO(l); const re=new RegExp('(\\d{1,4}(?:[.,]\\d{1,2})?)\\s*('+unitRe+')\\b','gi'); while((m=re.exec(L))) out.push(num(m[1])); return out; };
-    const pick=a=>a.length?(second&&a.length>1?a[1]:a[0]):null;
-    let kcal=null;
-    for(const l of lines){ const a=vals(l,'kcal'); if(a.length){ kcal=pick(a); break; } }
-    if(kcal==null){ const e=T.match(/(\d{3,5})\s*k[jJ]/); if(e) kcal=Math.round(num(e[1])/4.184); }
-    const find=(incl,excl)=>{ for(const l of lines){ const n=l.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); if(!incl.test(n)) continue; if(excl&&excl.test(n)) continue; const a=vals(l,'g|9|q'); if(a.length) return pick(a); } return null; };
-    const out={kcal:kcal,prot:find(/proteine|protein|eiweiss/),fat:find(/matieres? grasses|lipides?|graisses|\bfat\b|total fat/,/satur|dont|of which/),carb:find(/glucides?|carbohydrate|hydrates? de carbone|\bcarbs?\b/,/dont|sucres|of which/),warn:[]};
-    if(out.kcal!=null&&!(out.kcal>=0&&out.kcal<=950)) out.kcal=null;
-    ['prot','fat','carb'].forEach(k=>{ if(out[k]!=null&&!(out[k]>=0&&out[k]<=100)) out[k]=null; });
-    if(out.kcal!=null&&out.prot!=null&&out.fat!=null&&out.carb!=null){   // virgule décimale perdue par la lecture (65 au lieu de 6,5) : on teste les corrections qui rendent les calories cohérentes
-      const dev=(p,f,c)=>Math.abs(4*p+9*f+4*c-out.kcal), tol=Math.max(40,out.kcal*0.35);
-      if(dev(out.prot,out.fat,out.carb)>tol){ let best=null,bd=1e9; for(const kp of [1,10]) for(const kf of [1,10]) for(const kc of [1,10]){ if(kp*kf*kc===1) continue; const p=out.prot/kp,f=out.fat/kf,c=out.carb/kc; if((kp>1&&out.prot<10)||(kf>1&&out.fat<10)||(kc>1&&out.carb<10)) continue; const d=dev(p,f,c); if(d<bd){ bd=d; best=[p,f,c]; } }
-        if(best&&bd<=tol){ out.prot=best[0]; out.fat=best[1]; out.carb=best[2]; out.fixed=true; } }
+    const cl=l=>l.replace(/[|¦_~—–=«»“”"‘’`´*•]/g,' ').replace(/\s+/g,' ').trim();
+    let lines=T.split('\n').map(cl).filter(Boolean), Lw=null;
+    if(words&&words.length>5){   // lignes reconstituées à partir de la position des mots (colonnes fiables)
+      const ws=words.filter(w=>w&&w.text&&w.text.trim()&&w.bbox).map(w=>({t:w.text.trim(),x0:w.bbox.x0,x1:w.bbox.x1,yc:(w.bbox.y0+w.bbox.y1)/2,h:w.bbox.y1-w.bbox.y0})).sort((a,b)=>a.yc-b.yc);
+      const hs=ws.map(w=>w.h).sort((a,b)=>a-b), mh=hs[Math.floor(hs.length/2)]||20; Lw=[];
+      ws.forEach(w=>{ const g=Lw[Lw.length-1]; if(g&&Math.abs(w.yc-g.yc)<mh*0.6){ g.ws.push(w); g.yc=(g.yc*(g.ws.length-1)+w.yc)/g.ws.length; } else Lw.push({yc:w.yc,ws:[w]}); });
+      Lw.forEach(g=>g.ws.sort((a,b)=>a.x0-b.x0)); lines=Lw.map(g=>cl(g.ws.map(w=>w.t).join(' '))); Lw.mh=mh;
     }
-    if(out.kcal!=null&&out.prot!=null&&out.fat!=null&&out.carb!=null){ const est=4*out.prot+9*out.fat+4*out.carb; if(Math.abs(est-out.kcal)>Math.max(40,out.kcal*0.35)) out.warn.push('les valeurs ne collent pas entre elles'); }
-    return out;
+    const fixO=l=>l.replace(/(?<=\d)[Oo](?=\d|\s*[g9]\b)|(?<![A-Za-z])[Oo](?=[.,]\d)/g,'0').replace(/(?<=\d)[lI](?=\s*[g9]?(?![\w]))/g,'L').replace(/(?<=\d)\s*[Ss](?=\s|$)/g,'5');
+    const p100=T.search(/100\s*(?:g|9|ml|mi|m1)\b/i), pp=T.search(/portion|serving|verre|bouteille|tranche|biscuit|par\s+(?:\w+\s+)?\(?\d+\s*(?:g|ml)\b/i);
+    const second=(p100>=0&&pp>=0&&pp<p100);
+    const res={kcal:[],prot:[],fat:[],carb:[],raw:T,dbg:{}};
+    const unacc=l=>l.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    const colPick=(a,pen)=>{ if(!a.length) return null; if(a.length===1) return {t:a[0],p:second?0.3:0}; return {t:second?a[1]:a[0],p:pen||0}; };
+    // énergie
+    let kcalTok=null,kjTok=null;
+    for(const l of lines){ const L=fixO(l); const a=[]; let m; const re=/(\d{2,4})\s*(?:kcal|keal|kca[l1i]|kcai|kcol|kca)(?![a-z])/gi; while((m=re.exec(L))) a.push(+m[1]);
+      if(a.length&&!kcalTok){ kcalTok=a; const b=[]; const r2=/(\d{3,5})\s*[kK]\s*[jJ/\]l)]?/g; let n; const Lc=L.replace(/kcal|keal|kca[l1i]/gi,' '); while((n=r2.exec(Lc))) b.push(+n[1]); if(b.length) kjTok=b; } }
+    if(!kcalTok){ for(const l of lines){ const b=[]; const r2=/(\d{3,5})\s*[kK]\s*[jJ/\]l)]/g; let n; while((n=r2.exec(fixO(l)))) b.push(+n[1]); if(b.length&&!kjTok){ kjTok=b; } } }
+    const ci=kcalTok?colPick(kcalTok):null;
+    const kjOK=(kc)=>kjTok?kjTok.find(k=>Math.abs(k/4.184-kc)<=Math.max(6,kc*0.07)):null;
+    if(ci){ const kj=kjOK(ci.t); let p=ci.p+((kjTok&&!kj)?1:0); res.kcal.push({v:ci.t,p});
+      if(kjTok&&!kj){ const alt=kcalTok.find(c=>kjOK(c)); if(alt) res.kcal.push({v:alt,p:0.3}); else { const k=colPick(kjTok); res.kcal.push({v:Math.round(k.t/4.184),p:0.6}); } } }
+    else if(kjTok){ const k=colPick(kjTok); res.kcal.push({v:Math.round(k.t/4.184),p:0.8}); }
+    res.kcal=res.kcal.filter(c=>c.v>=5&&c.v<=950);
+    // macros
+    const defs={ prot:[/prot|eiwei/,null], fat:[/gras|lipid|\bfat\b/,/satur|dont|of which|acide/], carb:[/glucid|carbo|hydrate|\bcarbs?\b/,/dont|sucre|sugar|of which/] };
+    const tok=l=>{ const a=[]; let m; const re=/(?<![A-Za-z\d.,])(\d{1,4}(?:[.,]\d{1,3}|L)?)\s*([gG9qd€¢{S])?(?![\w%])/g, L=fixO(l); while((m=re.exec(L))){ const nx=L.slice(m.index+m[0].length,m.index+m[0].length+1); if(/[kK]/.test(L[m.index+m[1].length]||'')) continue; a.push({s:m[1],g:/^[gG]$/.test(m[2]||'')}); } return a; };
+    let hdr=null;
+    if(Lw){ const all=[]; Lw.forEach((g,gi)=>g.ws.forEach((w,wi)=>all.push({w,g,wi})));
+      const a100=all.find(o=>/^(?:100|1009|l00|1OO|100g|100ml|100mi)$/i.test(o.w.t)), aP=all.find(o=>/^(?:portion|serving|verre|bouteille|tranche|biscuit|unit[eé])$/i.test(unacc(o.w.t)));
+      if(a100&&aP){ const mh=Lw.mh||20, span=(o,pre)=>{ let x0=o.w.x0, x1=o.w.x1, i=o.wi; const ws=o.g.ws; if(i>0&&/^(?:pour|per|par|for|pr)$/i.test(unacc(ws[i-1].t))) x0=ws[i-1].x0; for(let j=i+1;j<ws.length&&ws[j].x0-x1<mh*1.8;j++) x1=ws[j].x1; return [x0,x1]; };
+        const s1=span(a100), s2=span(aP), c1=(s1[0]+s1[1])/2, c2=(s2[0]+s2[1])/2; if(Math.abs(c1-c2)>mh*2) hdr={c1,c2,M:(c1+c2)/2}; } }
+    res.dbg.hdr=hdr; res.dbg.second=second;
+    const wTok=g=>{ const out=[], ws=g.ws; for(let j=0;j<ws.length;j++){ const t=fixO(ws[j].t), m=t.match(/^(\d{1,4}(?:[.,]\d{1,3}|L)?)([gG9qd€¢{S])?$/); if(!m) continue; let gf=/^[gG]$/.test(m[2]||''); const nx=ws[j+1]; if(!m[2]&&nx&&/^[gG9]$/.test(nx.t)&&nx.x0-ws[j].x1<(Lw.mh||20)*2){ gf=true; } out.push({s:m[1],g:gf,xc:(ws[j].x0+ws[j].x1)/2}); } return out; };
+    const rows={}, PM=T.match(/(?:portion|serving|verre|tranche|biscuit|bouteille|par)[^\n]{0,18}?\(?\s*(\d{1,4}(?:[.,]\d)?)\s*(?:g|9|ml|mi)/i), PG=PM?OCRU.num(PM[1]):null;
+    for(const k of Object.keys(defs)){ const [inc,exc]=defs[k];
+      for(let i=0;i<lines.length;i++){ const n=unacc(lines[i]); if(!inc.test(n)||(exc&&exc.test(n))) continue;
+        if(Lw&&hdr){ const tk=wTok(Lw[i]), left=hdr.c1<hdr.c2; const c100=tk.filter(t=>(t.xc<hdr.M)===left), cP=tk.filter(t=>(t.xc<hdr.M)!==left);
+          if(!c100.length&&!cP.length) continue; const near=(a,c)=>a.slice().sort((x,y)=>Math.abs(x.xc-c)-Math.abs(y.xc-c))[0];
+          rows[k]={wc:true,t:c100.length?near(c100,left?hdr.c1:hdr.c2):null,o:cP.length?near(cP,left?hdr.c2:hdr.c1):null}; break; }
+        let a=tok(n.replace(inc,' ')), fb=false; if(!a.length&&i+1<lines.length&&/^[\d.,\s gG9]+$/.test(lines[i+1])){ a=tok(lines[i+1]); fb=true; }
+        if(!a.length) continue; rows[k]={a,fb}; break; } }
+    for(const k in rows){ const r=rows[k]; if(!r.wc) continue; if(!r.t){ delete rows[k]; continue; } const oc=(r.o&&PG&&PG!==100)?ocrCands(r.o.s,r.o.g).map(c=>c.v):null;
+      ocrCands(r.t.s,r.t.g).forEach(c=>{ let p=c.p; if(oc&&oc.length){ const e=c.v*PG/100; p+=oc.some(q=>Math.abs(q-e)<=Math.max(0.15,0.12*q))?-0.7:0.6; } res[k].push({v:c.v,p:Math.max(0,p+((Math.round(c.v*100)%10)?0.8:0))}); }); delete rows[k]; }
+    const mx=Math.max(1,kcalTok?kcalTok.length:1,...Object.values(rows).filter(r=>!r.fb).map(r=>r.a.length));
+    for(const k in rows){ const {a,fb}=rows[k], pk=fb?{t:a[0],p:0.2}:colPick(a), skip=(!fb&&mx>1&&a.length<mx), extra=0;
+      let other=null; if(!fb&&a.length>1&&PG&&PG!==100){ other=second?a[0]:a[1]; }
+      const oc=other?ocrCands(other.s,other.g).map(c=>c.v):null;
+      if(skip) continue;
+      ocrCands(pk.t.s,pk.t.g).forEach(c=>{ let p=c.p+pk.p+extra;
+        if(oc&&oc.length){ const e=c.v*PG/100; p+= oc.some(q=>Math.abs(q-e)<=Math.max(0.15,0.12*q))?-0.7:0.6; }
+        res[k].push({v:c.v,p:Math.max(0,p+((Math.round(c.v*100)%10)?0.8:0))}); }); }
+    if(kcalTok&&mx>1&&kcalTok.length<mx) res.kcal=[];
+    return res;
+  }
+  function ocrSolve(parses){   // vote entre les passes + choix de la combinaison la plus cohérente avec les calories
+    const F=['kcal','prot','fat','carb'], N=parses.length||1, tab={};
+    F.forEach(f=>{ const m=new Map(); let Nf=0; parses.forEach(ps=>{ const seen=new Map(); (ps[f]||[]).forEach(c=>{ if(!seen.has(c.v)||seen.get(c.v)>c.p) seen.set(c.v,c.p); }); if(seen.size) Nf++; seen.forEach((p,v)=>{ const o=m.get(v)||{v,sum:0,n:0}; o.sum+=p; o.n++; m.set(v,o); }); });
+      tab[f]=[...m.values()].map(o=>({v:o.v,n:o.n,cost:(o.sum+(Nf-o.n)*1.2)/Math.max(1,Nf)+((o.n===1&&N>1)?0.4:0)})).sort((a,b)=>a.cost-b.cost).slice(0,4); });
+    const opt=f=>tab[f].length?tab[f]:[null];
+    let best=null;
+    for(const K of opt('kcal')) for(const P of opt('prot')) for(const Fa of opt('fat')) for(const C of opt('carb')){
+      let cost=0; [K,P,Fa,C].forEach(x=>{ if(x) cost+=x.cost; else cost+=0; });
+      let dev=null; if(K&&P&&Fa&&C){ dev=Math.abs(4*P.v+9*Fa.v+4*C.v-K.v)/Math.max(K.v,30); cost+=dev*5+Math.max(0,dev-0.2)*10; }
+      else if(K&&[P,Fa,C].filter(Boolean).length===2){ const e=4*(P?P.v:0)+9*(Fa?Fa.v:0)+4*(C?C.v:0); if(e>K.v*1.15+10) cost+=2; }
+      if(P&&P.v>45) cost+=1.5; if(Fa&&Fa.v>60) cost+=1; if(C&&C.v>85) cost+=0.8;
+      if(P&&Fa&&C&&P.v+Fa.v+C.v>101) cost+=6; else if(((P?P.v:0)+(Fa?Fa.v:0)+(C?C.v:0))>101) cost+=6;
+      if(!best||cost<best.cost) best={cost,K,P,Fa,C,dev};
+    }
+    const o={kcal:best.K?best.K.v:null,prot:best.P?best.P.v:null,fat:best.Fa?best.Fa.v:null,carb:best.C?best.C.v:null,warn:[],unsure:[],dev:best.dev};
+    [['kcal',best.K],['prot',best.P],['fat',best.Fa],['carb',best.C]].forEach(([f,x])=>{ if(x&&(x.cost>0.9||(N>1&&x.n<2))) o.unsure.push(f); });
+    if(best.dev!=null&&best.dev>0.25){ o.warn.push('les valeurs ne collent pas entre elles'); ['prot','fat','carb'].forEach(f=>{ if(!o.unsure.includes(f)) o.unsure.push(f); }); }
+    o.complete=best.K&&best.P&&best.Fa&&best.Fa&&best.C?true:false;
+    return o;
   }
   let tessP=null;
   function loadTess(){
@@ -2947,32 +3013,74 @@ window.BBXBk=(function(){
     if(!tessP) tessP=new Promise((ok,ko)=>{ const sc=document.createElement('script'); sc.src='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js'; sc.onload=()=>window.Tesseract?ok(window.Tesseract):ko(new Error('lecteur indisponible')); sc.onerror=()=>{ tessP=null; ko(new Error('hors ligne')); }; document.head.appendChild(sc); });
     return tessP;
   }
-  function prepImage(file){   // réduit, passe en niveaux de gris et renforce le contraste pour une meilleure lecture
-    return new Promise((ok,ko)=>{ const url=URL.createObjectURL(file), im=new Image();
-      im.onload=()=>{ try{ const k=Math.min(1,2000/Math.max(im.width,im.height)), up=Math.max(1,Math.min(2,1200/Math.max(im.width,im.height))), sc=k<1?k:up, w=Math.round(im.width*sc), h=Math.round(im.height*sc), c=document.createElement('canvas'); c.width=w; c.height=h; const x=c.getContext('2d'); x.drawImage(im,0,0,w,h);
-        const d=x.getImageData(0,0,w,h), a=d.data; let lo=255,hi=0; for(let i=0;i<a.length;i+=4){ const g=0.299*a[i]+0.587*a[i+1]+0.114*a[i+2]; a[i]=a[i+1]=a[i+2]=g; if(g<lo) lo=g; if(g>hi) hi=g; }
-        const sp=Math.max(1,hi-lo); for(let i=0;i<a.length;i+=4){ const v=Math.max(0,Math.min(255,(a[i]-lo)*255/sp)); a[i]=a[i+1]=a[i+2]=v; } x.putImageData(d,0,0); URL.revokeObjectURL(url); c.toBlob(b=>ok(b||file),'image/png'); }catch(e){ URL.revokeObjectURL(url); ok(file); } };
-      im.onerror=()=>{ URL.revokeObjectURL(url); ko(new Error('image illisible')); }; im.src=url; });
+  const ocrImg=file=>new Promise((ok,ko)=>{ const url=URL.createObjectURL(file), im=new Image(); im.onload=()=>{ URL.revokeObjectURL(url); ok(im); }; im.onerror=()=>{ URL.revokeObjectURL(url); ko(new Error('image illisible')); }; im.src=url; });
+  function ocrBase(im){   // niveaux de gris, taille ~2400 px, contraste étiré (1 % – 99 %)
+    const L=Math.max(im.width,im.height), sc=Math.min(3,Math.max(0.3,2400/L)), w=Math.round(im.width*sc), h=Math.round(im.height*sc);
+    const c=document.createElement('canvas'); c.width=w; c.height=h; const x=c.getContext('2d',{willReadFrequently:true}); x.imageSmoothingQuality='high'; x.fillStyle='#fff'; x.fillRect(0,0,w,h); x.drawImage(im,0,0,w,h);
+    const d=x.getImageData(0,0,w,h), a=d.data, hist=new Uint32Array(256);
+    for(let i=0;i<a.length;i+=4){ const g=Math.round(0.299*a[i]+0.587*a[i+1]+0.114*a[i+2]); a[i]=g; hist[g]++; }
+    const n=w*h; let acc=0,lo=0,hi=255; for(let v=0;v<256;v++){ acc+=hist[v]; if(acc>=n*0.01){ lo=v; break; } } acc=0; for(let v=255;v>=0;v--){ acc+=hist[v]; if(acc>=n*0.01){ hi=v; break; } }
+    const sp=Math.max(30,hi-lo); for(let i=0;i<a.length;i+=4){ const v=Math.max(0,Math.min(255,(a[i]-lo)*255/sp)); a[i]=a[i+1]=a[i+2]=v; } x.putImageData(d,0,0); return c;
   }
+  function ocrDark(c,r,off){   // pixels sombres par rapport à leur voisinage (seuil local via image intégrale)
+    const w=c.width,h=c.height,a=c.getContext('2d',{willReadFrequently:true}).getImageData(0,0,w,h).data, W=w+1, I=new Float64Array(W*(h+1));
+    for(let y=0;y<h;y++){ let s=0; for(let x=0;x<w;x++){ s+=a[(y*w+x)*4]; I[(y+1)*W+x+1]=I[y*W+x+1]+s; } }
+    const m=new Uint8Array(w*h);
+    for(let y=0;y<h;y++){ const y0=Math.max(0,y-r),y1=Math.min(h,y+r+1); for(let x=0;x<w;x++){ const x0=Math.max(0,x-r),x1=Math.min(w,x+r+1), mean=(I[y1*W+x1]-I[y0*W+x1]-I[y1*W+x0]+I[y0*W+x0])/((x1-x0)*(y1-y0)); m[y*w+x]=a[(y*w+x)*4]<mean-off?1:0; } }
+    return m;
+  }
+  function ocrThresh(c){ const w=c.width,h=c.height, m=ocrDark(c,Math.round(Math.max(w,h)/50),12), o=document.createElement('canvas'); o.width=w; o.height=h; const x=o.getContext('2d'), d=x.createImageData(w,h); for(let i=0;i<m.length;i++){ const v=m[i]?0:255; d.data[i*4]=d.data[i*4+1]=d.data[i*4+2]=v; d.data[i*4+3]=255; } x.putImageData(d,0,0); return o; }
+  function ocrSkew(c){   // angle d'inclinaison des lignes de texte (projection horizontale maximale)
+    const k=700/Math.max(c.width,c.height), s=document.createElement('canvas'); s.width=Math.round(c.width*k); s.height=Math.round(c.height*k); s.getContext('2d').drawImage(c,0,0,s.width,s.height);
+    const m=ocrDark(s,14,14), pts=[]; for(let y=0;y<s.height;y++) for(let x=0;x<s.width;x++) if(m[y*s.width+x]) pts.push(x,y);
+    if(pts.length<400) return 0;
+    const step=Math.max(2,Math.floor(pts.length/2/40000)*2), score=deg=>{ const t=deg*Math.PI/180, cs=Math.cos(t), sn=Math.sin(t), off=s.width+10, H=new Float64Array(s.height+2*s.width+30); for(let i=0;i<pts.length;i+=step){ const yy=Math.round(pts[i+1]*cs-pts[i]*sn)+off; H[yy]++; } let q=0; for(let i=0;i<H.length;i++) q+=H[i]*H[i]; return q; };
+    let best=0,bs=score(0); for(let d=-12;d<=12;d+=1){ const v=score(d); if(v>bs){ bs=v; best=d; } } for(let d=best-0.75;d<=best+0.75;d+=0.25){ const v=score(d); if(v>bs){ bs=v; best=d; } }
+    return best;
+  }
+  function ocrRot(c,deg){   // pivote l'image (fond blanc), canevas agrandi
+    const t=deg*Math.PI/180, w=c.width,h=c.height, nw=Math.round(Math.abs(w*Math.cos(t))+Math.abs(h*Math.sin(t))), nh=Math.round(Math.abs(w*Math.sin(t))+Math.abs(h*Math.cos(t))), o=document.createElement('canvas'); o.width=nw; o.height=nh; const x=o.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,nw,nh); x.translate(nw/2,nh/2); x.rotate(t); x.drawImage(c,-w/2,-h/2); return o;
+  }
+  const ocrBlob=c=>new Promise(ok=>c.toBlob(b=>ok(b),'image/png'));
   async function ocrRun(file){
     const info=t=>{ $('mfInfo').textContent=t; $('mfInfo').className='mf-info ok'; };
     const err=t=>{ $('mfInfo').textContent=t; $('mfInfo').className='mf-info err'; };
+    if(!document.getElementById('ocrUnsureCss')){ const st=document.createElement('style'); st.id='ocrUnsureCss'; st.textContent='.mf-unsure{box-shadow:0 0 0 2.5px #f59e0b !important;border-radius:12px !important;background:rgba(245,158,11,.10) !important}'; document.head.appendChild(st); }
+    ['mfKcal','mfProt','mfFat','mfCarb'].forEach(id=>$(id).classList.remove('mf-unsure'));
     $('mealForm').scrollTop=0; $('mfOcrBtn').classList.remove('pulse'); $('mfOcrBtn').classList.add('busy'); info('Préparation de la photo…');
+    let w=null;
     try{
-      const img=await prepImage(file); info('Chargement du lecteur de texte (la première fois, ça peut prendre un moment)…');
-      const T=await loadTess();
-      const w=await T.createWorker('fra+eng',1,{logger:m=>{ if(m.status==='recognizing text') info('Lecture du tableau… '+Math.round((m.progress||0)*100)+' %'); else if(/loading|initializ/.test(m.status||'')) info('Chargement du lecteur de texte…'); }});
-      let text=''; try{ text=(await w.recognize(img)).data.text; } finally{ try{ await w.terminate(); }catch(e){} }
-      const r=parseNutri(text), got=[r.kcal,r.prot,r.fat,r.carb].filter(v=>v!=null).length;
+      const im=await ocrImg(file); let A=ocrBase(im); await new Promise(r=>setTimeout(r,0));
+      const ang=ocrSkew(A); if(Math.abs(ang)>=0.7) A=ocrRot(A,-ang);
+      info('Chargement du lecteur de texte (la première fois, ça peut prendre un moment)…');
+      const T=await loadTess(); let pass='';
+      w=await T.createWorker('fra+eng',1,{logger:m=>{ if(m.status==='recognizing text') info('Lecture du tableau'+pass+'… '+Math.round((m.progress||0)*100)+' %'); else if(/loading|initializ/.test(m.status||'')) info('Chargement du lecteur de texte…'); }});
+      const parses=[]; let sol=null, B=null;
+      const plan=[['A',6],['B',6],['A',4],['B',11]];
+      const run=async(cv,psm)=>{ await w.setParameters({tessedit_pageseg_mode:String(psm),preserve_interword_spaces:'1',user_defined_dpi:'300'}); const blob=await ocrBlob(cv); const r=await w.recognize(blob); parses.push(parseNutri2(r.data.text,r.data.words)); sol=ocrSolve(parses); };
+      for(let i=0;i<plan.length;i++){
+        pass=' (passe '+(i+1)+')'; const [v,psm]=plan[i];
+        if(v==='B'&&!B) B=ocrThresh(A);
+        await run(v==='A'?A:B,psm);
+        if(i>=1&&sol.complete&&!sol.unsure.length&&sol.dev<=0.22) break;
+      }
+      if(!parses.some(p=>p.kcal.length||p.prot.length||p.fat.length||p.carb.length)){   // rien lu : la photo est peut‑être couchée
+        for(const deg of [90,270]){ pass=' (photo pivotée)'; await run(ocrRot(A,deg),6); if(sol.kcal!=null||sol.prot!=null) break; }
+      }
+      const r=sol, got=[r.kcal,r.prot,r.fat,r.carb].filter(v=>v!=null).length;
       if(!got){ err('Je n’ai pas réussi à lire le tableau. Reprends la photo bien à plat, de près et bien éclairée, ou saisis les valeurs à la main.'); return; }
-      if(r.kcal!=null) $('mfKcal').value=r1(r.kcal); if(r.prot!=null) $('mfProt').value=r1(r.prot); if(r.fat!=null) $('mfFat').value=r1(r.fat); if(r.carb!=null) $('mfCarb').value=r1(r.carb);
+      const ids={kcal:'mfKcal',prot:'mfProt',fat:'mfFat',carb:'mfCarb'};
+      for(const k in ids){ if(r[k]!=null) $(ids[k]).value=r1(r[k]); }
+      r.unsure.forEach(k=>{ if(r[k]!=null) $(ids[k]).classList.add('mf-unsure'); });
+      Object.values(ids).forEach(id=>$(id).addEventListener('input',()=>$(id).classList.remove('mf-unsure'),{once:true}));
       setUnit('g'); autoQty(); fmPrev();
       const miss=[['kcal',r.kcal],['protéines',r.prot],['lipides',r.fat],['glucides',r.carb]].filter(x=>x[1]==null).map(x=>x[0]);
-      let msg='Tableau lu (valeurs pour 100 g). Vérifie-les'+(miss.length?' et complète : '+miss.join(', '):'')+', indique la quantité puis valide.'; if(r.warn.length) msg+=' Attention : '+r.warn.join(', ')+'.';
-      if(miss.length||r.warn.length) err(msg); else info(msg);
+      let msg='Tableau lu (valeurs pour 100 g). Vérifie-les'+(miss.length?' et complète : '+miss.join(', '):'')+', indique la quantité puis valide.';
+      if(r.unsure.length) msg+=' Les cases en orange sont à contrôler.'; if(r.warn.length) msg+=' Attention : '+r.warn.join(', ')+'.';
+      if(miss.length||r.warn.length||r.unsure.length) err(msg); else info(msg);
       if(!$('mfName').value.trim()) $('mfName').focus();
     }catch(e){ err('Lecture impossible ('+((e&&e.message)||'erreur')+'). Vérifie ta connexion internet ou saisis les valeurs à la main.'); }
-    finally{ $('mfOcrBtn').classList.remove('busy'); }
+    finally{ try{ if(w) await w.terminate(); }catch(e){} $('mfOcrBtn').classList.remove('busy'); }
   }
   ['mfOcrFile','mfOcrGal'].forEach(id=>$(id).addEventListener('change',e=>{ const f=e.target.files&&e.target.files[0]; e.target.value=''; if(f) ocrRun(f); }));
   // ---------- Idées : aliments légers adaptés aux kcal / protéines / lipides / glucides restants ----------
