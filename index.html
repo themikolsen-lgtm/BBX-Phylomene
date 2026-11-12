@@ -2723,12 +2723,12 @@ window.BBXBk=(function(){
 <div id="mealScan" class="mc-scan" aria-label="Scanner">
   <video id="msVideo" playsinline muted></video>
   <div class="ms-frame"><i></i></div>
-  <div id="msCtl" class="ms-ctl"><button id="msFocus" type="button" aria-label="Refaire la mise au point">◎ Net</button><label id="msFocL" hidden>Netteté<input id="msFocR" type="range"></label><label id="msZoomL" hidden>Zoom<input id="msZoomR" type="range"></label></div>
+  <div id="msCtl" class="ms-ctl"><button id="msFocus" type="button" aria-label="Refaire la mise au point">◎ Net</button><button id="msTorch" type="button" aria-label="Lampe" hidden>🔦</button><label id="msFocL" hidden>Netteté<input id="msFocR" type="range"></label><label id="msZoomL" hidden>Zoom<input id="msZoomR" type="range"></label></div>
   <div class="ms-top"><b>Scanner un code-barres</b><button onclick="BBXMeal.closeScan()" aria-label="Fermer">✕</button></div>
   <div class="ms-bot"><div id="msStatus">Démarrage de la caméra…</div><button class="ms-tab" onclick="BBXMeal.scanTable()" aria-label="Photographier le tableau nutritionnel" title="Photographier le tableau nutritionnel"><span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M4 9.5h16M4 14.5h16M12 9.5V20"/></svg></span><em>Tableau nutritionnel</em></button><input type="file" id="msFile" accept="image/*" capture="environment" hidden><div class="ms-row"><input id="msCode" type="text" inputmode="numeric" placeholder="Ou tape le code-barres"><button onclick="BBXMeal.manual()">OK</button></div></div>
 </div>
 
-<style>.ms-ctl{position:absolute;left:12px;right:12px;bottom:calc(205px + env(safe-area-inset-bottom));display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;z-index:3}.ms-ctl button,.ms-ctl label{background:rgba(0,0,0,.55);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:9px 14px;font:600 14px system-ui;display:flex;align-items:center;gap:8px}.ms-ctl input{width:110px;accent-color:#fff}.ms-ctl [hidden]{display:none}</style>
+<style>.ms-ctl{position:absolute;left:12px;right:12px;bottom:calc(205px + env(safe-area-inset-bottom));display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;z-index:3}.ms-ctl button,.ms-ctl label{background:rgba(0,0,0,.55);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:9px 14px;font:600 14px system-ui;display:flex;align-items:center;gap:8px}.ms-ctl input{width:110px;accent-color:#fff}.ms-ctl [hidden]{display:none}.ms-ctl button.on{background:#fff;color:#000}</style>
 <script>
 (function(){
   const $=id=>document.getElementById(id), r=n=>Math.round(n), r1=n=>Math.round(n*10)/10, r2=n=>Math.round(n*100)/100;
@@ -3260,6 +3260,15 @@ window.BBXBk=(function(){
     cam.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});
     return cam.stream;
   }
+  function eanOk(c){ c=String(c).replace(/\D/g,''); if(![8,12,13].includes(c.length)) return false; const d=c.split('').map(Number), k=d.pop(); let sm=0; d.reverse().forEach((x,i)=>{ sm+=x*(i%2?1:3); }); return (10-sm%10)%10===k; }
+  let lastRead={c:'',n:0,t:0};
+  function camCode(raw){   // lecture caméra : somme de contrôle EAN valide, sinon ignorée (évite les faux codes)
+    const c=String(raw).replace(/\D/g,''); if(!eanOk(c)) return; const now=Date.now();
+    if(lastRead.c===c&&now-lastRead.t<1500) lastRead.n++; else lastRead={c,n:1,t:now}; lastRead.t=now;
+    try{ navigator.vibrate&&navigator.vibrate(60); }catch(e){}
+    onCode(c);
+  }
+  async function camTorch(){ const tr=cam.stream&&cam.stream.getVideoTracks()[0]; if(!tr) return; try{ cam.torch=!cam.torch; await tr.applyConstraints({advanced:[{torch:cam.torch}]}); $('msTorch').classList.toggle('on',cam.torch); }catch(e){ cam.torch=false; } }
   async function camFocus(){   // mise au point : un coup (au toucher), puis retour en continu
     const tr=cam.stream&&cam.stream.getVideoTracks()[0]; if(!tr) return; let cp={}; try{ cp=tr.getCapabilities?tr.getCapabilities():{}; }catch(e){}
     const fm=cp.focusMode||[]; try{ if(fm.includes('single-shot')){ await tr.applyConstraints({advanced:[{focusMode:'single-shot'}]}); await new Promise(r=>setTimeout(r,900)); }
@@ -3270,11 +3279,12 @@ window.BBXBk=(function(){
   function camFocusSetup(){
     const tr=cam.stream&&cam.stream.getVideoTracks()[0]; if(!tr) return; let cp={}; try{ cp=tr.getCapabilities?tr.getCapabilities():{}; }catch(e){}
     try{ if((cp.focusMode||[]).includes('continuous')) tr.applyConstraints({advanced:[{focusMode:'continuous'}]}); }catch(e){}
+    cam.torch=false; $('msTorch').classList.remove('on'); $('msTorch').hidden=!cp.torch;
     const fr=$('msFocR'), zr=$('msZoomR'), ss=tr.getSettings?tr.getSettings():{};
     if(cp.focusDistance&&cp.focusDistance.max>cp.focusDistance.min){ fr.min=cp.focusDistance.min; fr.max=cp.focusDistance.max; fr.step=cp.focusDistance.step||((cp.focusDistance.max-cp.focusDistance.min)/50); fr.value=ss.focusDistance!=null?ss.focusDistance:cp.focusDistance.min; $('msFocL').hidden=false; fr.oninput=()=>{ try{ tr.applyConstraints({advanced:[{focusMode:'manual',focusDistance:+fr.value}]}); }catch(e){} }; } else $('msFocL').hidden=true;
     if(cp.zoom&&cp.zoom.max>cp.zoom.min){ zr.min=cp.zoom.min; zr.max=cp.zoom.max; zr.step=cp.zoom.step||0.1; zr.value=ss.zoom||cp.zoom.min; $('msZoomL').hidden=false; zr.oninput=()=>{ try{ tr.applyConstraints({advanced:[{zoom:+zr.value}]}); }catch(e){} }; } else $('msZoomL').hidden=true;
   }
-  $('msFocus').addEventListener('click',camFocus); $('msVideo').addEventListener('click',camFocus);
+  $('msTorch').addEventListener('click',camTorch); $('msFocus').addEventListener('click',camFocus); $('msVideo').addEventListener('click',camFocus);
   function stopCam(){
     clearInterval(sc.timer); sc.timer=0; clearInterval(sc.timer2); sc.timer2=0; const v=$('msVideo'); try{ v.srcObject=null; }catch(e){}
     if(cam.stream){ cam.stream.getVideoTracks().forEach(t=>{ t.enabled=false; }); clearTimeout(cam.idle); cam.idle=setTimeout(releaseCam,7200000); }
@@ -3289,11 +3299,13 @@ window.BBXBk=(function(){
     hints.set(Z.DecodeHintType.TRY_HARDER,true);
     const reader=new Z.MultiFormatReader(); reader.setHints(hints);
     const cv=document.createElement('canvas'), cx=cv.getContext('2d',{willReadFrequently:true});
-    clearInterval(sc.timer2); sc.timer2=setInterval(()=>{
+    let k=0; clearInterval(sc.timer2); sc.timer2=setInterval(()=>{
       if(sc.done||v.readyState<2||!v.videoWidth) return;
-      cv.width=v.videoWidth; cv.height=v.videoHeight; cx.drawImage(v,0,0,cv.width,cv.height);
-      try{ const res=reader.decode(new Z.BinaryBitmap(new Z.HybridBinarizer(new Z.HTMLCanvasElementLuminanceSource(cv)))); if(res) onCode(res.getText()); }catch(e){}
-    },180);
+      const vw=v.videoWidth, vh=v.videoHeight, bw=vw, bh=Math.round(vh*0.5), sy=Math.round((vh-bh)*0.45), sc2=(k++%3===2)?0.6:1;   // bande centrale ; un tour sur trois en plus petit (code proche)
+      cv.width=Math.round(bw*sc2); cv.height=Math.round(bh*sc2); cx.drawImage(v,0,sy,bw,bh,0,0,cv.width,cv.height);
+      for(const rot of [0,1]){ try{ if(rot){ const c2=document.createElement('canvas'); c2.width=cv.width; c2.height=cv.height; const x2=c2.getContext('2d'); x2.filter='grayscale(1) contrast(1.6)'; x2.drawImage(cv,0,0); var src=c2; } else var src=cv;
+        const res=reader.decode(new Z.BinaryBitmap(new Z.HybridBinarizer(new Z.HTMLCanvasElementLuminanceSource(src)))); if(res){ camCode(res.getText()); return; } }catch(e){} }
+    },110);
   }
   async function decodeImage(file){
     await loadZX(); const Z=window.ZXing, hints=new Map();
@@ -3335,7 +3347,7 @@ window.BBXBk=(function(){
     if(det){
       loadZX().then(()=>{ if(!sc.done&&sc.stream) startZX(v); }).catch(()=>{});   // lecteur de secours en parallèle : certains Android déclarent BarcodeDetector sans qu'il lise
       let busy=false;
-      sc.timer=setInterval(async()=>{ if(busy||sc.done||v.readyState<2) return; busy=true; try{ const rs=await det.detect(v); if(rs&&rs.length) onCode(rs[0].rawValue); }catch(e){} busy=false; },220);
+      sc.timer=setInterval(async()=>{ if(busy||sc.done||v.readyState<2) return; busy=true; try{ const rs=await det.detect(v); if(rs&&rs.length) camCode(rs[0].rawValue); }catch(e){} busy=false; },220);
     }else{
       try{ await loadZX(); startZX(v); }catch(e){ st('Lecteur indisponible. Tape le code-barres ci-dessous.'); }
     }
