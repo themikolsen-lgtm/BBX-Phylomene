@@ -2515,6 +2515,10 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 /* appui prolongé sur un repas : Ajouter un repas (au-dessus de Supprimer) */
 .m-addpill{ bottom:calc(182px + env(safe-area-inset-bottom,0px)); background:#7DD957; color:#143008; box-shadow:0 16px 32px -10px rgba(91,190,72,.7); }
 .m-addpill svg{ width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:3; stroke-linecap:round; flex:none; }
+
+/* ajout direct : la confirmation reste visible au-dessus des feuilles, le ＋ passe en ✓ */
+.m-toast{ z-index:9700 !important; }
+.sr-go.added{ background:#3E9B2A !important; color:#fff !important; }
 </style>
 </head>
 <body>
@@ -3049,7 +3053,7 @@ window.BBXBk=(function(){
     const x=ideaState.list[i]; if(!x) return; const s=x.src;
     if(ev&&ev.target&&ev.target.closest&&ev.target.closest('.sr-go')){
       const P0=(s.portions&&s.portions.length)?s.portions:(s.serving>0?[{label:s.label||'portion',g:s.serving}]:[]);
-      if(directAdd(ideaState.m,{name:s.name,kcal:s.kcal,prot:s.prot,fat:s.fat,carb:s.carb,serving:s.serving,label:s.label,portions:P0,unit:'g',emoji:s.emoji,h:x.h},memQty(s.name,'g')||x.v.g,()=>{ $('mealIdeas').classList.remove('show'); })) return;
+      if(directAdd(ideaState.m,{name:s.name,kcal:s.kcal,prot:s.prot,fat:s.fat,carb:s.carb,serving:s.serving,label:s.label,portions:P0,unit:'g',emoji:s.emoji,h:x.h},memQty(s.name,'g')||x.v.g,null,()=>renderIdeas())) return;
     }
     $('mealIdeas').classList.remove('show'); sr.fromForm=false;
     const P=(s.portions&&s.portions.length)?s.portions:(s.serving>0?[{label:s.label||'portion',g:s.serving}]:[]);
@@ -3500,7 +3504,7 @@ window.BBXBk=(function(){
   }
   function addTyped(){ const q=$('srQ').value.trim(); sr.fromForm=false; openForm('add',sr.target,null,{name:q,info:'Renseigne les calories et les protéines pour 100 g.'}); }
   // ajout direct d'un produit (bouton ＋) : pas de formulaire, quantité habituelle ou portion
-  function directAdd(m,x,g,closeFn){
+  function directAdd(m,x,g,closeFn,after){
     if(!MEALS[m]) return false; const unit=x.unit||'g', uw=x.serving>0?x.serving:100;
     if(!(g>0)) g=memQty(x.name,unit)||uw;
     const label=x.serving>0?(x.label||'portion'):'portion de 100 '+unit;
@@ -3509,7 +3513,7 @@ window.BBXBk=(function(){
     upsertFav(it,x.portions); bumpHabit(MEALS[m][0],nm,g);
     if(x.h&&(x.h.ns||x.h.nova)){ HL[hlKey(nm)]=Object.assign({t:Date.now()},x.h); saveHL(); }
     MEALS[m][2].push(it); S.d[MEALS[m][0]+'|'+nm]=true; sr.fromForm=false;
-    if(closeFn) closeFn(); refresh();
+    if(closeFn) closeFn(); refresh(); if(after) after();
     const title=MEALS[m][0];
     showToast('✓ « '+x.name+' » ajouté à '+title+(AUTO?' et compté':''),()=>{
       const mm=MEALS.findIndex(z=>z[0]===title); if(mm<0) return; const ix=MEALS[mm][2].indexOf(it); if(ix<0) return;
@@ -3520,7 +3524,8 @@ window.BBXBk=(function(){
   function pick(i,ev){
     const x=sr.list[i]; if(!x) return;
     if(ev&&ev.target&&ev.target.closest&&ev.target.closest('.sr-go')&&x.kcal!=null&&x.prot!=null){
-      if(directAdd(sr.target,Object.assign({},x,{h:x.h||hlGet(x.name)}),0,()=>{ $('mealSearch').classList.remove('show'); })) return;
+      const gb=ev.target.closest('.sr-go');   // on reste dans la recherche pour ajouter d'autres produits
+      if(directAdd(sr.target,Object.assign({},x,{h:x.h||hlGet(x.name)}),0,null,()=>{ gb.textContent='✓'; gb.classList.add('added'); setTimeout(()=>{ gb.textContent='＋'; gb.classList.remove('added'); },1600); })) return;
     }
     sr.fromForm=false;
     const src=x.fav?'Dans tes produits.':(x.db?'Valeurs moyennes pour 100 '+(x.unit||'g')+'.':'Produit Open Food Facts.');
