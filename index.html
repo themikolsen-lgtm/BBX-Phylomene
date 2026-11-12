@@ -3259,7 +3259,7 @@ window.BBXBk=(function(){
     return cam.stream;
   }
   function stopCam(){
-    clearInterval(sc.timer); sc.timer=0; const v=$('msVideo'); try{ v.srcObject=null; }catch(e){}
+    clearInterval(sc.timer); sc.timer=0; clearInterval(sc.timer2); sc.timer2=0; const v=$('msVideo'); try{ v.srcObject=null; }catch(e){}
     if(cam.stream){ cam.stream.getVideoTracks().forEach(t=>{ t.enabled=false; }); clearTimeout(cam.idle); cam.idle=setTimeout(releaseCam,7200000); }
   }
   function closeScan(){ stopCam(); $('mealScan').classList.remove('show'); }
@@ -3272,7 +3272,7 @@ window.BBXBk=(function(){
     hints.set(Z.DecodeHintType.TRY_HARDER,true);
     const reader=new Z.MultiFormatReader(); reader.setHints(hints);
     const cv=document.createElement('canvas'), cx=cv.getContext('2d',{willReadFrequently:true});
-    sc.timer=setInterval(()=>{
+    clearInterval(sc.timer2); sc.timer2=setInterval(()=>{
       if(sc.done||v.readyState<2||!v.videoWidth) return;
       cv.width=v.videoWidth; cv.height=v.videoHeight; cx.drawImage(v,0,0,cv.width,cv.height);
       try{ const res=reader.decode(new Z.BinaryBitmap(new Z.HybridBinarizer(new Z.HTMLCanvasElementLuminanceSource(cv)))); if(res) onCode(res.getText()); }catch(e){}
@@ -3311,10 +3311,12 @@ window.BBXBk=(function(){
     catch(e){ st('Accès à la caméra refusé. Autorise-la dans les réglages, ou tape le code-barres ci-dessous.'); return; }
     const v=$('msVideo'); v.srcObject=sc.stream; v.muted=true; v.setAttribute('playsinline','');
     try{ await v.play(); }catch(e){}
+    try{ const tr=sc.stream.getVideoTracks()[0], cp=tr.getCapabilities?tr.getCapabilities():{}; if(cp.focusMode&&cp.focusMode.includes('continuous')) await tr.applyConstraints({advanced:[{focusMode:'continuous'}]}); }catch(e){}   // mise au point continue (Android)
     st('Place le code-barres dans le cadre');
     let det=null;
     if('BarcodeDetector' in window){ try{ det=new window.BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e']}); }catch(e){ det=null; } }
     if(det){
+      loadZX().then(()=>{ if(!sc.done&&sc.stream) startZX(v); }).catch(()=>{});   // lecteur de secours en parallèle : certains Android déclarent BarcodeDetector sans qu'il lise
       let busy=false;
       sc.timer=setInterval(async()=>{ if(busy||sc.done||v.readyState<2) return; busy=true; try{ const rs=await det.detect(v); if(rs&&rs.length) onCode(rs[0].rawValue); }catch(e){} busy=false; },220);
     }else{
