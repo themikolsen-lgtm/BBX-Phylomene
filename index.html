@@ -2631,6 +2631,14 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 #mealForm .mf-four .mf-in input{color:var(--c) !important;font-weight:800 !important;background:transparent !important}
 #mealForm .mf-four .mf-in input::placeholder{color:color-mix(in srgb,var(--c) 40%,transparent) !important}
 </style>
+<style id="tiles">
+#mealForm .mf-four,#mealForm .mf-s{display:none !important}
+#mealForm .mf-mac b{display:flex;justify-content:center;align-items:baseline;gap:3px;font-size:15px}
+#mealForm .mf-mac input{width:3.4ch;min-width:0;flex:0 1 auto;border:0;outline:0;background:transparent;text-align:right;font-weight:800;font-size:16px;line-height:1.2;font-family:inherit;color:var(--c);padding:0;margin:0;-webkit-appearance:none;border-radius:0}
+#mealForm .mf-mac input::placeholder{color:color-mix(in srgb,var(--c) 40%,transparent)}
+#mealForm .mf-mac u{text-decoration:none;font-size:11px;font-weight:800;color:var(--c)}
+#mealForm .mf-mac span:focus-within{box-shadow:0 0 0 2px var(--c)}
+</style>
 </head>
 <body>
 
@@ -3019,12 +3027,16 @@ window.BBXBk=(function(){
   function setBasis(b){ if(b==='g'&&fm.basis==='u'){ $('mfQty').value='100'; } if(b==='u'&&fm.basis==='g'){ $('mfQty').value=r1(fm.serving); } applyBasis(b); }
   function uset(n){ $('mfUn').value=n; $('mfQty').value=r1(n*fm.serving); fmPrev(); }
   function uqty(dir){ const n=num($('mfUn').value)||0, st=n>=2?1:0.5; const v=Math.max(0.5,Math.round((n+dir*st)*100)/100); $('mfUn').value=r2(v); $('mfQty').value=r1(v*fm.serving); fmPrev(); }
+  document.addEventListener('input',e=>{ const t=e.target; if(!t||!t.dataset||!t.dataset.s||!t.closest||!t.closest('#mfPrev')) return; const v=num(t.value), q=num($('mfQty').value), eff=q>0?q:100; $(t.dataset.s).value=isNaN(v)?'':String(+(v*100/eff).toFixed(2)); fmPrev(); });
   function fmPrev(){
     if(fm.basis==='u'&&fm.serving>0){ const g=num($('mfQty').value); if(document.activeElement===$('mfUn')){ const n=num($('mfUn').value); if(n>=0) $('mfQty').value=r1(n*fm.serving); } else if(g>0) $('mfUn').value=r2(g/fm.serving); $('mfUg').textContent='= '+r1(num($('mfQty').value)||0)+' '+$('mfUnit').value+' · 1 '+unitLabel()+' ≈ '+r1(fm.serving)+' '+$('mfUnit').value; }
     const k=num($('mfKcal').value), p=num($('mfProt').value), q=num($('mfQty').value), u=$('mfUnit').value, fa=num($('mfFat').value), ca=num($('mfCarb').value);
-    { const T=[['Calories',k*q/100,0,'kcal','#C2410C']]; T.push(['Protéines',(p>=0?p:0)*q/100,1,'g','#B91C1C']); if(fa>=0||ca>=0){ T.push(['Lipides',(fa>=0?fa:0)*q/100,1,'g','#A16207']); T.push(['Glucides',(ca>=0?ca:0)*q/100,1,'g','#1D4ED8']); }
-      $('mfPrev').innerHTML=(q>0&&k>=0)?('<small class="mp-for">pour '+r1(q)+' '+u+'</small><div class="mf-micro mf-mac">'+T.map(x=>'<span style="--c:'+x[4]+'"><i>'+x[0]+'</i><b>'+(+x[1].toFixed(x[2]))+' '+x[3]+'</b></span>').join('')+'</div>'):'<small>Indique les calories et la quantité pour voir le total</small>'; }
-    if(q>0&&k>=0&&Math.abs(q-100)>0.05) $('mfPrev').insertAdjacentHTML('beforeend','<div class="mf-p100">Pour 100 '+u+' : <b>'+r(k)+'</b> kcal · '+r1(p>=0?p:0)+' g prot.'+((fa>=0||ca>=0)?' · '+r1(fa>=0?fa:0)+' g lip. · '+r1(ca>=0?ca:0)+' g gluc.':'')+'</div>');
+    { const eff=q>0?q:100, pv=$('mfPrev'); let mac=pv.querySelector('.mf-mac');
+      if(!mac){ const D=[['Calories','mfKcal',0,'kcal','#C2410C'],['Protéines','mfProt',1,'g','#B91C1C'],['Lipides','mfFat',1,'g','#A16207'],['Glucides','mfCarb',1,'g','#1D4ED8']];
+        pv.innerHTML='<small class="mp-for"></small><div class="mf-micro mf-mac">'+D.map(x=>'<span style="--c:'+x[4]+'"><i>'+x[0]+'</i><b><input type="text" inputmode="decimal" placeholder="0" data-s="'+x[1]+'" data-d="'+x[2]+'"><u>'+x[3]+'</u></b></span>').join('')+'</div>'; mac=pv.querySelector('.mf-mac'); }
+      pv.querySelector('.mp-for').textContent='pour '+r1(eff)+' '+u;
+      mac.querySelectorAll('input').forEach(inp=>{ if(document.activeElement===inp) return; const v=num($(inp.dataset.s).value); inp.value=(isNaN(v)||v<0)?'':String(+(v*eff/100).toFixed(+inp.dataset.d)); });
+      pv.querySelectorAll('.mf-micro:not(.mf-mac),.mf-warn').forEach(x=>x.remove()); }
     { const MC={'Sucres':'#BE185D','Gras saturés':'#B45309','Fibres':'#15803D','Sel':'#475569','Calcium':'#0E7490','Fer':'#9F1239','Potassium':'#6D28D9','Magnésium':'#0F766E','Vit. C':'#C2410C'}; const h=fm.hv, q2=q>0?q/100:0, L=[];
       if(h&&q2){ const a=(l,v,d,u,m)=>{ if(v!=null&&isFinite(v)) L.push([l,v*(m||1)*q2,d,u]); };
         a('Sucres',h.sug,1,'g'); a('Gras saturés',h.sat,1,'g'); a('Fibres',h.fib,1,'g'); a('Sel',h.salt,2,'g');
