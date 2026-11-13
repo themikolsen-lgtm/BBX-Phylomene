@@ -2622,7 +2622,7 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 #mealForm .mf-prev:has(.mf-mac) .mf-micro:not(.mf-mac){margin-top:4px !important;padding-top:0 !important;border:0 !important}
 </style>
 <style>#mealForm .mf-ug{display:none !important}</style>
-<style>#mealForm .mh-t{display:none !important}#mealForm .mf-prev{margin:4px 0 6px !important}#mealForm .mf-btns{margin-top:0 !important}</style>
+<style>#mealForm .mh-t{display:none !important}#mealForm .mf-prev{margin:4px 0 6px !important}#mealForm .mf-btns{margin-top:12px !important}</style>
 <style id="inCol">
 #mealForm .mf-f:has(#mfKcal){--c:#C2410C} #mealForm .mf-f:has(#mfProt){--c:#B91C1C}
 #mealForm .mf-f:has(#mfFat){--c:#A16207} #mealForm .mf-f:has(#mfCarb){--c:#1D4ED8}
@@ -2833,6 +2833,7 @@ window.BBXBk=(function(){
     <label class="mf-f"><span>Glucides</span><div class="mf-in"><input id="mfCarb" type="text" inputmode="decimal" placeholder="0"><i>g</i></div></label>
   </div></div>
   <div class="mf-sec mf-h">Quantité mangée</div>
+  <div class="mf-prev" id="mfPrev"></div>
   <div class="mf-seg" id="mfBasis" style="margin:6px 0 8px"><button type="button" data-b="u" class="on" onclick="BBXMeal.basis('u')">À l’unité</button><button type="button" data-b="g" onclick="BBXMeal.basis('g')">Pour 100 g</button></div>
   <div class="mf-qty" id="mfUq" style="display:none"><button type="button" onclick="BBXMeal.uqty(-1)" aria-label="Moins">−</button><div class="mf-in big"><input id="mfUn" type="text" inputmode="decimal" placeholder="1" aria-label="Nombre d’unités"><i id="mfUl">unité</i></div><button type="button" onclick="BBXMeal.uqty(1)" aria-label="Plus">+</button></div>
   <div class="mf-ug" id="mfUg" style="display:none"></div>
@@ -2840,7 +2841,6 @@ window.BBXBk=(function(){
   <div class="mf-qty" id="mfGq"><button type="button" onclick="BBXMeal.qty(-1)" aria-label="Moins">−</button><div class="mf-in big"><input id="mfQty" type="text" inputmode="decimal" placeholder="100" aria-label="Quantité"><i id="mfQu">g</i></div><button type="button" onclick="BBXMeal.qty(1)" aria-label="Plus">+</button></div>
   <div class="mf-units" id="mfUnits" style="display:none"></div>
   <div class="mf-seg" id="mfSeg"><button type="button" class="on" onclick="BBXMeal.unit('g')">grammes</button><button type="button" onclick="BBXMeal.unit('ml')">millilitres</button></div><input type="hidden" id="mfUnit" value="g">
-  <div class="mf-prev" id="mfPrev"></div>
   <div class="mf-btns"><button class="mc-big ib red" id="mfOk" onclick="BBXMeal.saveForm()" aria-label="Valider" title="Valider"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button><button class="mc-big ib " onclick="BBXMeal.closeForm()" aria-label="Annuler" title="Annuler"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
 </div>
 <div id="mealScan" class="mc-scan" aria-label="Scanner">
