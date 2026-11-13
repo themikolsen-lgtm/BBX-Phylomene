@@ -2605,6 +2605,13 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 </style>
 <style>#mealForm:has(.mf-health:not([hidden])) .mf-info{display:none !important}</style>
 <style>#mealForm .mf-p100{display:none !important}</style>
+<style id="nutCol">
+#mealForm .mf-prev b.nk{color:#C2410C !important} #mealForm .mf-prev b.np{color:#B91C1C !important}
+#mealForm .mf-prev b.nf{color:#A16207 !important} #mealForm .mf-prev b.nc{color:#1D4ED8 !important}
+#mealForm .mf-micro span{background:color-mix(in srgb,var(--c) 12%,#fff) !important;border:1px solid color-mix(in srgb,var(--c) 30%,transparent)}
+#mealForm .mf-micro i{color:var(--c) !important;font-weight:700}
+#mealForm .mf-micro b{color:var(--c) !important}
+</style>
 </head>
 <body>
 
@@ -2994,13 +3001,13 @@ window.BBXBk=(function(){
   function fmPrev(){
     if(fm.basis==='u'&&fm.serving>0){ const g=num($('mfQty').value); if(document.activeElement===$('mfUn')){ const n=num($('mfUn').value); if(n>=0) $('mfQty').value=r1(n*fm.serving); } else if(g>0) $('mfUn').value=r2(g/fm.serving); $('mfUg').textContent='= '+r1(num($('mfQty').value)||0)+' '+$('mfUnit').value+' · 1 '+unitLabel()+' ≈ '+r1(fm.serving)+' '+$('mfUnit').value; }
     const k=num($('mfKcal').value), p=num($('mfProt').value), q=num($('mfQty').value), u=$('mfUnit').value, fa=num($('mfFat').value), ca=num($('mfCarb').value);
-    $('mfPrev').innerHTML=(q>0&&k>=0)?('<b>'+r(k*q/100)+'</b> kcal &nbsp;·&nbsp; <b>'+r1((p>=0?p:0)*q/100)+'</b> g de protéines'+((fa>=0||ca>=0)?' &nbsp;·&nbsp; <b>'+r1((fa>=0?fa:0)*q/100)+'</b> g lipides &nbsp;·&nbsp; <b>'+r1((ca>=0?ca:0)*q/100)+'</b> g glucides':'')+'<small>pour '+r1(q)+' '+u+'</small>'):'<small>Indique les calories et la quantité pour voir le total</small>';
+    $('mfPrev').innerHTML=(q>0&&k>=0)?('<b class="nk">'+r(k*q/100)+'</b> kcal &nbsp;·&nbsp; <b class="np">'+r1((p>=0?p:0)*q/100)+'</b> g de protéines'+((fa>=0||ca>=0)?' &nbsp;·&nbsp; <b class="nf">'+r1((fa>=0?fa:0)*q/100)+'</b> g lipides &nbsp;·&nbsp; <b class="nc">'+r1((ca>=0?ca:0)*q/100)+'</b> g glucides':'')+'<small>pour '+r1(q)+' '+u+'</small>'):'<small>Indique les calories et la quantité pour voir le total</small>';
     if(q>0&&k>=0&&Math.abs(q-100)>0.05) $('mfPrev').insertAdjacentHTML('beforeend','<div class="mf-p100">Pour 100 '+u+' : <b>'+r(k)+'</b> kcal · '+r1(p>=0?p:0)+' g prot.'+((fa>=0||ca>=0)?' · '+r1(fa>=0?fa:0)+' g lip. · '+r1(ca>=0?ca:0)+' g gluc.':'')+'</div>');
-    { const h=fm.hv, q2=q>0?q/100:0, L=[];
+    { const MC={'Sucres':'#BE185D','Gras saturés':'#B45309','Fibres':'#15803D','Sel':'#475569','Calcium':'#0E7490','Fer':'#9F1239','Potassium':'#6D28D9','Magnésium':'#0F766E','Vit. C':'#C2410C'}; const h=fm.hv, q2=q>0?q/100:0, L=[];
       if(h&&q2){ const a=(l,v,d,u,m)=>{ if(v!=null&&isFinite(v)) L.push([l,v*(m||1)*q2,d,u]); };
         a('Sucres',h.sug,1,'g'); a('Gras saturés',h.sat,1,'g'); a('Fibres',h.fib,1,'g'); a('Sel',h.salt,2,'g');
         a('Calcium',h.ca,0,'mg',1000); a('Fer',h.fe,1,'mg',1000); a('Potassium',h.k,0,'mg',1000); a('Magnésium',h.mg,0,'mg',1000); a('Vit. C',h.vc,1,'mg',1000); }
-      if(L.length) $('mfPrev').insertAdjacentHTML('beforeend','<div class="mf-micro"><div class="mm-t">Détail pour '+r1(q)+' '+u+'</div>'+L.map(x=>'<span><i>'+x[0]+'</i><b>'+(+x[1].toFixed(x[2]))+' '+x[3]+'</b></span>').join('')+'</div>'); }
+      if(L.length) $('mfPrev').insertAdjacentHTML('beforeend','<div class="mf-micro"><div class="mm-t">Détail pour '+r1(q)+' '+u+'</div>'+L.map(x=>'<span style="--c:'+(MC[x[0]]||'#374151')+'"><i>'+x[0]+'</i><b>'+(+x[1].toFixed(x[2]))+' '+x[3]+'</b></span>').join('')+'</div>'); }
     { const P=p>=0?p:0, F=fa>=0?fa:null, C=ca>=0?ca:null; let w='';
       if(k>=0&&F!=null&&C!=null){ const est=4*P+9*F+4*C; if(P+F+C>100.5) w='⚠️ Protéines + lipides + glucides dépassent 100 g : ces valeurs ne sont probablement pas « pour 100 g ».'; else if(est>=20&&Math.abs(k-est)>Math.max(40,est*0.3)) w='⚠️ Les calories ('+r(k)+') ne collent pas avec les macros (≈ '+r(est)+' kcal attendues). <button type="button" onclick="BBXMeal.fixKcal('+Math.round(est)+')">Utiliser '+r(est)+'</button>'; }
       $('mfPrev').insertAdjacentHTML('beforeend',w?'<div class="mf-warn">'+w+'</div>':''); }
