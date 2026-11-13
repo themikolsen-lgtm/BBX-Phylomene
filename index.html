@@ -2612,6 +2612,16 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 #mealForm .mf-micro i{color:var(--c) !important;font-weight:700}
 #mealForm .mf-micro b{color:var(--c) !important}
 </style>
+<style id="vignettes">
+#mealForm .mf-mult{display:flex;gap:6px;margin:4px 0 0}
+#mealForm .mf-mult button{flex:1;height:34px;border-radius:10px;border:1.5px solid #DDE0E6;background:#fff;color:#15171C;font-weight:800;font-size:15px;font-family:inherit;cursor:pointer;padding:0}
+#mealForm .mf-mult button:active{background:#F1FBEA;border-color:#7DD957}
+#mealForm .mf-mac{margin:0 0 2px !important;padding:0 !important;border:0 !important;grid-template-columns:repeat(4,1fr)}
+#mealForm .mf-mac span{padding:4px 1px !important} #mealForm .mf-mac i{font-size:11px !important} #mealForm .mf-mac b{font-size:15px !important}
+#mealForm .mf-prev .mp-for{display:block;margin:0 0 3px !important;text-align:center}
+#mealForm .mf-prev:has(.mf-mac) .mf-micro:not(.mf-mac){margin-top:4px !important;padding-top:0 !important;border:0 !important}
+</style>
+<style>#mealForm .mf-ug{display:none !important}</style>
 </head>
 <body>
 
@@ -2809,6 +2819,7 @@ window.BBXBk=(function(){
   <div class="mf-seg" id="mfBasis" style="margin:6px 0 8px"><button type="button" data-b="u" class="on" onclick="BBXMeal.basis('u')">À l’unité</button><button type="button" data-b="g" onclick="BBXMeal.basis('g')">Pour 100 g</button></div>
   <div class="mf-qty" id="mfUq" style="display:none"><button type="button" onclick="BBXMeal.uqty(-1)" aria-label="Moins">−</button><div class="mf-in big"><input id="mfUn" type="text" inputmode="decimal" placeholder="1" aria-label="Nombre d’unités"><i id="mfUl">unité</i></div><button type="button" onclick="BBXMeal.uqty(1)" aria-label="Plus">+</button></div>
   <div class="mf-ug" id="mfUg" style="display:none"></div>
+  <div class="mf-mult" id="mfMult"><button type="button" onclick="BBXMeal.uset(2)">×2</button><button type="button" onclick="BBXMeal.uset(3)">×3</button><button type="button" onclick="BBXMeal.uset(4)">×4</button><button type="button" onclick="BBXMeal.uset(5)">×5</button><button type="button" onclick="BBXMeal.uset(6)">×6</button></div>
   <div class="mf-qty" id="mfGq"><button type="button" onclick="BBXMeal.qty(-1)" aria-label="Moins">−</button><div class="mf-in big"><input id="mfQty" type="text" inputmode="decimal" placeholder="100" aria-label="Quantité"><i id="mfQu">g</i></div><button type="button" onclick="BBXMeal.qty(1)" aria-label="Plus">+</button></div>
   <div class="mf-units" id="mfUnits" style="display:none"></div>
   <div class="mf-seg" id="mfSeg"><button type="button" class="on" onclick="BBXMeal.unit('g')">grammes</button><button type="button" onclick="BBXMeal.unit('ml')">millilitres</button></div><input type="hidden" id="mfUnit" value="g">
@@ -2991,17 +3002,19 @@ window.BBXBk=(function(){
     if(b==='u'&&!hasUnit()) b='g'; fm.basis=b;
     [...$('mfBasis').children].forEach(x=>{ x.classList.toggle('on',x.dataset.b===b); });
     $('mfBasis').children[0].style.display=hasUnit()?'':'none'; $('mfBasis').style.display=hasUnit()?'':'none';
-    $('mfUq').style.display=b==='u'?'':'none'; $('mfUg').style.display=b==='u'?'':'none'; $('mfGq').style.display=b==='u'?'none':'';
+    $('mfUq').style.display=b==='u'?'':'none'; $('mfUg').style.display=b==='u'?'':'none'; $('mfMult').style.display=b==='u'?'':'none'; $('mfGq').style.display=b==='u'?'none':'';
     if(b==='u'){ $('mfUl').textContent=unitLabel(); const g=num($('mfQty').value); const n=g>0?Math.round(g/fm.serving*100)/100:1; $('mfUn').value=r2(n>0?n:1); $('mfQty').value=r1((n>0?n:1)*fm.serving); }
     if($('mfUnits')) renderUnits(); if(b==='u'){ if($('mfUnits')) $('mfUnits').style.display='none'; $('mfSeg').style.display='none'; } else $('mfSeg').style.display='';
     fmPrev();
   }
   function setBasis(b){ if(b==='g'&&fm.basis==='u'){ $('mfQty').value='100'; } if(b==='u'&&fm.basis==='g'){ $('mfQty').value=r1(fm.serving); } applyBasis(b); }
+  function uset(n){ $('mfUn').value=n; $('mfQty').value=r1(n*fm.serving); fmPrev(); }
   function uqty(dir){ const n=num($('mfUn').value)||0, st=n>=2?1:0.5; const v=Math.max(0.5,Math.round((n+dir*st)*100)/100); $('mfUn').value=r2(v); $('mfQty').value=r1(v*fm.serving); fmPrev(); }
   function fmPrev(){
     if(fm.basis==='u'&&fm.serving>0){ const g=num($('mfQty').value); if(document.activeElement===$('mfUn')){ const n=num($('mfUn').value); if(n>=0) $('mfQty').value=r1(n*fm.serving); } else if(g>0) $('mfUn').value=r2(g/fm.serving); $('mfUg').textContent='= '+r1(num($('mfQty').value)||0)+' '+$('mfUnit').value+' · 1 '+unitLabel()+' ≈ '+r1(fm.serving)+' '+$('mfUnit').value; }
     const k=num($('mfKcal').value), p=num($('mfProt').value), q=num($('mfQty').value), u=$('mfUnit').value, fa=num($('mfFat').value), ca=num($('mfCarb').value);
-    $('mfPrev').innerHTML=(q>0&&k>=0)?('<b class="nk">'+r(k*q/100)+'</b> kcal &nbsp;·&nbsp; <b class="np">'+r1((p>=0?p:0)*q/100)+'</b> g de protéines'+((fa>=0||ca>=0)?' &nbsp;·&nbsp; <b class="nf">'+r1((fa>=0?fa:0)*q/100)+'</b> g lipides &nbsp;·&nbsp; <b class="nc">'+r1((ca>=0?ca:0)*q/100)+'</b> g glucides':'')+'<small>pour '+r1(q)+' '+u+'</small>'):'<small>Indique les calories et la quantité pour voir le total</small>';
+    { const T=[['Calories',k*q/100,0,'kcal','#C2410C']]; T.push(['Protéines',(p>=0?p:0)*q/100,1,'g','#B91C1C']); if(fa>=0||ca>=0){ T.push(['Lipides',(fa>=0?fa:0)*q/100,1,'g','#A16207']); T.push(['Glucides',(ca>=0?ca:0)*q/100,1,'g','#1D4ED8']); }
+      $('mfPrev').innerHTML=(q>0&&k>=0)?('<small class="mp-for">pour '+r1(q)+' '+u+'</small><div class="mf-micro mf-mac">'+T.map(x=>'<span style="--c:'+x[4]+'"><i>'+x[0]+'</i><b>'+(+x[1].toFixed(x[2]))+' '+x[3]+'</b></span>').join('')+'</div>'):'<small>Indique les calories et la quantité pour voir le total</small>'; }
     if(q>0&&k>=0&&Math.abs(q-100)>0.05) $('mfPrev').insertAdjacentHTML('beforeend','<div class="mf-p100">Pour 100 '+u+' : <b>'+r(k)+'</b> kcal · '+r1(p>=0?p:0)+' g prot.'+((fa>=0||ca>=0)?' · '+r1(fa>=0?fa:0)+' g lip. · '+r1(ca>=0?ca:0)+' g gluc.':'')+'</div>');
     { const MC={'Sucres':'#BE185D','Gras saturés':'#B45309','Fibres':'#15803D','Sel':'#475569','Calcium':'#0E7490','Fer':'#9F1239','Potassium':'#6D28D9','Magnésium':'#0F766E','Vit. C':'#C2410C'}; const h=fm.hv, q2=q>0?q/100:0, L=[];
       if(h&&q2){ const a=(l,v,d,u,m)=>{ if(v!=null&&isFinite(v)) L.push([l,v*(m||1)*q2,d,u]); };
@@ -4450,7 +4463,7 @@ window.BBXBk=(function(){
     setMode:v=>{ MODE=(v==='auto'||v==='fab')?v:'chk'; AUTO=MODE!=='chk'; FABM=MODE==='fab'; try{ localStorage.setItem('phy-cmode',MODE); }catch(e){} applyMode(); calc(); renderCfg(); },
     openCfg:()=>{ renderCfg(); $('mealCfg').classList.add('show'); }, closeCfg:()=>$('mealCfg').classList.remove('show'),
     add:m=>openForm('add',m), edit:(m,i)=>openForm('edit',m,i), del:delItem, move:moveItem, resetDef:resetDef,
-    saveForm:saveForm, basis:setBasis, uqty:uqty, fixKcal:fixKcal, closeForm:()=>$('mealForm').classList.remove('show'),
+    saveForm:saveForm, basis:setBasis, uqty:uqty, uset:uset, uset:uset, fixKcal:fixKcal, closeForm:()=>$('mealForm').classList.remove('show'),
     ideas:openIdeas, closeIdeas:()=>$('mealIdeas').classList.remove('show'), ideaPick:ideaPick,
     ocr:()=>$('mealPick').classList.add('show'), closePick:()=>$('mealPick').classList.remove('show'), pickCam:()=>{ $('mealPick').classList.remove('show'); $('mfOcrFile').click(); }, pickGal:()=>{ $('mealPick').classList.remove('show'); $('mfOcrGal').click(); },
     scanTable:()=>{ const t=sc.target; stopCam(); closeScan(); openForm('add',t,null,{info:'Prends en photo le tableau nutritionnel du produit, ou choisis une image dans ta galerie.'}); $('mealPick').classList.add('show'); }, scan:scanOpen, closeScan:closeScan, manual:manual, scanMode:setScanMode, scanDesc:renderScanMode, photoMode:photoMode,
