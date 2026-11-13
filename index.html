@@ -2577,6 +2577,33 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 #mealForm .mf-p100{margin-top:2px !important;font-size:11.5px !important}
 #mealForm .mf-btns{gap:14px !important} #mealForm .mf-btns .mc-big.ib{width:52px !important;height:52px !important}
 </style>
+<style id="microCss">
+#mealForm .mf-micro{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:8px;padding-top:6px;border-top:1px solid rgba(0,0,0,.08);text-align:center}
+#mealForm .mf-micro .mm-t{grid-column:1/-1;font-size:11px;font-weight:700;color:#4B5563;text-transform:uppercase;letter-spacing:.04em}
+#mealForm .mf-micro span{display:flex;flex-direction:column;background:rgba(255,255,255,.7);border-radius:10px;padding:3px 2px}
+#mealForm .mf-micro i{font-style:normal;font-size:10.5px;color:#4B5563}
+#mealForm .mf-micro b{font-size:13.5px !important;color:#111 !important;font-style:normal !important}
+</style>
+<style id="microFit">
+#mealForm .mf-micro{grid-template-columns:repeat(4,1fr) !important;gap:3px !important;margin-top:5px !important;padding-top:4px !important}
+#mealForm .mf-micro .mm-t{display:none}
+#mealForm .mf-micro span{padding:2px 1px !important} #mealForm .mf-micro i{font-size:9.5px !important;white-space:nowrap} #mealForm .mf-micro b{font-size:12px !important;white-space:nowrap}
+#mealForm .mf-prev:has(.mf-micro) .mf-p100{display:none}
+#mealForm .mf-prev:has(.mf-micro){padding:6px 8px !important}
+#mealForm .mf-health .mh-f{display:none !important}
+#mealForm .mf-health{padding:6px 8px !important;margin-bottom:4px !important}
+#mealForm .mh-v{padding:4px 8px !important} #mealForm .mh-v b{font-size:13px !important}
+#mealForm .mf-info{margin:0 0 2px !important} 
+#mealForm #mfBasis{margin:4px 0 4px !important}
+#mealForm .mf-name input{height:40px !important}
+#mealForm .mf-chip{height:30px !important}
+#mealForm .mf-four .mf-in{height:38px !important}
+#mealForm .mf-in.big{height:42px !important} #mealForm .mf-qty button{width:42px !important;height:42px !important}
+#mealForm .mf-prev b{font-size:17px !important}
+#mealForm .mf-btns .mc-big.ib{width:48px !important;height:48px !important}
+#mealForm .mf-s{margin:4px 2px 1px !important}
+</style>
+<style>#mealForm:has(.mf-health:not([hidden])) .mf-info{display:none !important}</style>
 </head>
 <body>
 
@@ -2968,6 +2995,11 @@ window.BBXBk=(function(){
     const k=num($('mfKcal').value), p=num($('mfProt').value), q=num($('mfQty').value), u=$('mfUnit').value, fa=num($('mfFat').value), ca=num($('mfCarb').value);
     $('mfPrev').innerHTML=(q>0&&k>=0)?('<b>'+r(k*q/100)+'</b> kcal &nbsp;·&nbsp; <b>'+r1((p>=0?p:0)*q/100)+'</b> g de protéines'+((fa>=0||ca>=0)?' &nbsp;·&nbsp; <b>'+r1((fa>=0?fa:0)*q/100)+'</b> g lipides &nbsp;·&nbsp; <b>'+r1((ca>=0?ca:0)*q/100)+'</b> g glucides':'')+'<small>pour '+r1(q)+' '+u+'</small>'):'<small>Indique les calories et la quantité pour voir le total</small>';
     if(q>0&&k>=0&&Math.abs(q-100)>0.05) $('mfPrev').insertAdjacentHTML('beforeend','<div class="mf-p100">Pour 100 '+u+' : <b>'+r(k)+'</b> kcal · '+r1(p>=0?p:0)+' g prot.'+((fa>=0||ca>=0)?' · '+r1(fa>=0?fa:0)+' g lip. · '+r1(ca>=0?ca:0)+' g gluc.':'')+'</div>');
+    { const h=fm.hv, q2=q>0?q/100:0, L=[];
+      if(h&&q2){ const a=(l,v,d,u,m)=>{ if(v!=null&&isFinite(v)) L.push([l,v*(m||1)*q2,d,u]); };
+        a('Sucres',h.sug,1,'g'); a('Gras saturés',h.sat,1,'g'); a('Fibres',h.fib,1,'g'); a('Sel',h.salt,2,'g');
+        a('Calcium',h.ca,0,'mg',1000); a('Fer',h.fe,1,'mg',1000); a('Potassium',h.k,0,'mg',1000); a('Magnésium',h.mg,0,'mg',1000); a('Vit. C',h.vc,1,'mg',1000); }
+      if(L.length) $('mfPrev').insertAdjacentHTML('beforeend','<div class="mf-micro"><div class="mm-t">Détail pour '+r1(q)+' '+u+'</div>'+L.map(x=>'<span><i>'+x[0]+'</i><b>'+(+x[1].toFixed(x[2]))+' '+x[3]+'</b></span>').join('')+'</div>'); }
     { const P=p>=0?p:0, F=fa>=0?fa:null, C=ca>=0?ca:null; let w='';
       if(k>=0&&F!=null&&C!=null){ const est=4*P+9*F+4*C; if(P+F+C>100.5) w='⚠️ Protéines + lipides + glucides dépassent 100 g : ces valeurs ne sont probablement pas « pour 100 g ».'; else if(est>=20&&Math.abs(k-est)>Math.max(40,est*0.3)) w='⚠️ Les calories ('+r(k)+') ne collent pas avec les macros (≈ '+r(est)+' kcal attendues). <button type="button" onclick="BBXMeal.fixKcal('+Math.round(est)+')">Utiliser '+r(est)+'</button>'; }
       $('mfPrev').insertAdjacentHTML('beforeend',w?'<div class="mf-warn">'+w+'</div>':''); }
@@ -3266,7 +3298,7 @@ window.BBXBk=(function(){
     return t>=1.5?'good':(t>-0.5?'mid':'bad');
   }
   function renderHealth(h){
-    const box=$('mfHealth'); if(!box) return;
+    const box=$('mfHealth'); fm.hv=h||null; if(!box) return;
     if(!h){ box.hidden=true; box.innerHTML=''; return; }
     const v=healthVerdict(h);
     const VT={good:['Plutôt bon pour la santé','Un bon choix à consommer régulièrement.'],mid:['À consommer avec modération','Correct, sans en faire la base de l’alimentation.'],bad:['Plutôt mauvais pour la santé','À limiter : à garder pour les occasions.']};
@@ -3754,7 +3786,7 @@ window.BBXBk=(function(){
     let ns=String(pr.nutriscore_grade||'').toLowerCase(); if(!/^[a-e]$/.test(ns)) ns=null;
     let nv=+pr.nova_group; if(!(nv>=1&&nv<=4)) nv=null;
     const g=k=>n[k]==null||isNaN(+n[k])?null:+n[k];
-    return {ns:ns,nova:nv,sug:g('sugars_100g'),sat:g('saturated-fat_100g'),salt:g('salt_100g'),fib:g('fiber_100g'),prot:g('proteins_100g')};
+    return {ns:ns,nova:nv,sug:g('sugars_100g'),sat:g('saturated-fat_100g'),salt:g('salt_100g'),fib:g('fiber_100g'),prot:g('proteins_100g'),ca:g('calcium_100g'),fe:g('iron_100g'),k:g('potassium_100g'),mg:g('magnesium_100g'),vc:g('vitamin-c_100g')};
   }
   function offItem(pr){
     const n=pr.nutriments||{}; let kcal=n['energy-kcal_100g']; if(kcal==null&&n['energy_100g']!=null) kcal=n['energy_100g']/4.184;
