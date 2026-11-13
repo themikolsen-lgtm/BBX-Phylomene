@@ -2926,7 +2926,7 @@ window.BBXBk=(function(){
     box.innerHTML=h;
   }
   function setPortion(i){ const q=fm.portions&&fm.portions[i]; if(!q) return; $('mfQty').value=r1(q.g); fmPrev(); }
-  function autoQty(){ const d=fm.portions&&fm.portions[0], cur=$('mfQty').value.trim(), mq=memQty($('mfName').value,$('mfUnit').value), want=mq||(d?d.g:($('mfName').value.trim()?100:0)); if(want>0&&(cur===''||cur===String(fm.lastAuto))){ fm.lastAuto=r1(want); $('mfQty').value=fm.lastAuto; fmPrev(); } }
+  function autoQty(){ const d=fm.portions&&fm.portions[0], cur=$('mfQty').value.trim(), mq=memQty($('mfName').value,$('mfUnit').value), want=mq||($('mfName').value.trim()?100:0); if(want>0&&(cur===''||cur===String(fm.lastAuto))){ fm.lastAuto=r1(want); $('mfQty').value=fm.lastAuto; fmPrev(); } }
   function setQtyUnits(n){ $('mfQty').value=r1(n*fm.serving); fmPrev(); }
   function setUnit(u){
     $('mfUnit').value=u; $('mfU').textContent=u; $('mfQu').textContent=u;
@@ -3242,8 +3242,8 @@ window.BBXBk=(function(){
       $('mfKcal').value=pref.kcal!=null?r1(pref.kcal):''; $('mfProt').value=pref.prot!=null?r1(pref.prot):''; $('mfFat').value=pref.fat!=null?r1(pref.fat):''; $('mfCarb').value=pref.carb!=null?r1(pref.carb):'';
       { let P=pref.portions; if(!P||!P.length) P=pref.serving>0?[{label:(pref.label||'portion'),g:pref.serving}]:[];
       fm.fixed=!!(pref.portions&&pref.portions.length); fm.portions=mergePortions(P[0],P.slice(1),pref.name||''); syncPortions();
-      fm.lastAuto=fm.serving>0?r1(fm.serving):''; }
-    $('mfQty').value=fm.serving>0?r1(fm.serving):(pref.name?100:''); setUnit(pref.unit||'g');
+      fm.lastAuto=pref.name?100:''; }
+    $('mfQty').value=pref.name?100:''; setUnit(pref.unit||'g');
       { const mq=memQty(pref.name,pref.unit||'g'); if(mq>0){ $('mfQty').value=r1(mq); fm.lastAuto=r1(mq); } }
       $('mfInfo').textContent=pref.info||'';
       if(pref.info) $('mfInfo').className='mf-info ok';
@@ -3748,7 +3748,7 @@ window.BBXBk=(function(){
   // ajout direct d'un produit (bouton ＋) : pas de formulaire, quantité habituelle ou portion
   function directAdd(m,x,g,closeFn,after){
     if(!MEALS[m]) return false; const unit=x.unit||'g', uw=x.serving>0?x.serving:100;
-    if(!(g>0)) g=memQty(x.name,unit)||uw;
+    if(!(g>0)) g=memQty(x.name,unit)||100;   // 100 g par défaut (comme sur Open Food Facts) ; la portion reste proposée
     const label=x.serving>0?(x.label||'portion'):'portion de 100 '+unit;
     let nm=x.name, n=2; while(MEALS[m][2].some(y=>y[0]===nm)){ nm=x.name+' ('+n+')'; n++; }
     const it=[nm,label,uw,g/uw,x.kcal*g/100,x.prot*g/100,unit,x.emoji||'🍽️',x.fat!=null?x.fat*g/100:null,x.carb!=null?x.carb*g/100:null];
