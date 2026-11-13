@@ -2623,6 +2623,14 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 </style>
 <style>#mealForm .mf-ug{display:none !important}</style>
 <style>#mealForm .mh-t{display:none !important}#mealForm .mf-prev{margin:4px 0 6px !important}#mealForm .mf-btns{margin-top:0 !important}</style>
+<style id="inCol">
+#mealForm .mf-f:has(#mfKcal){--c:#C2410C} #mealForm .mf-f:has(#mfProt){--c:#B91C1C}
+#mealForm .mf-f:has(#mfFat){--c:#A16207} #mealForm .mf-f:has(#mfCarb){--c:#1D4ED8}
+#mealForm .mf-four .mf-f span{color:var(--c) !important;font-weight:800 !important}
+#mealForm .mf-four .mf-in{background:color-mix(in srgb,var(--c) 12%,#fff) !important;border:1.5px solid color-mix(in srgb,var(--c) 35%,transparent) !important}
+#mealForm .mf-four .mf-in input{color:var(--c) !important;font-weight:800 !important;background:transparent !important}
+#mealForm .mf-four .mf-in input::placeholder{color:color-mix(in srgb,var(--c) 40%,transparent) !important}
+</style>
 </head>
 <body>
 
