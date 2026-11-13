@@ -2540,120 +2540,106 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 <style>.mf-warn{margin-top:8px;padding:8px 10px;border-radius:10px;background:#FFF4D6;color:#6B4600;font:600 12.5px/1.35 system-ui;text-align:left}.mf-warn button{margin-left:6px;border:0;border-radius:8px;padding:5px 9px;background:#F59E0B;color:#15171C;font:700 12px system-ui}</style>
 <style>.mf-p100{margin-top:6px;font:600 12.5px/1.35 system-ui;opacity:.75}.mf-p100 b{font:inherit;color:inherit}</style>
 <style>.mf-ug{text-align:center;font:600 12.5px/1.3 system-ui;opacity:.7;margin:4px 0 6px}#mfBasis button{font-weight:700}</style>
-<style id="formCompact">
-#mealForm .mc-head{margin:0 0 6px !important} #mealForm .mc-head b{font-size:19px !important}
-#mealForm .mf-h{display:none !important}
-#mealForm .mf-s{margin:8px 2px 3px !important;font-size:13px !important;color:#4B5563}
-#mealForm .mf-quick{margin:0 0 4px !important} #mealForm .mf-quick .mc-big{min-height:0 !important}
-#mealForm .mf-quick .ibc{width:34px !important;height:34px !important} #mealForm .mf-quick .ibc svg{width:18px !important;height:18px !important}
-#mealForm .mf-quick em{font-size:12px !important;margin-top:2px !important}
-#mealForm .mf-info{font-size:12.5px !important;line-height:1.3 !important;margin:2px 0 4px !important}
-#mealForm .mf-info:empty{display:none}
-#mealForm .mf-health{display:flex !important;flex-wrap:wrap;gap:2px 8px;margin:0 0 6px !important;padding:8px 10px !important;border-radius:14px !important;box-shadow:none !important}
-#mealForm .mf-health[hidden]{display:none !important}
-#mealForm .mh-v{flex:1 1 100%;margin:0 !important;padding:6px 8px !important;gap:8px !important;border-radius:12px !important}
-#mealForm .mh-v small,#mealForm .mh-src,#mealForm .mh-d{display:none !important}
-#mealForm .mh-v b{font-size:13.5px !important} #mealForm .mh-i{width:26px !important;height:26px !important} #mealForm .mh-i svg{width:15px !important;height:15px !important}
-#mealForm .mh-row{flex:1 1 calc(50% - 8px);grid-template-columns:1fr !important;border:0 !important;padding:4px 0 2px !important;gap:2px !important}
-#mealForm .mh-t{font-size:10px !important}
-#mealForm .mh-ns span,#mealForm .mh-nv span{width:22px !important;height:22px !important;font-size:11.5px !important;border-radius:7px !important}
-#mealForm .mh-ns span.on,#mealForm .mh-nv span.on{transform:scale(1.15) !important;margin:0 2px !important}
-#mealForm .mh-f{flex:1 1 100%;padding-top:4px !important;border:0 !important;gap:4px !important} #mealForm .mh-f span{font-size:11px !important;padding:3px 8px !important}
-#mealForm .mf-chips{padding:0 16px 4px !important;margin-bottom:2px} #mealForm .mf-chip{height:34px !important;padding:0 12px !important;font-size:13px !important}
-#mealForm .mf-name{margin-top:2px} #mealForm .mf-name input{height:44px !important;font-size:16px !important} #mealForm .mf-name input:first-child{width:52px !important;font-size:20px !important}
-#mealForm .mf-four{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-#mealForm .mf-four .mf-pair{display:contents}
-#mealForm .mf-four .mf-f span{font-size:11px !important;margin:0 0 2px 2px !important;display:block}
-#mealForm .mf-four .mf-in{height:42px !important;padding:0 8px !important;border-radius:12px !important}
-#mealForm .mf-four .mf-in input{font-size:17px !important} #mealForm .mf-four .mf-in i{display:none}
-#mealForm .mf-four .mf-f{min-width:0}
-#mealForm #mfBasis{margin:8px 0 6px !important} #mealForm .mf-seg button{padding:7px 4px !important;font-size:13.5px !important}
-#mealForm .mf-in.big{height:46px !important} #mealForm .mf-in.big input{font-size:22px !important}
-#mealForm .mf-qty button{width:46px !important;height:46px !important}
-#mealForm .mf-ug{margin:2px 0 !important;font-size:11.5px !important}
-#mealForm .mf-prev{margin:8px 0 8px !important;padding:8px 10px !important;font-size:14px !important;border-radius:14px !important}
-#mealForm .mf-prev b{font-size:19px !important} #mealForm .mf-prev small{margin-top:1px !important;font-size:12px !important}
-#mealForm .mf-warn{margin-top:4px !important;padding:6px 8px !important}
-#mealForm .mf-p100{margin-top:2px !important;font-size:11.5px !important}
-#mealForm .mf-btns{gap:14px !important} #mealForm .mf-btns .mc-big.ib{width:52px !important;height:52px !important}
-</style>
-<style id="microCss">
-#mealForm .mf-micro{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:8px;padding-top:6px;border-top:1px solid rgba(0,0,0,.08);text-align:center}
-#mealForm .mf-micro .mm-t{grid-column:1/-1;font-size:11px;font-weight:700;color:#4B5563;text-transform:uppercase;letter-spacing:.04em}
-#mealForm .mf-micro span{display:flex;flex-direction:column;background:rgba(255,255,255,.7);border-radius:10px;padding:3px 2px}
-#mealForm .mf-micro i{font-style:normal;font-size:10.5px;color:#4B5563}
-#mealForm .mf-micro b{font-size:13.5px !important;color:#111 !important;font-style:normal !important}
-</style>
-<style id="microFit">
-#mealForm .mf-micro{grid-template-columns:repeat(4,1fr) !important;gap:3px !important;margin-top:5px !important;padding-top:4px !important}
-#mealForm .mf-micro .mm-t{display:none}
-#mealForm .mf-micro span{padding:2px 1px !important} #mealForm .mf-micro i{font-size:9.5px !important;white-space:nowrap} #mealForm .mf-micro b{font-size:12px !important;white-space:nowrap}
-#mealForm .mf-prev:has(.mf-micro) .mf-p100{display:none}
-#mealForm .mf-prev:has(.mf-micro){padding:6px 8px !important}
-#mealForm .mf-health .mh-f{display:none !important}
-#mealForm .mf-health{padding:6px 8px !important;margin-bottom:4px !important}
-#mealForm .mh-v{padding:4px 8px !important} #mealForm .mh-v b{font-size:13px !important}
-#mealForm .mf-info{margin:0 0 2px !important} 
-#mealForm #mfBasis{margin:4px 0 4px !important}
-#mealForm .mf-name input{height:40px !important}
-#mealForm .mf-chip{height:30px !important}
-#mealForm .mf-four .mf-in{height:38px !important}
-#mealForm .mf-in.big{height:42px !important} #mealForm .mf-qty button{width:42px !important;height:42px !important}
-#mealForm .mf-prev b{font-size:17px !important}
-#mealForm .mf-btns .mc-big.ib{width:48px !important;height:48px !important}
-#mealForm .mf-s{margin:4px 2px 1px !important}
-</style>
-<style>#mealForm:has(.mf-health:not([hidden])) .mf-info{display:none !important}</style>
-<style>#mealForm .mf-p100{display:none !important}</style>
-<style id="nutCol">
-#mealForm .mf-prev b.nk{color:#C2410C !important} #mealForm .mf-prev b.np{color:#B91C1C !important}
-#mealForm .mf-prev b.nf{color:#A16207 !important} #mealForm .mf-prev b.nc{color:#1D4ED8 !important}
-#mealForm .mf-micro span{background:color-mix(in srgb,var(--c) 12%,#fff) !important;border:1px solid color-mix(in srgb,var(--c) 30%,transparent)}
-#mealForm .mf-micro i{color:var(--c) !important;font-weight:700}
-#mealForm .mf-micro b{color:var(--c) !important}
-</style>
-<style id="vignettes">
-#mealForm .mf-mult{display:flex;gap:6px;margin:4px 0 0}
-#mealForm .mf-mult button{flex:1;height:34px;border-radius:10px;border:1.5px solid #DDE0E6;background:#fff;color:#15171C;font-weight:800;font-size:15px;font-family:inherit;cursor:pointer;padding:0}
-#mealForm .mf-mult button:active{background:#F1FBEA;border-color:#7DD957}
-#mealForm .mf-mac{margin:0 0 2px !important;padding:0 !important;border:0 !important;grid-template-columns:repeat(4,1fr)}
-#mealForm .mf-mac span{padding:4px 1px !important} #mealForm .mf-mac i{font-size:11px !important} #mealForm .mf-mac b{font-size:15px !important}
-#mealForm .mf-prev .mp-for{display:block;margin:0 0 3px !important;text-align:center}
-#mealForm .mf-prev:has(.mf-mac) .mf-micro:not(.mf-mac){margin-top:4px !important;padding-top:0 !important;border:0 !important}
-</style>
-<style>#mealForm .mf-ug{display:none !important}</style>
-<style>#mealForm .mh-t{display:none !important}#mealForm .mf-prev{margin:4px 0 6px !important}#mealForm .mf-btns{margin-top:12px !important}</style>
-<style id="inCol">
-#mealForm .mf-f:has(#mfKcal){--c:#C2410C} #mealForm .mf-f:has(#mfProt){--c:#B91C1C}
-#mealForm .mf-f:has(#mfFat){--c:#A16207} #mealForm .mf-f:has(#mfCarb){--c:#1D4ED8}
-#mealForm .mf-four .mf-f span{color:var(--c) !important;font-weight:800 !important}
-#mealForm .mf-four .mf-in{background:color-mix(in srgb,var(--c) 12%,#fff) !important;border:1.5px solid color-mix(in srgb,var(--c) 35%,transparent) !important}
-#mealForm .mf-four .mf-in input{color:var(--c) !important;font-weight:800 !important;background:transparent !important}
-#mealForm .mf-four .mf-in input::placeholder{color:color-mix(in srgb,var(--c) 40%,transparent) !important}
-</style>
-<style id="tiles">
-#mealForm .mf-four,#mealForm .mf-s{display:none !important}
+<style id="formV2">
+#mealForm{background:#F2F3F5;padding-top:10px;padding-bottom:0}
+#mealForm .mc-head{margin:2px 0 10px}
+#mealForm .mf-sec,#mealForm .mf-four{display:none !important}
+#mealForm .mf-quick{display:flex;gap:8px;margin:0 0 10px}
+#mealForm .mf-quick .mc-big.ibt{flex:1 1 0 !important;min-width:0 !important;flex-direction:row !important;justify-content:center;gap:6px !important;height:44px !important;padding:0 8px !important;background:#fff !important;border:1.5px solid #E3E6EB !important;border-radius:999px !important;box-shadow:0 10px 20px -16px rgba(30,40,70,.5) !important}
+#mealForm .mf-quick .mc-big.ibt.red{background:#7DD957 !important;border-color:#7DD957 !important}
+#mealForm .mf-quick .ibc{width:24px !important;height:24px !important;border:0 !important;box-shadow:none !important;background:transparent !important;color:inherit !important}
+#mealForm .mf-quick .ibc svg{width:20px;height:20px}
+#mealForm .mf-quick em{font-size:13px !important;color:#15171C !important;margin:0}
+#mealForm .mf-quick .red em,#mealForm .mf-quick .red .ibc{color:#143008 !important}
+#mealForm .mf-info{font-size:12.5px !important;font-weight:700;margin:0 4px 8px !important;min-height:0 !important;text-align:center}
+#mealForm .mf-info:empty,#mealForm:has(.mf-health:not([hidden])) .mf-info{display:none}
+#mealForm .fv-card{background:#fff;border-radius:26px;box-shadow:0 18px 40px -22px rgba(30,40,70,.32);margin:0 0 12px;overflow:hidden;border:0}
+/* produit */
+#mealForm .mf-name{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--mt,#F1FBEA);margin:0}
+#mealForm .mf-name input:first-child{flex:none;width:52px !important;height:52px !important;border-radius:50% !important;border:0 !important;background:var(--mc,#7DD957) !important;font-size:26px !important;text-align:center;padding:0 !important;box-shadow:0 8px 16px -8px var(--mc,#7DD957) !important}
+#mealForm .mf-name input:last-child{flex:1;height:52px !important;border:0 !important;border-radius:0 !important;background:transparent !important;font-size:19px !important;font-weight:900;padding:0 !important;box-shadow:none !important;color:#15171C}
+#mealForm .mf-name input:last-child::placeholder{color:rgba(21,23,28,.35);font-weight:700}
+#mealForm .mf-chips{display:flex;gap:6px;overflow-x:auto;margin:0 !important;padding:10px 12px !important}
+#mealForm .mf-chip{height:34px !important;padding:0 13px !important;font-size:13px !important;border:1.5px solid #E3E6EB !important;background:#fff}
+#mealForm .mf-chip.on{background:var(--mc) !important;border-color:var(--mc) !important;color:var(--mx,#fff) !important;box-shadow:0 8px 14px -8px var(--mc)}
+/* santé */
+#mealForm .mf-health{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;padding:12px 14px !important;border:0 !important;margin:0 0 12px !important}
+#mealForm .mf-health[hidden]{display:none}
+#mealForm .mh-v{grid-column:1/-1;margin:0 !important;padding:8px 10px !important;border-radius:16px}
+#mealForm .mh-v b{font-size:14px} #mealForm .mh-v small{font-size:12px}
+#mealForm .mh-i{width:32px;height:32px}
+#mealForm .mh-row{display:block;border:0 !important;padding:0 !important}
+#mealForm .mh-t{display:block;font-size:10.5px;margin:0 0 4px}
+#mealForm .mh-ns,#mealForm .mh-nv{gap:3px}
+#mealForm .mh-ns span,#mealForm .mh-nv span{width:26px;height:26px;border-radius:8px;font-size:12.5px}
+#mealForm .mh-ns span.on,#mealForm .mh-nv span.on{transform:scale(1.12);margin:0 2px}
+#mealForm .mh-d{display:block;font-size:11.5px;line-height:1.25;margin-top:5px}
+#mealForm .mh-f{grid-column:1/-1;border:0 !important;padding:0 !important;gap:6px}
+#mealForm .mh-src{display:none}
+/* nutrition */
+#mealForm .fv-nut{position:relative;padding:14px 12px 12px}
+#mealForm .fv-h{font-size:14px;font-weight:900;margin:0 0 10px 4px;color:#15171C}
+#mealForm .fv-nut .mf-prev{margin:0 !important;padding:0 !important;background:none !important;border:0 !important;border-radius:0;font-size:13px;text-align:left}
+#mealForm .mp-for{position:absolute;top:11px;right:12px;display:block;margin:0 !important;padding:3px 10px;border-radius:99px;background:var(--mt,#F1FBEA);color:var(--md,#2E7D1E);font-size:12px;font-weight:800}
+#mealForm .mf-micro{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:6px 0 0;padding:0;border:0;text-align:center}
+#mealForm .mf-micro.mf-mac{margin:0}
+#mealForm .mm-t{display:none}
+#mealForm .mf-micro span{display:flex;flex-direction:column;align-items:center;min-width:0;border-radius:14px;padding:5px 2px;background:color-mix(in srgb,var(--c) 11%,#fff);border:1.5px solid color-mix(in srgb,var(--c) 26%,transparent)}
+#mealForm .mf-micro i{font-style:normal;font-size:10px;font-weight:800;color:var(--c);white-space:nowrap}
+#mealForm .mf-micro b{font-size:13px;font-weight:900;font-style:normal;color:var(--c);white-space:nowrap}
+#mealForm .mf-mac span{padding:7px 2px}
+#mealForm .mf-mac i{font-size:11px}
 #mealForm .mf-mac b{display:flex;justify-content:center;align-items:baseline;gap:3px;font-size:15px}
-#mealForm .mf-mac input{width:3.4ch;min-width:0;flex:0 1 auto;border:0;outline:0;background:transparent;text-align:right;font-weight:800;font-size:16px;line-height:1.2;font-family:inherit;color:var(--c);padding:0;margin:0;-webkit-appearance:none;border-radius:0}
+#mealForm .mf-mac input{width:3.4ch;min-width:0;flex:0 1 auto;border:0;outline:0;background:transparent;text-align:right;font-weight:900;font-size:17px;line-height:1.2;font-family:inherit;color:var(--c);padding:0;margin:0;-webkit-appearance:none;border-radius:0}
 #mealForm .mf-mac input::placeholder{color:color-mix(in srgb,var(--c) 40%,transparent)}
 #mealForm .mf-mac u{text-decoration:none;font-size:11px;font-weight:800;color:var(--c)}
 #mealForm .mf-mac span:focus-within{box-shadow:0 0 0 2px var(--c)}
+#mealForm .mf-warn{margin-top:8px}
+/* quantité */
+#mealForm .fv-qty{padding:12px}
+#mealForm .mf-seg{margin:0 0 10px !important;background:#F1F2F5;padding:4px}
+#mealForm .mf-seg button{height:38px !important;font-size:14px !important}
+#mealForm .mf-qty{gap:10px}
+#mealForm .mf-qty>button{flex:0 0 50px;width:50px;height:50px;font-size:24px;border:1.5px solid #E3E6EB;box-shadow:0 8px 16px -12px rgba(30,40,70,.4)}
+#mealForm .mf-in.big{height:50px !important;border-radius:999px !important;background:#F6F7F9;border:0 !important;padding:0 16px !important}
+#mealForm .mf-in.big input{font-size:24px !important}
+#mealForm .mf-in.big i{font-size:14px !important}
+#mealForm .mf-ug{display:none !important}
+#mealForm .mf-mult{display:flex;gap:6px;margin-top:10px}
+#mealForm .mf-mult button{flex:1;height:36px;border-radius:999px;border:0;background:var(--mt,#F1FBEA);color:var(--md,#2E7D1E);font-family:inherit;font-weight:900;font-size:15px;cursor:pointer;padding:0}
+#mealForm .mf-mult button:active{transform:scale(.95)}
+#mealForm .mf-units{margin-top:10px}
+#mealForm #mfSeg{margin:10px 0 0 !important}
+/* barre du bas */
+#mealForm .mf-btns{position:sticky;bottom:0;z-index:5;display:flex !important;flex-direction:row !important;align-items:center;gap:10px;margin:0 -16px !important;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(242,243,245,0),#F2F3F5 30%)}
+#mealForm .mf-btns .mc-big.ib{flex:none;width:56px !important;height:56px !important;border-radius:50%;background:#fff;border:1.5px solid #E3E6EB}
+#mealForm .mf-btns #mfOk{flex:1;width:auto !important;border-radius:999px !important;border:0 !important;background:var(--mc,#7DD957) !important;color:var(--mx,#143008) !important;display:flex;align-items:center;justify-content:center;gap:8px;font-size:17px !important;font-weight:900;box-shadow:0 16px 28px -14px var(--mc,#7DD957)}
+#mealForm #mfOk svg{width:22px;height:22px;stroke:currentColor}
+#mealForm #mfOk b{font-weight:800;opacity:.85;font-size:16px}
 </style>
-<style id="healthBack">
-#mealForm .mh-t{display:block !important;font-size:11px !important}
-#mealForm .mh-d{display:block !important;font-size:11.5px !important;line-height:1.25}
-#mealForm .mh-v small{display:block !important;font-size:12px !important}
-#mealForm .mf-health .mh-f{display:flex !important;flex-wrap:wrap}
-#mealForm .mf-health{padding:8px 10px !important;margin-bottom:6px !important}
-#mealForm .mh-v{padding:6px 8px !important}
-</style>
-<style>
-#mealForm .mh-row{padding:0 !important;gap:0 !important} #mealForm .mh-d{margin-top:-2px}
-#mealForm .mh-v{padding:4px 8px !important} #mealForm .mf-health{padding:6px 10px !important;margin-bottom:4px !important}
-#mealForm .mf-health .mh-f{padding-top:2px !important} #mealForm .mf-health .mh-f span{padding:2px 8px !important}
-#mealForm .mf-btns{margin-top:4px !important} #mealForm .mf-mac span{padding:2px 1px !important}
-#mealForm .mf-chips{padding-bottom:0 !important} #mealForm .mf-chip{height:28px !important}
-#mealForm #mfBasis{margin:2px 0 4px !important}
+<style id="formV2b">
+#mealForm{padding-top:6px}
+#mealForm .mc-head{margin:0 0 6px}
+#mealForm .mf-quick{margin:0 0 8px} #mealForm .mf-quick .mc-big.ibt{height:40px !important}
+#mealForm .fv-card,#mealForm .mf-health{margin-bottom:8px !important;border-radius:24px}
+#mealForm .mf-name{padding:8px 12px;gap:10px}
+#mealForm .mf-name input:first-child{width:46px !important;height:46px !important;font-size:23px !important}
+#mealForm .mf-name input:last-child{height:46px !important;font-size:18px !important}
+#mealForm .mf-chips{padding:7px 10px !important} #mealForm .mf-chip{height:32px !important}
+#mealForm .mf-health{padding:9px 12px !important;gap:6px 12px}
+#mealForm .mh-v{padding:5px 8px !important} #mealForm .mh-v small{display:none} #mealForm .mh-i{width:28px;height:28px}
+#mealForm .mh-t{margin-bottom:3px} #mealForm .mh-ns span,#mealForm .mh-nv span{width:25px;height:25px}
+#mealForm .mh-d{margin-top:3px;font-size:11px}
+#mealForm .mh-f span{padding:3px 9px}
+#mealForm .fv-nut{padding:10px 10px 10px} #mealForm .fv-h{margin:0 0 7px 4px;font-size:13.5px}
+#mealForm .mp-for{top:8px}
+#mealForm .mf-micro{gap:5px;margin-top:5px} #mealForm .mf-mac span{padding:5px 2px} #mealForm .mf-micro span{padding:3px 2px}
+#mealForm .fv-qty{padding:10px}
+#mealForm .mf-seg{margin-bottom:8px !important} #mealForm .mf-seg button{height:34px !important}
+#mealForm .mf-qty>button{flex-basis:44px;width:44px;height:44px} #mealForm .mf-in.big{height:44px !important}
+#mealForm .mf-mult{margin-top:8px} #mealForm .mf-mult button{height:32px}
+#mealForm .mf-btns{padding-top:6px;padding-bottom:calc(8px + env(safe-area-inset-bottom))}
+#mealForm .mf-btns .mc-big.ib{width:52px !important;height:52px !important} #mealForm #mfOk{height:52px !important}
 </style>
 </head>
 <body>
@@ -2834,11 +2820,14 @@ window.BBXBk=(function(){
   <div class="mc-head"><b id="mfTitle">Ajouter un produit</b><button class="mc-x" onclick="BBXMeal.closeForm()" aria-label="Fermer">✕</button></div>
   <div class="mf-quick" id="mfQuick"><button class="mc-big ib ibt red" onclick="BBXMeal.scan('form')" aria-label="Scanner un code-barres" title="Scanner un code-barres"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M7 12h10"/></svg></span><em>Scanner</em></button><button class="mc-big ib ibt " onclick="BBXMeal.search('form')" aria-label="Rechercher un produit" title="Rechercher un produit"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></span><em>Rechercher</em></button><button class="mc-big ib ibt" id="mfOcrBtn" onclick="BBXMeal.ocr()" aria-label="Photographier le tableau nutritionnel" title="Photographier le tableau nutritionnel"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M4 9.5h16M4 14.5h16M12 9.5V20"/></svg></span><em>Tableau</em></button><input type="file" id="mfOcrFile" accept="image/*" capture="environment" hidden></div>
   <div class="mf-info" id="mfInfo"></div>
-  <div class="mf-health" id="mfHealth" hidden></div>
-  <div class="mf-sec mf-h">Repas</div>
-  <div class="mf-chips" id="mfChips"></div><input type="hidden" id="mfMeal" value="0">
-  <div class="mf-sec mf-h">Produit</div>
+  <section class="fv-card fv-prod">
   <div class="mf-name"><input id="mfEmoji" type="text" maxlength="4" placeholder="🍽️" aria-label="Emoji"><input id="mfName" type="text" autocomplete="off" placeholder="Nom du produit" aria-label="Nom du produit"></div>
+  <div class="mf-chips" id="mfChips"></div><input type="hidden" id="mfMeal" value="0">
+  </section>
+  <div class="mf-health fv-card" id="mfHealth" hidden></div>
+  <section class="fv-card fv-nut">
+  <div class="fv-h">Valeurs nutritionnelles</div>
+  <div class="mf-prev" id="mfPrev"></div>
   <div class="mf-sec mf-s">Valeurs pour 100 <span id="mfU">g</span></div>
   <div class="mf-four"><div class="mf-pair">
     <label class="mf-f"><span>Calories</span><div class="mf-in"><input id="mfKcal" type="text" inputmode="decimal" placeholder="0"><i>kcal</i></div></label>
@@ -2848,8 +2837,9 @@ window.BBXBk=(function(){
     <label class="mf-f"><span>Lipides</span><div class="mf-in"><input id="mfFat" type="text" inputmode="decimal" placeholder="0"><i>g</i></div></label>
     <label class="mf-f"><span>Glucides</span><div class="mf-in"><input id="mfCarb" type="text" inputmode="decimal" placeholder="0"><i>g</i></div></label>
   </div></div>
-  <div class="mf-sec mf-h">Quantité mangée</div>
-  <div class="mf-prev" id="mfPrev"></div>
+  
+  </section>
+  <section class="fv-card fv-qty">
   <div class="mf-seg" id="mfBasis" style="margin:6px 0 8px"><button type="button" data-b="u" class="on" onclick="BBXMeal.basis('u')">À l’unité</button><button type="button" data-b="g" onclick="BBXMeal.basis('g')">Pour 100 g</button></div>
   <div class="mf-qty" id="mfUq" style="display:none"><button type="button" onclick="BBXMeal.uqty(-1)" aria-label="Moins">−</button><div class="mf-in big"><input id="mfUn" type="text" inputmode="decimal" placeholder="1" aria-label="Nombre d’unités"><i id="mfUl">unité</i></div><button type="button" onclick="BBXMeal.uqty(1)" aria-label="Plus">+</button></div>
   <div class="mf-ug" id="mfUg" style="display:none"></div>
@@ -2857,7 +2847,8 @@ window.BBXBk=(function(){
   <div class="mf-qty" id="mfGq"><button type="button" onclick="BBXMeal.qty(-1)" aria-label="Moins">−</button><div class="mf-in big"><input id="mfQty" type="text" inputmode="decimal" placeholder="100" aria-label="Quantité"><i id="mfQu">g</i></div><button type="button" onclick="BBXMeal.qty(1)" aria-label="Plus">+</button></div>
   <div class="mf-units" id="mfUnits" style="display:none"></div>
   <div class="mf-seg" id="mfSeg"><button type="button" class="on" onclick="BBXMeal.unit('g')">grammes</button><button type="button" onclick="BBXMeal.unit('ml')">millilitres</button></div><input type="hidden" id="mfUnit" value="g">
-  <div class="mf-btns"><button class="mc-big ib red" id="mfOk" onclick="BBXMeal.saveForm()" aria-label="Valider" title="Valider"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button><button class="mc-big ib " onclick="BBXMeal.closeForm()" aria-label="Annuler" title="Annuler"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  </section>
+  <div class="mf-btns"><button class="mc-big ib " onclick="BBXMeal.closeForm()" aria-label="Annuler" title="Annuler"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><button class="mc-big ib red" id="mfOk" onclick="BBXMeal.saveForm()" aria-label="Valider" title="Valider"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span id="mfOkT">Ajouter</span><b id="mfOkK"></b></button></div>
 </div>
 <div id="mealScan" class="mc-scan" aria-label="Scanner">
   <video id="msVideo" playsinline muted></video>
@@ -3048,12 +3039,12 @@ window.BBXBk=(function(){
     if(fm.basis==='u'&&fm.serving>0){ const g=num($('mfQty').value); if(document.activeElement===$('mfUn')){ const n=num($('mfUn').value); if(n>=0) $('mfQty').value=r1(n*fm.serving); } else if(g>0) $('mfUn').value=r2(g/fm.serving); $('mfUg').textContent='= '+r1(num($('mfQty').value)||0)+' '+$('mfUnit').value+' · 1 '+unitLabel()+' ≈ '+r1(fm.serving)+' '+$('mfUnit').value; }
     const k=num($('mfKcal').value), p=num($('mfProt').value), q=num($('mfQty').value), u=$('mfUnit').value, fa=num($('mfFat').value), ca=num($('mfCarb').value);
     { const eff=q>0?q:100, pv=$('mfPrev'); let mac=pv.querySelector('.mf-mac');
-      if(!mac){ const D=[['Calories','mfKcal',0,'kcal','#C2410C'],['Protéines','mfProt',1,'g','#B91C1C'],['Lipides','mfFat',1,'g','#A16207'],['Glucides','mfCarb',1,'g','#1D4ED8']];
+      if(!mac){ const D=[['Calories','mfKcal',0,'kcal','#2E7D1E'],['Protéines','mfProt',1,'g','#0F7C8A'],['Lipides','mfFat',1,'g','#B45F06'],['Glucides','mfCarb',1,'g','#C8102E']];
         pv.innerHTML='<small class="mp-for"></small><div class="mf-micro mf-mac">'+D.map(x=>'<span style="--c:'+x[4]+'"><i>'+x[0]+'</i><b><input type="text" inputmode="decimal" placeholder="0" data-s="'+x[1]+'" data-d="'+x[2]+'"><u>'+x[3]+'</u></b></span>').join('')+'</div>'; mac=pv.querySelector('.mf-mac'); }
       pv.querySelector('.mp-for').textContent='pour '+r1(eff)+' '+u;
       mac.querySelectorAll('input').forEach(inp=>{ if(document.activeElement===inp) return; const v=num($(inp.dataset.s).value); inp.value=(isNaN(v)||v<0)?'':String(+(v*eff/100).toFixed(+inp.dataset.d)); });
-      pv.querySelectorAll('.mf-micro:not(.mf-mac),.mf-warn').forEach(x=>x.remove()); }
-    { const MC={'Sucres':'#BE185D','Gras saturés':'#B45309','Fibres':'#15803D','Sel':'#475569','Calcium':'#0E7490','Fer':'#9F1239','Potassium':'#6D28D9','Magnésium':'#0F766E','Vit. C':'#C2410C'}; const h=fm.hv, q2=q>0?q/100:0, L=[];
+      pv.querySelectorAll('.mf-micro:not(.mf-mac),.mf-warn').forEach(x=>x.remove()); { const kk=num($('mfKcal').value), okk=$('mfOkK'); if(okk) okk.textContent=(q>0&&kk>=0)?' · '+r(kk*q/100)+' kcal':''; } }
+    { const MC={'Sucres':'#C026D3','Gras saturés':'#92400E','Fibres':'#4D7C0F','Sel':'#475569','Calcium':'#0369A1','Fer':'#9F1239','Potassium':'#6D28D9','Magnésium':'#0D9488','Vit. C':'#EA580C'}; const h=fm.hv, q2=q>0?q/100:0, L=[];
       if(h&&q2){ const a=(l,v,d,u,m)=>{ if(v!=null&&isFinite(v)) L.push([l,v*(m||1)*q2,d,u]); };
         a('Sucres',h.sug,1,'g'); a('Gras saturés',h.sat,1,'g'); a('Fibres',h.fib,1,'g'); a('Sel',h.salt,2,'g');
         a('Calcium',h.ca,0,'mg',1000); a('Fer',h.fe,1,'mg',1000); a('Potassium',h.k,0,'mg',1000); a('Magnésium',h.mg,0,'mg',1000); a('Vit. C',h.vc,1,'mg',1000); }
@@ -3085,7 +3076,7 @@ window.BBXBk=(function(){
   function setMeal(x){
     $('mfMeal').value=x;
     [...$('mfChips').children].forEach((b,i)=>b.classList.toggle('on',i===x));
-    const bx=$('mfChips'), ch=bx.children[x]; if(ch) bx.scrollLeft=ch.offsetLeft-(bx.clientWidth-ch.offsetWidth)/2;
+    const bx=$('mfChips'), ch=bx.children[x]; if(ch){ ['--mc','--mt','--mx','--md'].forEach(v=>$('mealForm').style.setProperty(v,ch.style.getPropertyValue(v))); } if(ch) bx.scrollLeft=ch.offsetLeft-(bx.clientWidth-ch.offsetWidth)/2;
   }
   function qtyStep(dir){
     const q=num($('mfQty').value)||0, step=q>=100?10:5;
@@ -3379,12 +3370,12 @@ window.BBXBk=(function(){
     if(mode==='edit'){
       const it=MEALS[m][2][i], q=per100(it);
       fm.m=m; fm.i=i; fm.unitW=it[2]; fm.label=it[1]; fm.fixed=true; fm.portions=mergePortions(it[2]>0?{label:it[1],g:it[2]}:null,(FAV.find(f=>normS(f.name)===normS(it[0]))||{}).portions,it[0]); syncPortions();
-      $('mfTitle').textContent='Modifier le produit'; $('mfOk').setAttribute('aria-label','Enregistrer'); $('mfQuick').style.display='none';
+      $('mfTitle').textContent='Modifier le produit'; $('mfOk').setAttribute('aria-label','Enregistrer'); $('mfOkT').textContent='Enregistrer'; $('mfQuick').style.display='none';
       setMeal(m); $('mfName').value=it[0]; $('mfEmoji').value=it[7];
       $('mfKcal').value=r1(q.k); $('mfProt').value=r1(q.p); $('mfFat').value=q.f!=null?r1(q.f):''; $('mfCarb').value=q.c!=null?r1(q.c):''; $('mfQty').value=r1(W(m,i,it)); setUnit(it[6]);
       $('mfInfo').textContent='';
     }else{
-      $('mfTitle').textContent='Ajouter un produit'; $('mfOk').setAttribute('aria-label','Valider'); $('mfQuick').style.display='';
+      $('mfTitle').textContent='Ajouter un produit'; $('mfOk').setAttribute('aria-label','Valider'); $('mfOkT').textContent='Ajouter'; $('mfQuick').style.display='';
       setMeal((m!=null&&m>=0)?m:(+$('mfMeal').value||0));
       $('mfName').value=pref.name||''; $('mfEmoji').value=pref.emoji||'';
       $('mfKcal').value=pref.kcal!=null?r1(pref.kcal):''; $('mfProt').value=pref.prot!=null?r1(pref.prot):''; $('mfFat').value=pref.fat!=null?r1(pref.fat):''; $('mfCarb').value=pref.carb!=null?r1(pref.carb):'';
