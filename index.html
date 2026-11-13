@@ -2740,7 +2740,7 @@ window.BBXBk=(function(){
 <div id="mealScan" class="mc-scan" aria-label="Scanner">
   <video id="msVideo" playsinline muted></video>
   <div class="ms-frame"><i></i></div>
-  <div id="msCtl" class="ms-ctl"><button id="msFocus" type="button" aria-label="Refaire la mise au point">◎ Net</button><button id="msTorch" type="button" aria-label="Lampe" hidden>🔦</button><label id="msFocL" hidden>Netteté<input id="msFocR" type="range"></label><label id="msZoomL" hidden>Zoom<input id="msZoomR" type="range"></label></div>
+  <div id="msCtl" class="ms-ctl"><button id="msFocus" type="button" aria-label="Refaire la mise au point">◎ Net</button><button id="msTorch" type="button" aria-label="Lampe" hidden>🔦</button><button id="msCamSw" type="button" aria-label="Changer d'objectif" hidden>🔄</button><label id="msFocL" hidden>Netteté<input id="msFocR" type="range"></label><label id="msZoomL" hidden>Zoom<input id="msZoomR" type="range"></label></div>
   <div class="ms-top"><b>Scanner un code-barres</b><button onclick="BBXMeal.closeScan()" aria-label="Fermer">✕</button></div>
   <div class="ms-bot"><div id="msStatus">Démarrage de la caméra…</div><button class="ms-tab" onclick="BBXMeal.scanTable()" aria-label="Photographier le tableau nutritionnel" title="Photographier le tableau nutritionnel"><span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M4 9.5h16M4 14.5h16M12 9.5V20"/></svg></span><em>Tableau nutritionnel</em></button><input type="file" id="msFile" accept="image/*" capture="environment" hidden><div class="ms-row"><input id="msCode" type="text" inputmode="numeric" placeholder="Ou tape le code-barres"><button onclick="BBXMeal.manual()">OK</button></div></div>
 </div>
@@ -3279,7 +3279,9 @@ window.BBXBk=(function(){
   async function getCam(){
     clearTimeout(cam.idle);
     if(cam.stream&&cam.stream.getVideoTracks().some(t=>t.readyState==='live')){ cam.stream.getVideoTracks().forEach(t=>{ t.enabled=true; }); return cam.stream; }
-    cam.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});
+    const base={width:{ideal:2560},height:{ideal:1440}};
+    try{ cam.stream=await navigator.mediaDevices.getUserMedia({video:Object.assign({},base,cam.deviceId?{deviceId:{exact:cam.deviceId}}:{facingMode:{ideal:'environment'}}),audio:false}); }
+    catch(e){ cam.deviceId=null; cam.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false}); }
     return cam.stream;
   }
   function eanOk(c){ c=String(c).replace(/\D/g,''); if(![8,12,13].includes(c.length)) return false; const d=c.split('').map(Number), k=d.pop(); let sm=0; d.reverse().forEach((x,i)=>{ sm+=x*(i%2?1:3); }); return (10-sm%10)%10===k; }
@@ -3298,17 +3300,38 @@ window.BBXBk=(function(){
       if(fm.includes('continuous')) await tr.applyConstraints({advanced:[{focusMode:'continuous'}]}); }catch(e){}
     st('Mise au point refaite : approche ou recule le code-barres (≈ 15 cm).');
   }
+  let ss0=null;
+  function camAssist(tr,cp,ss){
+    clearInterval(sc.sweep); sc.sweep=0;
+    // zoom de départ x2 : un petit code-barres occupe plus de pixels
+    if(cp.zoom&&cp.zoom.max>=2){ try{ tr.applyConstraints({advanced:[{zoom:Math.min(cp.zoom.max,Math.max(cp.zoom.min,2))}]}); const zr=$('msZoomR'); zr.value=Math.min(cp.zoom.max,Math.max(cp.zoom.min,2)); }catch(e){} }
+    // autofocus logiciel : si rien n'est lu, on balaye la distance de mise au point (les autofocus Android sont souvent paresseux)
+    const fd=cp.focusDistance; if(fd&&fd.max>fd.min){
+      const pts=[0,0.06,0.12,0.2,0.32,0.5].map(f=>fd.min+(fd.max-fd.min)*f); let i=0, t0=Date.now(), manual=false;
+      $('msFocR').addEventListener('input',()=>{ manual=true; },{once:true});
+      sc.sweep=setInterval(()=>{ if(sc.done||manual||!sc.stream){ clearInterval(sc.sweep); return; }
+        if(Date.now()-t0<2500) return;   // laisse d'abord l'autofocus normal travailler
+        try{ if(i<pts.length) tr.applyConstraints({advanced:[{focusMode:'manual',focusDistance:pts[i]}]}); else { tr.applyConstraints({advanced:[{focusMode:(cp.focusMode||[]).includes('continuous')?'continuous':'manual'}]}); t0=Date.now()+1500; i=-1; } }catch(e){} i++; },650);
+    }
+    // changement d'objectif (grand‑angle / principal / téléobjectif)
+    navigator.mediaDevices.enumerateDevices().then(ds=>{ const cams=ds.filter(d=>d.kind==='videoinput'&&!/front|avant|user|selfie/i.test(d.label)); sc.cams=cams; $('msCamSw').hidden=cams.length<2; }).catch(()=>{ $('msCamSw').hidden=true; });
+  }
+  function camSwitch(){
+    const cams=sc.cams||[]; if(cams.length<2) return; const cur=(cam.stream&&cam.stream.getVideoTracks()[0].getSettings().deviceId)||'', i=Math.max(0,cams.findIndex(c=>c.deviceId===cur)), nx=cams[(i+1)%cams.length];
+    try{ cam.stream&&cam.stream.getTracks().forEach(t=>t.stop()); }catch(e){} cam.stream=null; cam.deviceId=nx.deviceId; st('Objectif : '+(nx.label||'suivant')); startCam();
+  }
   function camFocusSetup(){
     const tr=cam.stream&&cam.stream.getVideoTracks()[0]; if(!tr) return; let cp={}; try{ cp=tr.getCapabilities?tr.getCapabilities():{}; }catch(e){}
     try{ if((cp.focusMode||[]).includes('continuous')) tr.applyConstraints({advanced:[{focusMode:'continuous'}]}); }catch(e){}
     cam.torch=false; $('msTorch').classList.remove('on'); $('msTorch').hidden=!cp.torch;
+    camAssist(tr,cp,ss0=tr.getSettings?tr.getSettings():{});
     const fr=$('msFocR'), zr=$('msZoomR'), ss=tr.getSettings?tr.getSettings():{};
     if(cp.focusDistance&&cp.focusDistance.max>cp.focusDistance.min){ fr.min=cp.focusDistance.min; fr.max=cp.focusDistance.max; fr.step=cp.focusDistance.step||((cp.focusDistance.max-cp.focusDistance.min)/50); fr.value=ss.focusDistance!=null?ss.focusDistance:cp.focusDistance.min; $('msFocL').hidden=false; fr.oninput=()=>{ try{ tr.applyConstraints({advanced:[{focusMode:'manual',focusDistance:+fr.value}]}); }catch(e){} }; } else $('msFocL').hidden=true;
     if(cp.zoom&&cp.zoom.max>cp.zoom.min){ zr.min=cp.zoom.min; zr.max=cp.zoom.max; zr.step=cp.zoom.step||0.1; zr.value=ss.zoom||cp.zoom.min; $('msZoomL').hidden=false; zr.oninput=()=>{ try{ tr.applyConstraints({advanced:[{zoom:+zr.value}]}); }catch(e){} }; } else $('msZoomL').hidden=true;
   }
-  $('msTorch').addEventListener('click',camTorch); $('msFocus').addEventListener('click',camFocus); $('msVideo').addEventListener('click',camFocus);
+  $('msTorch').addEventListener('click',camTorch); $('msCamSw').addEventListener('click',camSwitch); $('msFocus').addEventListener('click',camFocus); $('msVideo').addEventListener('click',camFocus);
   function stopCam(){
-    clearInterval(sc.timer); sc.timer=0; clearInterval(sc.timer2); sc.timer2=0; sc.wasmOn=false; const v=$('msVideo'); try{ v.srcObject=null; }catch(e){}
+    clearInterval(sc.timer); sc.timer=0; clearInterval(sc.timer2); sc.timer2=0; sc.wasmOn=false; clearInterval(sc.sweep); sc.sweep=0; const v=$('msVideo'); try{ v.srcObject=null; }catch(e){}
     if(cam.stream){ cam.stream.getVideoTracks().forEach(t=>{ t.enabled=false; }); clearTimeout(cam.idle); cam.idle=setTimeout(releaseCam,7200000); }
   }
   function closeScan(){ stopCam(); $('mealScan').classList.remove('show'); }
@@ -3344,8 +3367,8 @@ window.BBXBk=(function(){
       try{ if(v.readyState>=2&&v.videoWidth){
         const vw=v.videoWidth, vh=v.videoHeight, mode=k++%3;   // image entière, puis zone centrale à pleine résolution, etc.
         let sx=0,sy=0,sw=vw,sh=vh;
-        if(mode!==0){ sw=Math.round(vw*0.8); sh=Math.round(vh*0.5); sx=Math.round((vw-sw)/2); sy=Math.round((vh-sh)*0.45); }
-        const f=Math.min(1,1400/Math.max(sw,sh)); cv.width=Math.round(sw*f); cv.height=Math.round(sh*f); cx.drawImage(v,sx,sy,sw,sh,0,0,cv.width,cv.height);
+        if(mode!==0){ const fw=mode===1?0.8:0.5, fh=mode===1?0.5:0.32; sw=Math.round(vw*fw); sh=Math.round(vh*fh); sx=Math.round((vw-sw)/2); sy=Math.round((vh-sh)*0.45); }
+        const f=Math.min(1,(mode===0?1800:2200)/Math.max(sw,sh)); cv.width=Math.round(sw*f); cv.height=Math.round(sh*f); cx.drawImage(v,sx,sy,sw,sh,0,0,cv.width,cv.height);
         const SEQ=['orig','orig','norm','sharp','r25','r-25','norm'], vn=SEQ[(k-1)%SEQ.length]; const t=await wasmRead(bcVariant(cv,vn)); if(t) camCode(t);
       } }catch(e){}
       if(sc.wasmOn&&!sc.done) setTimeout(loop,20);
@@ -3373,6 +3396,8 @@ window.BBXBk=(function(){
         for(const maxW of [2000,1200,800,2800]){ const f=Math.min(1,maxW/Math.max(img.naturalWidth,img.naturalHeight)), w=Math.round(img.naturalWidth*f), h=Math.round(img.naturalHeight*f);
           const c=document.createElement('canvas'); c.width=w; c.height=h; const x=c.getContext('2d',{willReadFrequently:true}); x.drawImage(img,0,0,w,h);
           for(const vn of ['orig','norm','sharp','r25','r-25','sharp2']){ const t=await wasmRead(bcVariant(c,vn)); if(t) return t; } }
+        for(const [fw,fh] of [[0.7,0.5],[0.5,0.35],[1,0.5]]){ const sw=Math.round(img.naturalWidth*fw), sh=Math.round(img.naturalHeight*fh), f=Math.min(1,2600/Math.max(sw,sh)), c=document.createElement('canvas'); c.width=Math.round(sw*f); c.height=Math.round(sh*f); const x=c.getContext('2d',{willReadFrequently:true}); x.drawImage(img,Math.round((img.naturalWidth-sw)/2),Math.round((img.naturalHeight-sh)/2),sw,sh,0,0,c.width,c.height);
+          for(const vn of ['orig','norm','sharp']){ const t=await wasmRead(bcVariant(c,vn)); if(t) return t; } }
       } finally{ URL.revokeObjectURL(url0); } }catch(e){}
     await loadZX(); const Z=window.ZXing, hints=new Map();
     hints.set(Z.DecodeHintType.POSSIBLE_FORMATS,[Z.BarcodeFormat.EAN_13,Z.BarcodeFormat.EAN_8,Z.BarcodeFormat.UPC_A,Z.BarcodeFormat.UPC_E]); hints.set(Z.DecodeHintType.TRY_HARDER,true);
