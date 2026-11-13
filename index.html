@@ -2537,6 +2537,7 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 #mealView{ --mu:#565E6C !important; }
 .my-brand + * .ml-sub, #mealView h1 span{ }
 </style>
+<style>.mf-warn{margin-top:8px;padding:8px 10px;border-radius:10px;background:#FFF4D6;color:#6B4600;font:600 12.5px/1.35 system-ui;text-align:left}.mf-warn button{margin-left:6px;border:0;border-radius:8px;padding:5px 9px;background:#F59E0B;color:#15171C;font:700 12px system-ui}</style>
 </head>
 <body>
 
@@ -2909,7 +2910,11 @@ window.BBXBk=(function(){
   function fmPrev(){
     const k=num($('mfKcal').value), p=num($('mfProt').value), q=num($('mfQty').value), u=$('mfUnit').value, fa=num($('mfFat').value), ca=num($('mfCarb').value);
     $('mfPrev').innerHTML=(q>0&&k>=0)?('<b>'+r(k*q/100)+'</b> kcal &nbsp;·&nbsp; <b>'+r1((p>=0?p:0)*q/100)+'</b> g de protéines'+((fa>=0||ca>=0)?' &nbsp;·&nbsp; <b>'+r1((fa>=0?fa:0)*q/100)+'</b> g lipides &nbsp;·&nbsp; <b>'+r1((ca>=0?ca:0)*q/100)+'</b> g glucides':'')+'<small>pour '+r1(q)+' '+u+'</small>'):'<small>Indique les calories et la quantité pour voir le total</small>';
+    { const P=p>=0?p:0, F=fa>=0?fa:null, C=ca>=0?ca:null; let w='';
+      if(k>=0&&F!=null&&C!=null){ const est=4*P+9*F+4*C; if(P+F+C>100.5) w='⚠️ Protéines + lipides + glucides dépassent 100 g : ces valeurs ne sont probablement pas « pour 100 g ».'; else if(est>=20&&Math.abs(k-est)>Math.max(40,est*0.3)) w='⚠️ Les calories ('+r(k)+') ne collent pas avec les macros (≈ '+r(est)+' kcal attendues). <button type="button" onclick="BBXMeal.fixKcal('+Math.round(est)+')">Utiliser '+r(est)+'</button>'; }
+      $('mfPrev').insertAdjacentHTML('beforeend',w?'<div class="mf-warn">'+w+'</div>':''); }
   }
+  function fixKcal(v){ $('mfKcal').value=v; fmPrev(); }
   function syncPortions(){ const d=fm.portions&&fm.portions[0]; fm.serving=d?d.g:0; fm.newLabel=d?d.label:''; }
   function renderUnits(){
     const box=$('mfUnits'), P=fm.portions||[], d=P[0];
@@ -3693,6 +3698,13 @@ window.BBXBk=(function(){
   }
   function offItem(pr){
     const n=pr.nutriments||{}; let kcal=n['energy-kcal_100g']; if(kcal==null&&n['energy_100g']!=null) kcal=n['energy_100g']/4.184;
+    { // contrôle de cohérence : Open Food Facts contient souvent des kcal saisies en kJ ou erronées
+      const kj=+(n['energy-kj_100g']!=null?n['energy-kj_100g']:n['energy_100g']), P=+n.proteins_100g, Fa=+n.fat_100g, C=+n.carbohydrates_100g, ok3=[P,Fa,C].every(v=>isFinite(v)&&n['proteins_100g']!=null&&n['fat_100g']!=null&&n['carbohydrates_100g']!=null), est=ok3?4*P+9*Fa+4*C:null;
+      if(kcal!=null){ kcal=+kcal;
+        if(kcal>900) kcal=kcal/4.184;
+        else if(kj>0&&Math.abs(kcal-kj)/kj<0.03&&kj>60) kcal=kj/4.184;
+        else if(est!=null&&kj>0&&kcal>est*1.5+30&&Math.abs(kj/4.184-est)<=est*0.25+20) kcal=kj/4.184;
+        kcal=Math.round(kcal); } }
     const nm=(txt(pr.product_name_fr)||txt(pr.product_name)).trim(), br=txt(pr.brands).split(',')[0].trim(), full=nm+(br&&nm.toLowerCase().indexOf(br.toLowerCase())<0?' ('+br+')':'');
     const P=offPortions({serving_quantity:pr.serving_quantity,serving_size:txt(pr.serving_size),product_quantity:pr.product_quantity},full);
     return {name:full,kcal:kcal==null?null:+kcal,prot:n.proteins_100g==null?null:+n.proteins_100g,fat:n.fat_100g==null?null:+n.fat_100g,carb:n.carbohydrates_100g==null?null:+n.carbohydrates_100g,serving:P[0]?P[0].g:0,label:P[0]?P[0].label:'',portions:P,unit:'g',emoji:'🛒',off:true,_nm:nm,h:offHealth(pr,n)};
@@ -4338,7 +4350,7 @@ window.BBXBk=(function(){
     setMode:v=>{ MODE=(v==='auto'||v==='fab')?v:'chk'; AUTO=MODE!=='chk'; FABM=MODE==='fab'; try{ localStorage.setItem('phy-cmode',MODE); }catch(e){} applyMode(); calc(); renderCfg(); },
     openCfg:()=>{ renderCfg(); $('mealCfg').classList.add('show'); }, closeCfg:()=>$('mealCfg').classList.remove('show'),
     add:m=>openForm('add',m), edit:(m,i)=>openForm('edit',m,i), del:delItem, move:moveItem, resetDef:resetDef,
-    saveForm:saveForm, closeForm:()=>$('mealForm').classList.remove('show'),
+    saveForm:saveForm, fixKcal:fixKcal, closeForm:()=>$('mealForm').classList.remove('show'),
     ideas:openIdeas, closeIdeas:()=>$('mealIdeas').classList.remove('show'), ideaPick:ideaPick,
     ocr:()=>$('mealPick').classList.add('show'), closePick:()=>$('mealPick').classList.remove('show'), pickCam:()=>{ $('mealPick').classList.remove('show'); $('mfOcrFile').click(); }, pickGal:()=>{ $('mealPick').classList.remove('show'); $('mfOcrGal').click(); },
     scanTable:()=>{ const t=sc.target; stopCam(); closeScan(); openForm('add',t,null,{info:'Prends en photo le tableau nutritionnel du produit, ou choisis une image dans ta galerie.'}); $('mealPick').classList.add('show'); }, scan:scanOpen, closeScan:closeScan, manual:manual, scanMode:setScanMode, scanDesc:renderScanMode, photoMode:photoMode,
