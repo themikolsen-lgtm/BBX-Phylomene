@@ -2540,6 +2540,43 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 <style>.mf-warn{margin-top:8px;padding:8px 10px;border-radius:10px;background:#FFF4D6;color:#6B4600;font:600 12.5px/1.35 system-ui;text-align:left}.mf-warn button{margin-left:6px;border:0;border-radius:8px;padding:5px 9px;background:#F59E0B;color:#15171C;font:700 12px system-ui}</style>
 <style>.mf-p100{margin-top:6px;font:600 12.5px/1.35 system-ui;opacity:.75}.mf-p100 b{font:inherit;color:inherit}</style>
 <style>.mf-ug{text-align:center;font:600 12.5px/1.3 system-ui;opacity:.7;margin:4px 0 6px}#mfBasis button{font-weight:700}</style>
+<style id="formCompact">
+#mealForm .mc-head{margin:0 0 6px !important} #mealForm .mc-head b{font-size:19px !important}
+#mealForm .mf-h{display:none !important}
+#mealForm .mf-s{margin:8px 2px 3px !important;font-size:13px !important;color:#4B5563}
+#mealForm .mf-quick{margin:0 0 4px !important} #mealForm .mf-quick .mc-big{min-height:0 !important}
+#mealForm .mf-quick .ibc{width:34px !important;height:34px !important} #mealForm .mf-quick .ibc svg{width:18px !important;height:18px !important}
+#mealForm .mf-quick em{font-size:12px !important;margin-top:2px !important}
+#mealForm .mf-info{font-size:12.5px !important;line-height:1.3 !important;margin:2px 0 4px !important}
+#mealForm .mf-info:empty{display:none}
+#mealForm .mf-health{display:flex !important;flex-wrap:wrap;gap:2px 8px;margin:0 0 6px !important;padding:8px 10px !important;border-radius:14px !important;box-shadow:none !important}
+#mealForm .mf-health[hidden]{display:none !important}
+#mealForm .mh-v{flex:1 1 100%;margin:0 !important;padding:6px 8px !important;gap:8px !important;border-radius:12px !important}
+#mealForm .mh-v small,#mealForm .mh-src,#mealForm .mh-d{display:none !important}
+#mealForm .mh-v b{font-size:13.5px !important} #mealForm .mh-i{width:26px !important;height:26px !important} #mealForm .mh-i svg{width:15px !important;height:15px !important}
+#mealForm .mh-row{flex:1 1 calc(50% - 8px);grid-template-columns:1fr !important;border:0 !important;padding:4px 0 2px !important;gap:2px !important}
+#mealForm .mh-t{font-size:10px !important}
+#mealForm .mh-ns span,#mealForm .mh-nv span{width:22px !important;height:22px !important;font-size:11.5px !important;border-radius:7px !important}
+#mealForm .mh-ns span.on,#mealForm .mh-nv span.on{transform:scale(1.15) !important;margin:0 2px !important}
+#mealForm .mh-f{flex:1 1 100%;padding-top:4px !important;border:0 !important;gap:4px !important} #mealForm .mh-f span{font-size:11px !important;padding:3px 8px !important}
+#mealForm .mf-chips{padding:0 16px 4px !important;margin-bottom:2px} #mealForm .mf-chip{height:34px !important;padding:0 12px !important;font-size:13px !important}
+#mealForm .mf-name{margin-top:2px} #mealForm .mf-name input{height:44px !important;font-size:16px !important} #mealForm .mf-name input:first-child{width:52px !important;font-size:20px !important}
+#mealForm .mf-four{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+#mealForm .mf-four .mf-pair{display:contents}
+#mealForm .mf-four .mf-f span{font-size:11px !important;margin:0 0 2px 2px !important;display:block}
+#mealForm .mf-four .mf-in{height:42px !important;padding:0 8px !important;border-radius:12px !important}
+#mealForm .mf-four .mf-in input{font-size:17px !important} #mealForm .mf-four .mf-in i{display:none}
+#mealForm .mf-four .mf-f{min-width:0}
+#mealForm #mfBasis{margin:8px 0 6px !important} #mealForm .mf-seg button{padding:7px 4px !important;font-size:13.5px !important}
+#mealForm .mf-in.big{height:46px !important} #mealForm .mf-in.big input{font-size:22px !important}
+#mealForm .mf-qty button{width:46px !important;height:46px !important}
+#mealForm .mf-ug{margin:2px 0 !important;font-size:11.5px !important}
+#mealForm .mf-prev{margin:8px 0 8px !important;padding:8px 10px !important;font-size:14px !important;border-radius:14px !important}
+#mealForm .mf-prev b{font-size:19px !important} #mealForm .mf-prev small{margin-top:1px !important;font-size:12px !important}
+#mealForm .mf-warn{margin-top:4px !important;padding:6px 8px !important}
+#mealForm .mf-p100{margin-top:2px !important;font-size:11.5px !important}
+#mealForm .mf-btns{gap:14px !important} #mealForm .mf-btns .mc-big.ib{width:52px !important;height:52px !important}
+</style>
 </head>
 <body>
 
@@ -2720,20 +2757,20 @@ window.BBXBk=(function(){
   <div class="mf-quick" id="mfQuick"><button class="mc-big ib ibt red" onclick="BBXMeal.scan('form')" aria-label="Scanner un code-barres" title="Scanner un code-barres"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M7 12h10"/></svg></span><em>Scanner</em></button><button class="mc-big ib ibt " onclick="BBXMeal.search('form')" aria-label="Rechercher un produit" title="Rechercher un produit"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></span><em>Rechercher</em></button><button class="mc-big ib ibt" id="mfOcrBtn" onclick="BBXMeal.ocr()" aria-label="Photographier le tableau nutritionnel" title="Photographier le tableau nutritionnel"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M4 9.5h16M4 14.5h16M12 9.5V20"/></svg></span><em>Tableau</em></button><input type="file" id="mfOcrFile" accept="image/*" capture="environment" hidden></div>
   <div class="mf-info" id="mfInfo"></div>
   <div class="mf-health" id="mfHealth" hidden></div>
-  <div class="mf-sec">Repas</div>
+  <div class="mf-sec mf-h">Repas</div>
   <div class="mf-chips" id="mfChips"></div><input type="hidden" id="mfMeal" value="0">
-  <div class="mf-sec">Produit</div>
+  <div class="mf-sec mf-h">Produit</div>
   <div class="mf-name"><input id="mfEmoji" type="text" maxlength="4" placeholder="🍽️" aria-label="Emoji"><input id="mfName" type="text" autocomplete="off" placeholder="Nom du produit" aria-label="Nom du produit"></div>
-  <div class="mf-sec">Valeurs pour 100 <span id="mfU">g</span></div>
-  <div class="mf-pair">
+  <div class="mf-sec mf-s">Valeurs pour 100 <span id="mfU">g</span></div>
+  <div class="mf-four"><div class="mf-pair">
     <label class="mf-f"><span>Calories</span><div class="mf-in"><input id="mfKcal" type="text" inputmode="decimal" placeholder="0"><i>kcal</i></div></label>
     <label class="mf-f"><span>Protéines</span><div class="mf-in"><input id="mfProt" type="text" inputmode="decimal" placeholder="0"><i>g</i></div></label>
   </div>
   <div class="mf-pair">
     <label class="mf-f"><span>Lipides</span><div class="mf-in"><input id="mfFat" type="text" inputmode="decimal" placeholder="0"><i>g</i></div></label>
     <label class="mf-f"><span>Glucides</span><div class="mf-in"><input id="mfCarb" type="text" inputmode="decimal" placeholder="0"><i>g</i></div></label>
-  </div>
-  <div class="mf-sec">Quantité mangée</div>
+  </div></div>
+  <div class="mf-sec mf-h">Quantité mangée</div>
   <div class="mf-seg" id="mfBasis" style="margin:6px 0 8px"><button type="button" data-b="u" class="on" onclick="BBXMeal.basis('u')">À l’unité</button><button type="button" data-b="g" onclick="BBXMeal.basis('g')">Pour 100 g</button></div>
   <div class="mf-qty" id="mfUq" style="display:none"><button type="button" onclick="BBXMeal.uqty(-1)" aria-label="Moins">−</button><div class="mf-in big"><input id="mfUn" type="text" inputmode="decimal" placeholder="1" aria-label="Nombre d’unités"><i id="mfUl">unité</i></div><button type="button" onclick="BBXMeal.uqty(1)" aria-label="Plus">+</button></div>
   <div class="mf-ug" id="mfUg" style="display:none"></div>
