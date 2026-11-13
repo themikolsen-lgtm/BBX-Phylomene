@@ -2538,6 +2538,7 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 .my-brand + * .ml-sub, #mealView h1 span{ }
 </style>
 <style>.mf-warn{margin-top:8px;padding:8px 10px;border-radius:10px;background:#FFF4D6;color:#6B4600;font:600 12.5px/1.35 system-ui;text-align:left}.mf-warn button{margin-left:6px;border:0;border-radius:8px;padding:5px 9px;background:#F59E0B;color:#15171C;font:700 12px system-ui}</style>
+<style>.mf-p100{margin-top:6px;font:600 12.5px/1.35 system-ui;opacity:.75}</style>
 </head>
 <body>
 
@@ -2910,6 +2911,7 @@ window.BBXBk=(function(){
   function fmPrev(){
     const k=num($('mfKcal').value), p=num($('mfProt').value), q=num($('mfQty').value), u=$('mfUnit').value, fa=num($('mfFat').value), ca=num($('mfCarb').value);
     $('mfPrev').innerHTML=(q>0&&k>=0)?('<b>'+r(k*q/100)+'</b> kcal &nbsp;·&nbsp; <b>'+r1((p>=0?p:0)*q/100)+'</b> g de protéines'+((fa>=0||ca>=0)?' &nbsp;·&nbsp; <b>'+r1((fa>=0?fa:0)*q/100)+'</b> g lipides &nbsp;·&nbsp; <b>'+r1((ca>=0?ca:0)*q/100)+'</b> g glucides':'')+'<small>pour '+r1(q)+' '+u+'</small>'):'<small>Indique les calories et la quantité pour voir le total</small>';
+    if(q>0&&k>=0&&Math.abs(q-100)>0.05) $('mfPrev').insertAdjacentHTML('beforeend','<div class="mf-p100">Pour 100 '+u+' : <b>'+r(k)+'</b> kcal · '+r1(p>=0?p:0)+' g prot.'+((fa>=0||ca>=0)?' · '+r1(fa>=0?fa:0)+' g lip. · '+r1(ca>=0?ca:0)+' g gluc.':'')+'</div>');
     { const P=p>=0?p:0, F=fa>=0?fa:null, C=ca>=0?ca:null; let w='';
       if(k>=0&&F!=null&&C!=null){ const est=4*P+9*F+4*C; if(P+F+C>100.5) w='⚠️ Protéines + lipides + glucides dépassent 100 g : ces valeurs ne sont probablement pas « pour 100 g ».'; else if(est>=20&&Math.abs(k-est)>Math.max(40,est*0.3)) w='⚠️ Les calories ('+r(k)+') ne collent pas avec les macros (≈ '+r(est)+' kcal attendues). <button type="button" onclick="BBXMeal.fixKcal('+Math.round(est)+')">Utiliser '+r(est)+'</button>'; }
       $('mfPrev').insertAdjacentHTML('beforeend',w?'<div class="mf-warn">'+w+'</div>':''); }
