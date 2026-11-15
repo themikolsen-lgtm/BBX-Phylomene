@@ -2675,6 +2675,7 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 #mealView .sm-i .sm-v{font-size:15px!important;font-weight:800;font-style:italic;letter-spacing:-.02em}
 #mealView .sm-i .sm-f{font-size:10px;font-weight:800;font-style:italic;color:#1D1D20;white-space:nowrap;line-height:1.1;letter-spacing:-.01em}
 </style>
+<style id="noMini">#mealView .sum-mini{display:none!important}</style>
 </head>
 <body>
 
@@ -4468,7 +4469,7 @@ window.BBXBk=(function(){
   function sumScroll(){ const c=Math.min(Math.max(mv.scrollTop,0),fxD); fx.style.setProperty('--c',c.toFixed(1)); fx.style.setProperty('--p',(c/fxD).toFixed(3)); }
   function sumMeasure(){
     const full=[...fx.querySelectorAll('.sum-full')].find(e=>e.offsetHeight>0); if(!full) return;
-    const hs=Math.ceil(full.offsetHeight); fx.style.setProperty('--hs',hs); fxD=Math.max(1,hs-44); fx.classList.add('ready'); sumScroll();
+    const hs=Math.ceil(full.offsetHeight); fx.style.setProperty('--hs',hs); fxD=Math.max(1,hs); fx.classList.add('ready'); sumScroll();
   }
   mv.addEventListener('scroll',()=>{ if(!fxRaf) fxRaf=requestAnimationFrame(()=>{ fxRaf=0; sumScroll(); }); },{passive:true});
   window.addEventListener('resize',sumMeasure);
