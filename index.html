@@ -2641,6 +2641,30 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 #mealForm .mf-btns{padding-top:6px;padding-bottom:calc(8px + env(safe-area-inset-bottom))}
 #mealForm .mf-btns .mc-big.ib{width:52px !important;height:52px !important} #mealForm #mfOk{height:52px !important}
 </style>
+<style id="macroTiles">
+/* ===== Nutriments accueil : 4 tuiles colorées ===== */
+#mealView .my-fixed .sum-full{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important;padding:12px 12px 14px!important;justify-content:stretch!important;align-items:stretch!important}
+#mealView .my-fixed .sum-full.two{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+#mealView .sum-full .sx-c{border:0!important;border-radius:18px!important;padding:10px 7px 9px!important;background:var(--t)!important;display:flex!important;flex-direction:column;gap:7px;min-width:0}
+#mealView .sum-full .sx-c:first-child,#mealView .sum-full .sx-c:last-child{padding:10px 7px 9px!important}
+#mealView .sum-full .sx-c.k{--c:#2E7D1E;--t:#E7F6DD;--f:#7DD957}
+#mealView .sum-full .sx-c.p{--c:#0F7C8A;--t:#DFF4F6;--f:#35CBD8}
+#mealView .sum-full .sx-c.f{--c:#B45F06;--t:#FFF0D8;--f:#FFB84D}
+#mealView .sum-full .sx-c.c{--c:#C8102E;--t:#FFE5E8;--f:#FF5C60}
+#mealView .sum-full .sx-c.over{--c:#E3213B;--t:#FFE1E4;--f:#E3213B}
+#mealView .sum-full .sx-h{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:3px!important}
+#mealView .sum-full .sx-c .sx-t,#mealView .sum-full .sx-c.k .sx-h .sx-t{font-size:10px!important;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:var(--c)!important;opacity:.8}
+#mealView .sum-full .sx-h b{font-size:25px!important;line-height:1!important;color:var(--c)!important}
+#mealView .sum-full .sx-bar{flex:none!important;width:100%;height:6px!important;border-radius:99px;background:rgba(255,255,255,.8)!important}
+#mealView .sum-full .sx-bar i{background:var(--f)!important}
+#mealView .sum-full .sx-l{font-size:9.5px!important;letter-spacing:-.02em;color:var(--c)!important;opacity:.95;white-space:nowrap}
+#mealView .sum-full .sx-c .sm-in{width:24px}
+#mealView .sum-full .sx-c.k .sm-in{width:28px}
+#mealView .sum-full .sx-c.k .sx-l{font-size:8.5px!important;letter-spacing:-.05em}
+#mealView .sum-full .sx-c.k .sx-l .sm-in{font-size:9px}
+#mealView .my-fixed .my-dsum .my-sum,#mealView .my-fixed.ready .my-dsum .my-sum{background:#fff!important}
+#mealView .my-fixed .sum-mini{background:#FCEFD7;border-radius:0 0 28px 28px}
+</style>
 </head>
 <body>
 
