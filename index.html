@@ -2665,6 +2665,16 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 #mealView .my-fixed .my-dsum .my-sum,#mealView .my-fixed.ready .my-dsum .my-sum{background:#fff!important}
 #mealView .my-fixed .sum-mini{background:#FCEFD7;border-radius:0 0 28px 28px}
 </style>
+<style id="miniLabels">
+/* Version réduite : étiquette + restant + mangé / objectif */
+#mealView .my-fixed .sum-mini{background:#fff!important;height:44px!important;padding:0 14px!important;grid-template-columns:repeat(4,auto)!important;justify-content:space-between!important;gap:6px!important;align-items:center!important}
+#mealView .sm-i{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:1px!important;min-width:0}
+#mealView .sm-i .sm-b{display:none!important}
+#mealView .sm-i .sm-t{display:flex;align-items:baseline;gap:5px;white-space:nowrap;line-height:1}
+#mealView .sm-i .sm-l{font-size:13px;font-weight:800;font-style:italic;color:#C3CAD4;letter-spacing:-.02em}
+#mealView .sm-i .sm-v{font-size:15px!important;font-weight:800;font-style:italic;letter-spacing:-.02em}
+#mealView .sm-i .sm-f{font-size:10px;font-weight:800;font-style:italic;color:#1D1D20;white-space:nowrap;line-height:1.1;letter-spacing:-.01em}
+</style>
 </head>
 <body>
 
@@ -2991,8 +3001,8 @@ window.BBXBk=(function(){
     BW('barP',P/S.pg); $('barP').closest('.sx-c').classList.toggle('over',prem<0);
     const frem=S.fg-F; $('myFt').textContent=r(F); $('myFrem').textContent=r(Math.abs(frem)); $('myFremLab').textContent=frem>=0?'Restants':'Dépassé'; BW('barF',F/S.fg); $('barF').closest('.sx-c').classList.toggle('over',frem<0);
     const crem=S.cg-C; $('myCt').textContent=r(C); $('myCrem').textContent=r(Math.abs(crem)); $('myCremLab').textContent=crem>=0?'Restants':'Dépassé'; BW('barC',S.cg>0?C/S.cg:0); $('barC').closest('.sx-c').classList.toggle('over',crem<0);
-    const MN=(k,rem,f)=>{ const v=$('mn'+k), b=$('mnb'+k); if(!v) return; v.textContent=r(Math.abs(rem)); b.style.width=(Math.max(0,Math.min(1,f||0))*100)+'%'; v.parentElement.classList.toggle('over',rem<0); };
-    MN('K',rem,K/S.kg); MN('P',prem,P/S.pg); MN('F',frem,F/S.fg); MN('C',crem,S.cg>0?C/S.cg:0);
+    const MN=(k,rem,f,e,g)=>{ const v=$('mn'+k), b=$('mnb'+k); if(!v) return; v.textContent=r(Math.abs(rem)); b.style.width=(Math.max(0,Math.min(1,f||0))*100)+'%'; v.closest('.sm-i').classList.toggle('over',rem<0); const fr=$('mnf'+k); if(fr) fr.textContent=r(e)+' / '+r(g)+(k==='K'?'':'g'); };
+    MN('K',rem,K/S.kg,K,S.kg); MN('P',prem,P/S.pg,P,S.pg); MN('F',frem,F/S.fg,F,S.fg); MN('C',crem,S.cg>0?C/S.cg:0,C,S.cg);
     $('myMacNote').textContent=unk?('⚠️ '+unk+' produit'+(unk>1?'s':'')+(AUTO?' compté':' coché')+(unk>1?'s':'')+' sans lipides ni glucides : complète-les (Réglages ✎) pour un total exact.'):'';
     recordToday(K,P,F,C,HM,HI);
     $('myPlan').textContent='Prévu aujourd’hui : '+r(TK)+' kcal · '+r(TP)+' g de protéines';
@@ -4453,8 +4463,8 @@ window.BBXBk=(function(){
   // ---------- progression : rétrécit en défilant, se redéploie en haut ----------
   const fx=document.querySelector('.my-fixed'), mv=$('mealView');
   let fxD=1, fxRaf=0;
-  function miniStrip(a,ids){ return a.map(x=>`<div class="sm-i ${x.cls}${x.rem<0?' over':''}"><div class="sm-b"><i${ids?' id="mnb'+x.k+'"':''} style="width:${Math.max(0,Math.min(1,x.f||0))*100}%"></i></div><b class="sm-v"${ids?' id="mn'+x.k+'"':''}>${Math.abs(Math.round(x.rem))}</b></div>`).join(''); }
-  $('sumMini').innerHTML=miniStrip([{k:'K',t:'kcal',cls:'k',rem:0,f:0},{k:'P',t:'Prot.',cls:'p',rem:0,f:0},{k:'F',t:'Lip.',cls:'f',rem:0,f:0},{k:'C',t:'Gluc.',cls:'c',rem:0,f:0}],true);
+  function miniStrip(a,ids){ return a.map(x=>{ const lab=(x.t==='kcal'?'Kcal':x.t); const fr=(x.e!=null)?(x.e+' / '+x.g+(x.k==='K'?'':'g')):''; return `<div class="sm-i ${x.cls}${x.rem<0?' over':''}"><div class="sm-b"><i${ids?' id="mnb'+x.k+'"':''} style="width:${Math.max(0,Math.min(1,x.f||0))*100}%"></i></div><div class="sm-t"><span class="sm-l">${lab}</span><b class="sm-v"${ids?' id="mn'+x.k+'"':''}>${Math.abs(Math.round(x.rem))}</b></div><div class="sm-f"${ids?' id="mnf'+x.k+'"':''}>${fr}</div></div>`; }).join(''); }
+  $('sumMini').innerHTML=miniStrip([{k:'K',t:'kcal',cls:'k',rem:0,f:0,e:0,g:0},{k:'P',t:'Prot.',cls:'p',rem:0,f:0,e:0,g:0},{k:'F',t:'Lip.',cls:'f',rem:0,f:0,e:0,g:0},{k:'C',t:'Gluc.',cls:'c',rem:0,f:0,e:0,g:0}],true);
   function sumScroll(){ const c=Math.min(Math.max(mv.scrollTop,0),fxD); fx.style.setProperty('--c',c.toFixed(1)); fx.style.setProperty('--p',(c/fxD).toFixed(3)); }
   function sumMeasure(){
     const full=[...fx.querySelectorAll('.sum-full')].find(e=>e.offsetHeight>0); if(!full) return;
@@ -4488,7 +4498,7 @@ window.BBXBk=(function(){
       return `<section class="my-card past" style="--mc:${col[0]};--mt:${col[1]}"><div class="my-mh"><div class="my-mi">${mm?mm[1]:'🍽️'}</div><div class="my-mt"><b>${esc(t)}</b><span>${its.length} aliment${its.length>1?'s':''} · ${H.m[t][1]} g prot.</span></div><div class="my-mk"><b>${H.m[t][0]}</b><small>kcal</small></div></div>`+
         its.map(x=>`<div class="my-it"><div class="my-row"><div class="my-th">${emo[x[1]]||'🍽️'}</div><div class="my-nm"><b>${esc(x[1])}</b><span>${esc(x[2])}${x[5]!=null?' · '+x[5]+' g lip. · '+x[6]+' g gluc.':''}</span></div><div class="my-kc"><b>${x[3]}</b><small>kcal</small></div></div></div>`).join('')+'</section>';
     }).join('');
-    $('pastSum').hidden=false; $('pastSum').innerHTML=`<div class="my-sum mp-sum"><div class="sum-full${H.f==null?' two':''}">${cols}</div><div class="sum-mini">${miniStrip(H.f!=null?[{k:'K',t:'kcal',cls:'k',rem:gk-H.k,f:H.k/gk},{k:'P',t:'Prot.',cls:'p',rem:gp-H.p,f:H.p/gp},{k:'F',t:'Lip.',cls:'f',rem:(H.fg||S.fg)-H.f,f:H.f/(H.fg||S.fg)},{k:'C',t:'Gluc.',cls:'c',rem:(H.cg||S.cg)-H.c,f:H.c/(H.cg||S.cg)}]:[{k:'K',t:'kcal',cls:'k',rem:gk-H.k,f:H.k/gk},{k:'P',t:'Prot.',cls:'p',rem:gp-H.p,f:H.p/gp}],false)}</div></div>`; box.innerHTML=cards; sumMeasure();
+    $('pastSum').hidden=false; $('pastSum').innerHTML=`<div class="my-sum mp-sum"><div class="sum-full${H.f==null?' two':''}">${cols}</div><div class="sum-mini">${miniStrip(H.f!=null?[{k:'K',t:'kcal',cls:'k',rem:gk-H.k,f:H.k/gk,e:H.k,g:gk},{k:'P',t:'Prot.',cls:'p',rem:gp-H.p,f:H.p/gp,e:H.p,g:gp},{k:'F',t:'Lip.',cls:'f',rem:(H.fg||S.fg)-H.f,f:H.f/(H.fg||S.fg),e:H.f,g:(H.fg||S.fg)},{k:'C',t:'Gluc.',cls:'c',rem:(H.cg||S.cg)-H.c,f:H.c/(H.cg||S.cg),e:H.c,g:(H.cg||S.cg)}]:[{k:'K',t:'kcal',cls:'k',rem:gk-H.k,f:H.k/gk,e:H.k,g:gk},{k:'P',t:'Prot.',cls:'p',rem:gp-H.p,f:H.p/gp,e:H.p,g:gp}],false)}</div></div>`; box.innerHTML=cards; sumMeasure();
   }
   function dayPrev(){
     if(!Object.keys(HIST).length || viewOff-1<oldestOff()){ showToast('Pas d’historique plus ancien : chaque jour est enregistré dès que tu coches ce que tu as mangé.'); return; }
