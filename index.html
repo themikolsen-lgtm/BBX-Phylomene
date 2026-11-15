@@ -2641,30 +2641,6 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 #mealForm .mf-btns{padding-top:6px;padding-bottom:calc(8px + env(safe-area-inset-bottom))}
 #mealForm .mf-btns .mc-big.ib{width:52px !important;height:52px !important} #mealForm #mfOk{height:52px !important}
 </style>
-<style id="macroTiles">
-/* ===== Nutriments accueil : 4 tuiles colorées ===== */
-#mealView .my-fixed .sum-full{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important;padding:12px 12px 14px!important;justify-content:stretch!important;align-items:stretch!important}
-#mealView .my-fixed .sum-full.two{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-#mealView .sum-full .sx-c{border:0!important;border-radius:18px!important;padding:10px 7px 9px!important;background:var(--t)!important;display:flex!important;flex-direction:column;gap:7px;min-width:0}
-#mealView .sum-full .sx-c:first-child,#mealView .sum-full .sx-c:last-child{padding:10px 7px 9px!important}
-#mealView .sum-full .sx-c.k{--c:#2E7D1E;--t:#E7F6DD;--f:#7DD957}
-#mealView .sum-full .sx-c.p{--c:#0F7C8A;--t:#DFF4F6;--f:#35CBD8}
-#mealView .sum-full .sx-c.f{--c:#B45F06;--t:#FFF0D8;--f:#FFB84D}
-#mealView .sum-full .sx-c.c{--c:#C8102E;--t:#FFE5E8;--f:#FF5C60}
-#mealView .sum-full .sx-c.over{--c:#E3213B;--t:#FFE1E4;--f:#E3213B}
-#mealView .sum-full .sx-h{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:3px!important}
-#mealView .sum-full .sx-c .sx-t,#mealView .sum-full .sx-c.k .sx-h .sx-t{font-size:10px!important;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:var(--c)!important;opacity:.8}
-#mealView .sum-full .sx-h b{font-size:25px!important;line-height:1!important;color:var(--c)!important}
-#mealView .sum-full .sx-bar{flex:none!important;width:100%;height:6px!important;border-radius:99px;background:rgba(255,255,255,.8)!important}
-#mealView .sum-full .sx-bar i{background:var(--f)!important}
-#mealView .sum-full .sx-l{font-size:9.5px!important;letter-spacing:-.02em;color:var(--c)!important;opacity:.95;white-space:nowrap}
-#mealView .sum-full .sx-c .sm-in{width:24px}
-#mealView .sum-full .sx-c.k .sm-in{width:28px}
-#mealView .sum-full .sx-c.k .sx-l{font-size:8.5px!important;letter-spacing:-.05em}
-#mealView .sum-full .sx-c.k .sx-l .sm-in{font-size:9px}
-#mealView .my-fixed .my-dsum .my-sum,#mealView .my-fixed.ready .my-dsum .my-sum{background:#fff!important}
-#mealView .my-fixed .sum-mini{background:#FCEFD7;border-radius:0 0 28px 28px}
-</style>
 <style id="miniLabels">
 /* Version réduite : étiquette + restant + mangé / objectif */
 #mealView .my-fixed .sum-mini{background:#fff!important;height:44px!important;padding:0 14px!important;grid-template-columns:repeat(4,auto)!important;justify-content:space-between!important;gap:6px!important;align-items:center!important}
@@ -2676,6 +2652,27 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 #mealView .sm-i .sm-f{font-size:10px;font-weight:800;font-style:italic;color:#1D1D20;white-space:nowrap;line-height:1.1;letter-spacing:-.01em}
 </style>
 <style id="noMini">#mealView .sum-mini{display:none!important}</style>
+<style id="macroTiles">
+/* ===== Nutriments accueil : tuiles à anneau ===== */
+#mealView .my-fixed .sum-full{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:7px!important;padding:12px 10px 14px!important;justify-content:stretch!important;align-items:stretch!important}
+#mealView .my-fixed .sum-full.two{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+#mealView .sum-full .sx-c{position:relative;border:0!important;border-radius:20px!important;padding:9px 4px 8px!important;background:var(--t)!important;display:grid!important;grid-template-rows:auto 48px auto;justify-items:center;align-items:center;row-gap:6px;min-width:0}
+#mealView .sum-full .sx-c:first-child,#mealView .sum-full .sx-c:last-child{padding:9px 4px 8px!important}
+#mealView .sum-full .sx-c.k{--c:#2E7D1E;--t:#E7F6DD;--f:#4FA64A}
+#mealView .sum-full .sx-c.p{--c:#0F7C8A;--t:#DFF4F6;--f:#2FB8C8}
+#mealView .sum-full .sx-c.f{--c:#B45F06;--t:#FFF0D8;--f:#F2A33A}
+#mealView .sum-full .sx-c.c{--c:#C8102E;--t:#FFE5E8;--f:#E8505B}
+#mealView .sum-full .sx-c.over{--c:#E3213B;--t:#FFE1E4;--f:#E3213B}
+#mealView .sum-full .sx-h{display:contents!important}
+#mealView .sum-full .sx-c .sx-t,#mealView .sum-full .sx-c.k .sx-h .sx-t{font-size:10px!important;font-weight:900;text-transform:uppercase;letter-spacing:.09em;color:var(--c)!important;opacity:.85;line-height:1}
+#mealView .sum-full .sx-bar{width:48px!important;height:48px!important;flex:none!important;border-radius:50%!important;overflow:visible;background:conic-gradient(var(--f) calc(var(--pct,0) * 1%),rgba(255,255,255,.9) 0)!important;-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 6px),#000 calc(100% - 5px));mask:radial-gradient(farthest-side,transparent calc(100% - 6px),#000 calc(100% - 5px))}
+#mealView .sum-full .sx-bar i{display:none!important}
+#mealView .sum-full .sx-h b{position:absolute;left:0;right:0;top:calc(9px + 10px + 6px + 24px);transform:translateY(-50%);text-align:center;font-size:14px!important;line-height:1!important;color:var(--c)!important;letter-spacing:-.04em}
+#mealView .sum-full .sx-l{font-size:9px!important;color:var(--c)!important;opacity:.95;white-space:nowrap;letter-spacing:-.03em;text-align:center}
+#mealView .sum-full .sx-c .sm-in{width:23px}
+#mealView .sum-full .sx-c.k .sm-in{width:27px}
+#mealView .my-fixed .my-dsum .my-sum,#mealView .my-fixed.ready .my-dsum .my-sum{background:#fff!important}
+</style>
 </head>
 <body>
 
@@ -4560,6 +4557,15 @@ window.BBXBk=(function(){
     if(S.day!==today()){ S.d={}; S.day=today(); if(AUTO){ MEALS.forEach(mm=>{ mm[2]=[]; }); S.w={}; saveDef(); } save(); build(); calc(); renderCfg(); }
     autoView();
   });
+})();
+</script>
+<script id="pctSync">
+(function(){
+  function sync(){ document.querySelectorAll('#mealView .sum-full .sx-c').forEach(c=>{ const i=c.querySelector('.sx-bar i'); if(!i) return; const w=Math.max(0,Math.min(100,parseFloat(i.style.width)||0)); if(c.style.getPropertyValue('--pct')!==String(w)) c.style.setProperty('--pct',w); }); }
+  let raf=0; const go=()=>{ if(raf) return; raf=requestAnimationFrame(()=>{ raf=0; sync(); }); };
+  const mv=document.getElementById('mealView'); if(!mv) return;
+  new MutationObserver(go).observe(mv,{subtree:true,childList:true,attributes:true,attributeFilter:['style']});
+  sync();
 })();
 </script>
 </body>
