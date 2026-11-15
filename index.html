@@ -4467,7 +4467,7 @@ window.BBXBk=(function(){
   let fxD=1, fxRaf=0;
   function miniStrip(a,ids){ return a.map(x=>{ const lab=(x.t==='kcal'?'Kcal':x.t); const fr=(x.e!=null)?(x.e+' / '+x.g+(x.k==='K'?'':'g')):''; return `<div class="sm-i ${x.cls}${x.rem<0?' over':''}"><div class="sm-b"><i${ids?' id="mnb'+x.k+'"':''} style="width:${Math.max(0,Math.min(1,x.f||0))*100}%"></i></div><div class="sm-t"><span class="sm-l">${lab}</span><b class="sm-v"${ids?' id="mn'+x.k+'"':''}>${Math.abs(Math.round(x.rem))}</b></div><div class="sm-f"${ids?' id="mnf'+x.k+'"':''}>${fr}</div></div>`; }).join(''); }
   $('sumMini').innerHTML=miniStrip([{k:'K',t:'kcal',cls:'k',rem:0,f:0,e:0,g:0},{k:'P',t:'Prot.',cls:'p',rem:0,f:0,e:0,g:0},{k:'F',t:'Lip.',cls:'f',rem:0,f:0,e:0,g:0},{k:'C',t:'Gluc.',cls:'c',rem:0,f:0,e:0,g:0}],true);
-  function sumScroll(){ const c=Math.min(Math.max(mv.scrollTop,0),fxD); fx.style.setProperty('--c',c.toFixed(1)); fx.style.setProperty('--p',(c/fxD).toFixed(3)); }
+  let sLast=0, sC=0; function sumScroll(){ const st=Math.max(mv.scrollTop,0), d=st-sLast; sLast=st; sC=Math.max(0,Math.min(fxD,sC+(d<0?d*2.6:d))); sC=Math.min(sC,st); fx.style.setProperty('--c',sC.toFixed(1)); fx.style.setProperty('--p',(sC/fxD).toFixed(3)); }
   function sumMeasure(){
     const full=[...fx.querySelectorAll('.sum-full')].find(e=>e.offsetHeight>0); if(!full) return;
     const hs=Math.ceil(full.offsetHeight); fx.style.setProperty('--hs',hs); fxD=Math.max(1,hs); fx.classList.add('ready'); sumScroll();
