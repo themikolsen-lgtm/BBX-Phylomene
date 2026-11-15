@@ -2678,6 +2678,7 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 #mealView .my-fixed::before{content:"";position:absolute;left:0;right:0;top:0;bottom:-30px;z-index:-1;pointer-events:none;background:rgba(242,244,246,.8);-webkit-backdrop-filter:blur(12px) saturate(1.15);backdrop-filter:blur(12px) saturate(1.15);-webkit-mask-image:linear-gradient(#000 0,#000 calc(100% - 38px),transparent 100%);mask-image:linear-gradient(#000 0,#000 calc(100% - 38px),transparent 100%)}
 </style>
 <style id="noHint">#mealView .my-hint{display:none!important}</style>
+<style id="smoothSum">#mealView .my-fixed .my-sum,#mealView .my-fixed .sum-full,#mealView .my-fixed .sum-mini{will-change:height,opacity,transform}</style>
 </head>
 <body>
 
@@ -4468,7 +4469,7 @@ window.BBXBk=(function(){
   let fxD=1, fxRaf=0;
   function miniStrip(a,ids){ return a.map(x=>{ const lab=(x.t==='kcal'?'Kcal':x.t); const fr=(x.e!=null)?(x.e+' / '+x.g+(x.k==='K'?'':'g')):''; return `<div class="sm-i ${x.cls}${x.rem<0?' over':''}"><div class="sm-b"><i${ids?' id="mnb'+x.k+'"':''} style="width:${Math.max(0,Math.min(1,x.f||0))*100}%"></i></div><div class="sm-t"><span class="sm-l">${lab}</span><b class="sm-v"${ids?' id="mn'+x.k+'"':''}>${Math.abs(Math.round(x.rem))}</b></div><div class="sm-f"${ids?' id="mnf'+x.k+'"':''}>${fr}</div></div>`; }).join(''); }
   $('sumMini').innerHTML=miniStrip([{k:'K',t:'kcal',cls:'k',rem:0,f:0,e:0,g:0},{k:'P',t:'Prot.',cls:'p',rem:0,f:0,e:0,g:0},{k:'F',t:'Lip.',cls:'f',rem:0,f:0,e:0,g:0},{k:'C',t:'Gluc.',cls:'c',rem:0,f:0,e:0,g:0}],true);
-  let sLast=0, sC=0; function sumScroll(){ const st=Math.max(mv.scrollTop,0), d=st-sLast; sLast=st; sC=Math.max(0,Math.min(fxD,sC+(d<0?d*2.6:d))); sC=Math.min(sC,st); fx.style.setProperty('--c',sC.toFixed(1)); fx.style.setProperty('--p',(sC/fxD).toFixed(3)); }
+  let sLast=0, sC=0, sCur=null, sAnim=0; function sumPaint(){ sCur+=(sC-sCur)*0.2; if(Math.abs(sC-sCur)<0.4) sCur=sC; fx.style.setProperty('--c',sCur.toFixed(1)); fx.style.setProperty('--p',(sCur/fxD).toFixed(3)); sAnim=(sCur!==sC)?requestAnimationFrame(sumPaint):0; } function sumScroll(){ const st=Math.max(mv.scrollTop,0), d=st-sLast; sLast=st; sC=Math.max(0,Math.min(fxD,sC+(d<0?d*2.2:d))); sC=Math.min(sC,st); if(sCur===null) sCur=sC; if(!sAnim) sAnim=requestAnimationFrame(sumPaint); }
   function sumMeasure(){
     const full=[...fx.querySelectorAll('.sum-full')].find(e=>e.offsetHeight>0); if(!full) return;
     const hs=Math.ceil(full.offsetHeight); fx.style.setProperty('--hs',hs); fxD=Math.max(1,hs); fx.classList.add('ready'); sumScroll();
