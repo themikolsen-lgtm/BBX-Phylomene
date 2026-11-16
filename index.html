@@ -3044,12 +3044,6 @@ html.mt-beta #mealHist .mc-head .ht-cfg svg{ width:22px; height:22px; fill:curre
       <div class="cm-seg" id="usdaSeg" role="group" aria-label="Base USDA"><button data-u="on" onclick="BBXMeal.setUsda('on')">Oui</button><button data-u="off" onclick="BBXMeal.setUsda('off')">Non</button></div></div>
     <input id="usdaKey" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Clé API personnelle (facultatif)" onchange="BBXMeal.setUsdaKey(this.value)" style="margin-top:2px;width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #E6E9EE;border-radius:12px;font:600 14px system-ui;background:#F7F8FA">
     <div class="cm-d">Clé USDA facultative : sans elle, limite d’environ 30 recherches par heure. Clé gratuite sur <a href="https://fdc.nal.usda.gov/api-key-signup" target="_blank" rel="noopener" style="color:#0A7">fdc.nal.usda.gov</a>.</div>
-    <div class="cf-row"><div class="cf-n"><b>Edamam</b><span>Aliments et produits, en anglais · identifiants requis</span></div>
-      <div class="cm-seg" id="edamSeg" role="group" aria-label="Base Edamam"><button data-u="on" onclick="BBXMeal.setEdam('on')">Oui</button><button data-u="off" onclick="BBXMeal.setEdam('off')">Non</button></div></div>
-    <input id="edamId" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Edamam · Application ID" onchange="BBXMeal.setEdamKey('id',this.value)" style="margin-top:2px;width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #E6E9EE;border-radius:12px;font:600 14px system-ui;background:#F7F8FA">
-    <input id="edamKey" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Edamam · Application Key" onchange="BBXMeal.setEdamKey('key',this.value)" style="margin-top:6px;width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #E6E9EE;border-radius:12px;font:600 14px system-ui;background:#F7F8FA">
-    <div class="cm-d">Edamam demande un compte : crée une application « Food Database API » sur <a href="https://developer.edamam.com/food-database-api" target="_blank" rel="noopener" style="color:#0A7">developer.edamam.com</a>, puis colle ici l’Application ID et l’Application Key. Ils restent sur ce téléphone.</div>
-    
   </div>
   </div>
   <details class="cf-det" style="--c:#FF8FB8"><summary><i>🍽️</i>Mes repas et produits</summary>
@@ -3339,7 +3333,7 @@ window.BBXBk=(function(){
     lensSeg();
     if(window.BBXSync) BBXSync.render();
     ciqSeg();
-    try{ const k=$('usdaKey'); if(k) k.value=localStorage.getItem('phy-usdakey')||''; }catch(e){} edamSeg(); try{ $('edamId').value=localStorage.getItem(EDAMID)||''; $('edamKey').value=localStorage.getItem(EDAMKEY)||''; }catch(e){}
+    try{ const k=$('usdaKey'); if(k) k.value=localStorage.getItem('phy-usdakey')||''; }catch(e){}
     applyMode(); if(window.BBXBk) BBXBk.refresh(); { const d=$('cmDesc'); if(d) d.textContent=MODE==='fab'?'Bouton central : comptage automatique, sans case. Un seul bouton ＋ en bas de l’écran propose le repas de l’heure (modifiable), puis Idées, Scanner, Rechercher ou Récurrent. Chaque nouveau jour, les repas repartent vides.':AUTO?'Sans case : chaque produit présent dans un repas est compté tout de suite (kcal et macros). Supprime-le pour le retirer du total. Chaque nouveau jour, les repas repartent vides (l’historique est gardé) : le bouton Récurrent remet tes produits habituels en un geste.':'Avec cases : tu coches un produit pour le compter dans ta journée.'; }
     $('mcList').innerHTML=MEALS.map(([t,ic,items],m)=>`<section class="mc-meal" style="--mc:${mcol(t)[0]};--mx:${mcx(t)};--md:${mcd(t)};--mt:${mcol(t)[1]}"><div class="mc-mh"><span class="mc-mi">${esc(ic)}</span><b>${esc(t)}</b><button class="mc-sm" onclick="BBXMeal.renameMeal(${m})" aria-label="Renommer ${esc(t)}">✎</button><button class="mc-sm del" onclick="BBXMeal.delMeal(${m})" aria-label="Supprimer le repas ${esc(t)}">🗑</button><button class="mc-plus" onclick="BBXMeal.add(${m})" aria-label="Ajouter à ${esc(t)}">＋</button></div>`+
       (items.length?items.map((it,i)=>{ const q=per100(it); return `<div class="mc-it"><span class="mc-th">${esc(it[7])}</span><div class="mc-nm"><b>${esc(it[0])}</b><span>${r(q.k)} kcal · ${r1(q.p)} g prot.${q.f!=null&&q.c!=null?' · '+r1(q.f)+' g lip. · '+r1(q.c)+' g gluc.':''} / 100 ${it[6]}</span></div><div class="mc-acts"><button onclick="BBXMeal.move(${m},${i},-1)" ${i===0?'disabled':''} aria-label="Monter">▲</button><button onclick="BBXMeal.move(${m},${i},1)" ${i===items.length-1?'disabled':''} aria-label="Descendre">▼</button><button onclick="BBXMeal.edit(${m},${i})" aria-label="Modifier">✎</button><button class="del" onclick="BBXMeal.del(${m},${i})" aria-label="Supprimer">🗑</button></div></div>`; }).join(''):'<div class="mc-empty">Aucun produit dans ce repas</div>')+`</section>`).join('');
@@ -4149,7 +4143,7 @@ window.BBXBk=(function(){
     const L=sr.list; L.forEach((x,i)=>{ x._i=i; });
     const row=x=>`<div class="sr-row"><button class="sr-it" onclick="BBXMeal.pick(${x._i},event)"><span class="sr-th">${esc(x.emoji||'🛒')}</span><span class="sr-nm"><b>${esc(x.name)}</b><span>${x.kcal!=null?r(x.kcal):'?'} kcal · ${x.prot!=null?r1(x.prot):'?'} g prot.${x.fat!=null&&x.carb!=null?' · '+r1(x.fat)+' g lip. · '+r1(x.carb)+' g gluc.':''} / 100 ${x.unit||'g'}${x.serving>0&&x.label&&!/^portion de /.test(x.label)?' · 1 '+esc(x.label)+' ≈ '+r(x.serving)+' '+(x.unit||'g'):''}</span></span><span class="sr-go">＋</span></button>${x.fav?`<button class="sr-del" onclick="BBXMeal.favDel(${x._fi})" aria-label="Retirer de mes produits">✕</button>`:''}</div>`;
     const sec=(t,arr)=>arr.length?`<div class="sr-sec">${t}</div>`+arr.map(row).join(''):'';
-    const h=sec('Mes produits (enregistrés sur ton téléphone)',L.filter(x=>x.fav))+sec('Aliments courants',L.filter(x=>x.db))+sec('Ciqual · ANSES (base française)',L.filter(x=>x.ciq))+sec('Open Food Facts',L.filter(x=>x.off))+sec('USDA FoodData Central',L.filter(x=>x.usda))+sec('Edamam',L.filter(x=>x.edam));
+    const h=sec('Mes produits (enregistrés sur ton téléphone)',L.filter(x=>x.fav))+sec('Aliments courants',L.filter(x=>x.db))+sec('Ciqual · ANSES (base française)',L.filter(x=>x.ciq))+sec('Open Food Facts',L.filter(x=>x.off))+sec('USDA FoodData Central',L.filter(x=>x.usda));
     const qv=$('srQ').value.trim();
     $('srList').innerHTML=(h||'<div class="sr-note">Aucun résultat pour le moment.</div>')+(extra||'')+(qv.length>=2?'<button class="sr-manual" onclick="BBXMeal.addTyped()">＋ Ajouter « '+esc(qv)+' » à la main</button>':'');
   }
@@ -4300,32 +4294,6 @@ window.BBXBk=(function(){
     }catch(e){ return {items:[],err:e}; }
     finally{ clearTimeout(t); }
   }
-  // --- Edamam Food Database (identifiants personnels) ---
-  const EDAMID='phy-edamid', EDAMKEY='phy-edamkey', EDAMON='phy-edamon';
-  const edamCred=()=>{ try{ return [(localStorage.getItem(EDAMID)||'').trim(),(localStorage.getItem(EDAMKEY)||'').trim()]; }catch(e){ return ['','']; } };
-  const edamOn=()=>{ try{ const c=edamCred(); return localStorage.getItem(EDAMON)!=='off'&&!!c[0]&&!!c[1]; }catch(e){ return false; } };
-  function edamSeg(){ let v='on'; try{ v=localStorage.getItem(EDAMON)==='off'?'off':'on'; }catch(e){} document.querySelectorAll('#edamSeg [data-u]').forEach(b=>{ const o=b.dataset.u===v; b.classList.toggle('on',o); b.setAttribute('aria-pressed',o); }); }
-  function edamItem(h){
-    const f=h&&h.food; if(!f||!f.label) return null; const n=f.nutrients||{}, num=v=>(v==null||!isFinite(+v))?null:Math.round(+v*10)/10;
-    let nm=String(f.label).trim(); if(nm===nm.toUpperCase()) nm=nm.toLowerCase(); nm=nm.charAt(0).toUpperCase()+nm.slice(1);
-    const br=String(f.brand||'').trim(); if(br&&nm.toLowerCase().indexOf(br.toLowerCase())<0) nm+=' ('+br+')';
-    const kcal=num(n.ENERC_KCAL), hh={}; if(n.FIBTG!=null) hh.fib=+n.FIBTG;
-    const P=[]; (h.measures||[]).forEach(m=>{ const g=+m.weight; if(m.label&&g>0&&g<1500&&!/^(gram|kilogram|ounce|pound|milliliter|liter)$/i.test(m.label)&&P.length<3) P.push({label:String(m.label).toLowerCase(),g:Math.round(g)}); });
-    return {name:nm,kcal:kcal==null?null:Math.round(kcal),prot:num(n.PROCNT),fat:num(n.FAT),carb:num(n.CHOCDF),serving:P[0]?P[0].g:0,label:P[0]?P[0].label:'',portions:P,unit:'g',emoji:'🥗',edam:true,h:Object.keys(hh).length?hh:undefined};
-  }
-  async function fetchEdam(q){
-    if(!edamOn()) return {items:[]};
-    const c=edamCred(), url='https://api.edamam.com/api/food-database/v2/parser?app_id='+enc(c[0])+'&app_key='+enc(c[1])+'&ingr='+enc(q)+'&nutrition-type=logging';
-    const ctl=new AbortController(), t=setTimeout(()=>ctl.abort(),8000);
-    try{
-      const res=await fetch(url,{signal:ctl.signal});
-      if(!res.ok){ const e=new Error('HTTP '+res.status); e.status=res.status; throw e; }
-      const j=await res.json(), seen={}, out=[];
-      (j.hints||[]).forEach(h=>{ const it=edamItem(h); if(!it) return; const k=normS(it.name)+'|'+it.kcal; if(seen[k]) return; seen[k]=1; out.push(it); });
-      return {items:out.slice(0,15)};
-    }catch(e){ return {items:[],err:e}; }
-    finally{ clearTimeout(t); }
-  }
   // --- Ciqual (ANSES, France) : chargée à la demande, jamais au démarrage ---
   const CIQON=USDAKEY.replace('usdakey','ciqon'), XDBC={rows:null,p:null};
   const ciqOn=()=>{ try{ return localStorage.getItem(CIQON)!=='off'; }catch(e){ return true; } };
@@ -4356,7 +4324,7 @@ window.BBXBk=(function(){
     let lx=''; const R=e=>{ lx=e; srRender(e); };
     clearTimeout(srTimer);
     const q=$('srQ').value.trim(); if(isCodeQ(q)){ searchCode(q); return; } if(q.length<2){ R('<div class="sr-note">Tape au moins 2 lettres.</div>'); return; }
-    const my=++sr.n, base=localResults(q); sr.list=base; const usdaP=fetchUSDA(q), edamP=fetchEdam(q); xEnsure(q);
+    const my=++sr.n, base=localResults(q); sr.list=base; const usdaP=fetchUSDA(q); xEnsure(q);
     R('<div class="sr-note" id="srWait">Recherche sur Open Food Facts…</div>');
     try{
       const net=await fetchOFF(q); if(my!==sr.n) return;
@@ -4369,9 +4337,6 @@ window.BBXBk=(function(){
     const u=await usdaP; if(my!==sr.n) return;
     if(u.items.length){ sr.list=sr.list.concat(u.items); srRender(/Rien de plus trouvé/.test(lx)?'':lx); }
     else if(u.err&&u.err.status===429){ srRender(lx+'<div class="sr-note">USDA : limite de la clé de démo atteinte. Ajoute ta clé gratuite dans les réglages Meal (⚙).</div>'); }
-    const ed=await edamP; if(my!==sr.n) return;
-    if(ed.items.length){ sr.list=sr.list.concat(ed.items); srRender(/Rien de plus trouvé/.test(lx)?'':lx); }
-    else if(ed.err){ const st=ed.err.status; srRender(lx+'<div class="sr-note">Edamam : '+(st===401||st===403?'identifiants refusés, vérifie l’Application ID et la Key dans les réglages Meal.':st===429?'limite de ton forfait atteinte.':'pas de réponse.')+'</div>'); }
   }
   function addTyped(){ const q=$('srQ').value.trim(); sr.fromForm=false; openForm('add',sr.target,null,{name:q,info:'Renseigne les calories et les protéines pour 100 g.'}); }
   // ajout direct d'un produit (bouton ＋) : pas de formulaire, quantité habituelle ou portion
@@ -4979,8 +4944,6 @@ window.BBXBk=(function(){
     setUsda:v=>{ try{ localStorage.setItem(USDAON,v==='off'?'off':'on'); }catch(e){} usdaSeg(); },
     setTheme:v=>{ v=v==='beta'?'beta':'normal'; try{ localStorage.setItem(THEMEKEY,v); }catch(e){} document.documentElement.classList.toggle('mt-beta',v==='beta'); themeSeg(); },
     setLens:v=>{ try{ localStorage.setItem(LENSKEY,v==='main'?'main':'auto'); }catch(e){} window.__camAuto=false; lensSeg(); },
-    setEdam:v=>{ try{ localStorage.setItem(EDAMON,v==='off'?'off':'on'); }catch(e){} edamSeg(); },
-    setEdamKey:(w,v)=>{ try{ const k=w==='id'?EDAMID:EDAMKEY; v=String(v||'').trim(); if(v) localStorage.setItem(k,v); else localStorage.removeItem(k); }catch(e){} },
     setUsdaKey:v=>{ try{ v=String(v||'').trim(); if(v) localStorage.setItem(USDAKEY,v); else localStorage.removeItem(USDAKEY); }catch(e){} },
     fab:fabOpen, fabClose:fabClose, fabSel:fabSel, fabGo:fabGo,
     setMode:v=>{ MODE=(v==='auto'||v==='fab')?v:'chk'; AUTO=MODE!=='chk'; FABM=MODE==='fab'; try{ localStorage.setItem('phy-cmode',MODE); }catch(e){} applyMode(); calc(); renderCfg(); },
@@ -5027,7 +4990,7 @@ window.BBXBk=(function(){
 (function(){
   var URL_='https://izajghznnufkgjsafuxp.supabase.co', KEY='sb_publishable_COkI6c5lH72Lm2S6unK08g_jfTUWH2A';
   var SK='bbx-sb-session', MK='bbx-sync-meta', LS=window.localStorage;
-  var INC=/^(bb9-|phy-|bbx-shared-)/, EXC=/(usdakey|edamid|edamkey|edamon|shfav-1|restore-defs|-(view|auto|navmode|scanmode|wmode|wlayout|autonext|cmode|usdaon|ciqon))$/;
+  var INC=/^(bb9-|phy-|bbx-shared-)/, EXC=/(usdakey|shfav-1|restore-defs|-(view|auto|navmode|scanmode|wmode|wlayout|autonext|cmode|usdaon|ciqon))$/;
   var busy=false, timer=null, msg='', lastErr='', recTok=null;
   (function(){ try{ var h=location.hash||''; if(/type=recovery/.test(h)){ var q={}; h.replace(/^#/,'').split('&').forEach(function(x){ var a=x.split('='); q[a[0]]=decodeURIComponent(a[1]||''); }); if(q.access_token){ recTok=q.access_token; history.replaceState(null,'',location.pathname+location.search); } }
       else if(/type=(signup|magiclink|invite|email_change)/.test(h)&&/access_token=/.test(h)){ var q2={}; h.replace(/^#/,'').split('&').forEach(function(x){ var a=x.split('='); q2[a[0]]=decodeURIComponent(a[1]||''); }); var em=''; try{ em=JSON.parse(atob(q2.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).email||''; }catch(e){} jset('bbx-sb-session',{at:q2.access_token,rt:q2.refresh_token,exp:Date.now()+(+q2.expires_in||3600)*1000,email:em}); history.replaceState(null,'',location.pathname+location.search); } }catch(e){} })();
