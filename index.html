@@ -2742,6 +2742,25 @@ html body #mealView .my-nm b{ color:#0B0D12 !important; }
 html body #mealView .my-nm span{ font-size:12px !important; font-weight:600 !important; line-height:1.35 !important; color:#374151 !important; opacity:1 !important; }
 html body #mealView .my-kc b{ color:#0B0D12 !important; }
 </style>
+<style id="a11yContrast">
+/* ===== Lisibilité : boutons de la carte Poids, textes secondaires plus foncés ===== */
+.wg-btns{ gap:10px !important; }
+.wg-btns button{ display:flex !important; align-items:center !important; justify-content:center !important; gap:8px !important; height:48px !important; font-size:14px !important; font-weight:900 !important; color:#0B0D12 !important; border:2px solid #0B0D12 !important; background:#fff !important; line-height:1.1; }
+.wg-btns button:first-child{ background:#7DD957 !important; border-color:#0B0D12 !important; color:#0B0D12 !important; }
+.wg-btns button svg{ width:20px !important; height:20px !important; flex:none; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+.wg-btns button span{ color:#0B0D12 !important; text-align:center; }
+.wg-btns button{ font-size:13px !important; padding:0 8px !important; }
+.cm-d,.wg-empty,.ht-empty,.sr-note,.mw-text,.ht-sub,.cf-n span,.mc-hint,.mf-ug{ color:#374151 !important; opacity:1 !important; }
+.ht-title small,.cc-note{ color:#374151 !important; opacity:1 !important; }
+#mealWeigh .mf-in i,#mealForm .mf-in i{ color:#374151 !important; }
+#mealWeigh input::placeholder,#mealForm input::placeholder,#mealSearch input::placeholder{ color:#6B7280 !important; opacity:1 !important; }
+#syncIn .cm-seg button,#syncOut .cm-seg button{ color:#0B0D12 !important; font-weight:800 !important; }
+#mealCfg a{ color:#047857 !important; font-weight:800 !important; text-decoration:underline; }
+#mealCfg .mc-reset{ color:#1D4ED8 !important; }
+.mc-ov .cf-n span{ color:#374151 !important; }
+#mealCfg #mcList .mc-it span,#mealCfg #mcList [class*=nm] span{ color:#374151 !important; }
+#mealForm .mp-for{ color:#6B3F00 !important; }
+</style>
 </head>
 <body>
 
@@ -4450,7 +4469,7 @@ window.BBXBk=(function(){
   // --- carte « Poids » ---
   function weightHTML(){
     const L=Object.keys(WT.log).sort().map(k=>({k:k,kg:WT.log[k]}));
-    const btns='<div class="wg-btns"><button onclick="BBXMeal.addWeigh()" aria-label="Ajouter une pesée" title="Ajouter une pesée"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><button onclick="BBXMeal.goalWeigh()">🎯 '+(WT.plan?'Modifier l’objectif':'Définir un objectif')+'</button></div>';
+    const btns='<div class="wg-btns"><button onclick="BBXMeal.addWeigh()" aria-label="Ajouter une pesée" title="Ajouter une pesée"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Ajouter une pesée</span></button><button onclick="BBXMeal.goalWeigh()">🎯 '+(WT.plan?'Modifier l’objectif':'Définir un objectif')+'</button></div>';
     if(!L.length) return '<div class="ht-card wg"><div class="ht-title" style="margin-bottom:10px">⚖️ Poids<small>'+(WT.goal?'objectif '+fk(WT.goal)+' kg':'')+'</small></div><div class="wg-empty">Pas encore de pesée. Chaque lundi, l’appli te demande ton poids : l’évolution s’affichera ici semaine après semaine. Tu peux aussi en ajouter une maintenant.</div>'+btns+'</div>';
     const last=L[L.length-1], prev=L.length>1?L[L.length-2]:null, first=L[0];
     const wk={}; L.forEach(x=>{ const i=weekIdx(fd(x.k)); wk[i]={wk:i,kg:x.kg,k:x.k}; });
