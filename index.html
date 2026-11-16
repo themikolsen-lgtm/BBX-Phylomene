@@ -2875,6 +2875,41 @@ html.mt-beta #mealForm .mf-mac input,html.mt-beta #mealForm .mf-in input{ backgr
 html.mt-beta #mealForm .mf-name{ background:linear-gradient(180deg,color-mix(in srgb,var(--mc,#34C759) 24%,rgba(255,255,255,.5)),rgba(255,255,255,.2))!important; }
 html.mt-beta .wg-btns button{ border:0!important; border-radius:18px!important; background:var(--g-fill2)!important; box-shadow:var(--g-edge),0 8px 18px -10px rgba(30,40,80,.4)!important; }
 html.mt-beta .wg-btns button:first-child{ background:linear-gradient(180deg,#5BE07B,#34C759)!important; box-shadow:inset 0 1.5px 0 rgba(255,255,255,.75),0 12px 22px -10px rgba(52,199,89,.8)!important; }
+/* ===== Jetons du kit officiel iOS 27 (Sketch) ===== */
+html.mt-beta{
+  --ios-green:#34C759; --ios-blue:#0088FF; --ios-orange:#FF8D28; --ios-pink:#FF2D55; --ios-teal:#00C3D0; --ios-red:#FF383C; --ios-indigo:#6155F5;
+  --ios-ink:#000; --lbl2:rgba(60,60,67,.60); --lbl3:rgba(60,60,67,.30); --sep:rgba(60,60,67,.18);
+  --fill1:rgba(120,120,128,.20); --fill2:rgba(120,120,128,.16); --fill3:rgba(118,118,128,.12); --fill4:rgba(116,116,128,.08);
+  --bg-grp:#F2F2F7;
+}
+html.mt-beta #mealView,html.mt-beta .mc-ov{ color:#000; }
+/* styles de texte SF Pro */
+html.mt-beta .mc-head b,html.mt-beta #mealView .mc-head b{ font-size:34px!important; line-height:41px!important; font-weight:700!important; letter-spacing:.012em!important; }
+html.mt-beta #mealView .my-dt b{ font-size:22px!important; line-height:28px!important; font-weight:700!important; letter-spacing:.01em!important; }
+html.mt-beta #mealView .my-card .my-mh .my-mt b{ font-size:17px!important; line-height:22px!important; font-weight:600!important; letter-spacing:-.022em; }
+html.mt-beta .cf-det>summary{ font-size:17px!important; line-height:22px!important; font-weight:600!important; }
+html.mt-beta .cf-h{ font-size:13px!important; line-height:18px!important; font-weight:400!important; text-transform:uppercase; letter-spacing:-.003em; color:var(--lbl2)!important; }
+/* boutons : grand 50 / moyen 34 / petit 28, capsules */
+html.mt-beta .sr-go,html.mt-beta #mealForm .mf-btns #mfOk,html.mt-beta .mc-big.red:not(.ibt),html.mt-beta .wg-btns button{ min-height:50px!important; border-radius:999px!important; font-size:17px!important; font-weight:600!important; }
+html.mt-beta .mc-ov .mf-btns button,html.mt-beta .mc-ov .cm-btns button{ min-height:50px; border-radius:999px!important; font-size:17px!important; font-weight:600; }
+html.mt-beta .mc-search .sr-bar button,html.mt-beta .sr-bar button{ border-radius:999px!important; min-width:50px; min-height:50px; }
+html.mt-beta .mc-x{ width:34px!important; height:34px!important; background:var(--fill2)!important; box-shadow:none!important; color:var(--lbl2)!important; }
+html.mt-beta #mealView .my-hbtn{ width:34px!important; height:34px!important; min-width:34px; }
+html.mt-beta #mealView .my-dn{ width:34px!important; height:34px!important; }
+/* segmentés : 32 px, rayon capsule, fond fill3 */
+html.mt-beta .cm-seg,html.mt-beta .mf-seg{ background:var(--fill3)!important; border-radius:999px!important; padding:2px!important; min-height:32px; }
+html.mt-beta .cm-seg button,html.mt-beta .mf-seg button{ border-radius:999px!important; min-height:28px; font-size:13px!important; font-weight:500!important; color:#000!important; }
+html.mt-beta .cm-seg button.on,html.mt-beta .mf-seg button.on,html.mt-beta .cf-sec .cm-seg button.on{ font-weight:600!important; color:#000!important; }
+/* champs : 52 px, fond groupé, texte 17 */
+html.mt-beta .mc-ov input[type=text],html.mt-beta .mc-ov input[type=email],html.mt-beta .mc-ov input[type=password],html.mt-beta .mc-ov input[type=number],html.mt-beta .mc-ov input[type=date],html.mt-beta .mf-in.big,html.mt-beta #srQ{ min-height:52px; border-radius:26px!important; font-size:17px!important; color:#000!important; }
+html.mt-beta .mc-ov input::placeholder{ color:rgba(60,60,67,.62)!important; }
+/* cartes / listes : rayons du kit (groupé 26, menu 20) */
+html.mt-beta #mealView .my-dsum,html.mt-beta #mealView .my-card,html.mt-beta .cm-box,html.mt-beta .cf-det,html.mt-beta .ht-card,html.mt-beta .fv-card,html.mt-beta .sr-row,html.mt-beta .mc-meal,html.mt-beta .my-plan{ border-radius:26px!important; }
+html.mt-beta #mealView .my-card .my-mh{ border-radius:26px 26px 0 0!important; }
+html.mt-beta #mealView .my-row,html.mt-beta #mealView .my-it{ border-color:var(--sep)!important; }
+html.mt-beta #mealView .my-th,html.mt-beta .sr-th{ border-radius:10px!important; }
+/* textes secondaires lisibles (contraste ≥ 4.5 sur verre clair) */
+html.mt-beta #mealView small,html.mt-beta .mc-ov small{ color:#4A4A50!important; font-size:13px; line-height:18px; }
 </style>
 </head>
 <body>
