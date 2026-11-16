@@ -2680,6 +2680,51 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 <style id="mealBg">#mealView{background:linear-gradient(rgba(126,217,87,.08),rgba(126,217,87,.08)),#fff !important}</style>
 <style id="noHint">#mealView .my-hint{display:none!important}</style>
 <style id="smoothSum">#mealView .my-fixed .my-sum,#mealView .my-fixed .sum-full,#mealView .my-fixed .sum-mini{will-change:height,opacity,transform}</style>
+<style id="formUI">
+/* ===== Fiche produit : design aéré, sans blocs blancs ===== */
+#mealForm{background:radial-gradient(120% 55% at 100% -5%,rgba(126,217,87,.34),transparent 62%),radial-gradient(90% 45% at -10% 30%,rgba(255,196,80,.16),transparent 62%),linear-gradient(180deg,#F3FBEC 0,#F9FDF6 55%,#F6FBF2 100%)!important}
+#mealForm .mc-head b{font-size:26px!important;letter-spacing:-.03em}
+#mealForm .mc-x{background:rgba(255,255,255,.7)!important;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+#mealForm .fv-card,#mealForm .mf-health{background:transparent!important;box-shadow:none!important;border:0!important;border-radius:0!important;overflow:visible!important;margin:0 0 14px!important;padding-left:2px!important;padding-right:2px!important}
+/* produit : bandeau héros */
+#mealForm .fv-prod{margin-bottom:10px!important;padding:0!important}
+#mealForm .mf-name{background:linear-gradient(135deg,color-mix(in srgb,var(--mc,#7DD957) 26%,#fff),color-mix(in srgb,var(--mc,#7DD957) 8%,#fff))!important;border-radius:26px!important;padding:14px 16px!important;gap:14px!important;box-shadow:0 18px 30px -24px var(--mc,#7DD957)}
+#mealForm .mf-name input:first-child{width:60px!important;height:60px!important;font-size:30px!important;box-shadow:0 10px 20px -8px var(--mc,#7DD957),inset 0 0 0 3px rgba(255,255,255,.55)!important}
+#mealForm .mf-name input:last-child{font-size:19px!important;line-height:1.15;text-overflow:ellipsis}
+#mealForm .mf-chips{padding:12px 0 2px!important;gap:8px!important}
+#mealForm .mf-chip{background:rgba(255,255,255,.65)!important;border:0!important;height:36px!important;padding:0 14px!important;box-shadow:none}
+#mealForm .mf-chip.on{background:var(--mc)!important;box-shadow:0 10px 16px -8px var(--mc)!important}
+/* santé */
+#mealForm .mf-health{padding:0 2px!important;gap:10px 18px!important}
+#mealForm .mh-v{border-radius:18px!important;padding:10px 14px!important}
+#mealForm .mh-t{opacity:.55;letter-spacing:.08em;font-weight:900}
+/* valeurs nutritionnelles */
+#mealForm .fv-nut{padding:4px 0 0!important}
+#mealForm .fv-h{font-size:12px!important;letter-spacing:.1em;text-transform:uppercase;opacity:.55;margin:0 0 10px 4px!important}
+#mealForm .mp-for{top:2px!important;right:2px!important;background:rgba(255,255,255,.7)!important}
+#mealForm .mf-micro{gap:8px!important;margin-top:8px!important}
+#mealForm .mf-micro span{border:0!important;border-radius:20px!important;padding:11px 4px 10px!important;background:linear-gradient(165deg,color-mix(in srgb,var(--c) 20%,#fff),color-mix(in srgb,var(--c) 7%,#fff))!important;box-shadow:0 14px 22px -18px var(--c)}
+#mealForm .mf-mac span{padding:13px 4px 12px!important}
+#mealForm .mf-micro i{font-size:10.5px!important;letter-spacing:.06em;text-transform:uppercase;opacity:.8}
+#mealForm .mf-micro b{font-size:15px!important}
+#mealForm .mf-mac b{font-size:21px!important;letter-spacing:-.03em}
+#mealForm .mf-mac input{font-size:22px!important}
+#mealForm .mf-mac u{font-size:12px!important}
+/* quantité */
+#mealForm .fv-qty{padding:2px 0 0!important}
+#mealForm .mf-seg{background:rgba(255,255,255,.55)!important;border-radius:999px!important}
+#mealForm .mf-seg button.on{box-shadow:0 8px 16px -10px rgba(30,40,70,.5)!important}
+#mealForm .mf-qty{gap:12px!important}
+#mealForm .mf-qty>button{background:rgba(255,255,255,.8)!important;border:0!important;width:54px!important;flex-basis:54px!important;height:54px!important;box-shadow:0 14px 22px -14px rgba(30,40,70,.45)!important}
+#mealForm .mf-in.big{height:54px!important;background:rgba(255,255,255,.6)!important}
+#mealForm .mf-in.big input{font-size:28px!important;font-weight:900}
+#mealForm .mf-mult{gap:8px!important;margin-top:12px!important}
+#mealForm .mf-mult button{height:38px!important;background:rgba(255,255,255,.65)!important;color:var(--md,#2E7D1E)!important}
+/* barre du bas */
+#mealForm .mf-btns{background:linear-gradient(0deg,#F6FBF2 55%,rgba(246,251,242,0))!important;padding-top:22px!important}
+#mealForm .mf-btns .mc-big.ib:not(.red){background:rgba(255,255,255,.85)!important;border:0!important;box-shadow:0 14px 22px -14px rgba(30,40,70,.45)}
+#mealForm .mf-btns #mfOk{height:58px!important;background:linear-gradient(135deg,color-mix(in srgb,var(--mc,#7DD957) 78%,#fff),var(--mc,#7DD957))!important;box-shadow:0 18px 28px -14px var(--mc,#7DD957)!important;font-size:17px!important}
+</style>
 </head>
 <body>
 
