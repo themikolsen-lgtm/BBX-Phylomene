@@ -2800,39 +2800,23 @@ html body #mealScan .ms-dock .ms-row button svg{width:26px;height:26px;fill:none
 /* ===== Thème Bêta — calqué sur le design des Réglages (Meal uniquement) ===== */
 html.mt-beta{ --b-blue:#8EC5FF; --b-green:#8DDB6F; --b-purple:#C4A9FF; --b-orange:#FFC36B; --b-pink:#FF9DB5; --b-ink:#15171C; }
 /* cartes teintées : dégradé pastel + bord coloré doux */
-html.mt-beta #mealHist .ht-card,html.mt-beta #mealForm .fv-card,html.mt-beta #mealSearch .sr-row{
+html.mt-beta #mealHist .ht-card{
   --c:var(--b-blue); background:linear-gradient(180deg,color-mix(in srgb,var(--c) 14%,#fff),#fff 70%)!important;
   border:1.5px solid color-mix(in srgb,var(--c) 45%,#fff)!important; border-radius:18px!important; box-shadow:0 10px 20px -16px color-mix(in srgb,var(--c) 90%,#000)!important; }
 html.mt-beta #mealHist .ht-card:nth-of-type(2n){ --c:var(--b-purple); }
 html.mt-beta #mealHist .ht-card:nth-of-type(3n){ --c:var(--b-green); }
-html.mt-beta #mealForm .fv-prod{ --c:var(--b-orange); }
-html.mt-beta #mealForm .fv-nut{ --c:var(--b-green); }
-html.mt-beta #mealForm .fv-qty{ --c:var(--b-blue); }
-html.mt-beta #mealForm .mf-health{ --c:var(--b-pink); }
-html.mt-beta #mealSearch .sr-row{ --c:var(--b-green); margin-bottom:10px; }
 html.mt-beta #mealHist .ht-tiles>div{ background:linear-gradient(180deg,color-mix(in srgb,var(--b-green) 16%,#fff),#fff 75%)!important; border:1.5px solid color-mix(in srgb,var(--b-green) 45%,#fff)!important; border-radius:18px!important; }
 /* titres de section façon Réglages */
-html.mt-beta #mealHist .ht-title,html.mt-beta #mealForm .fv-h{ font-size:14px!important; font-weight:900!important; color:var(--b-ink)!important; letter-spacing:.01em; }
-html.mt-beta #mealForm .mf-sec,html.mt-beta #mealSearch .sr-meal{ font-size:12px!important; font-weight:900!important; letter-spacing:.07em; text-transform:uppercase; color:#4B5563!important; }
+html.mt-beta #mealHist .ht-title{ font-size:14px!important; font-weight:900!important; color:var(--b-ink)!important; letter-spacing:.01em; }
 /* segmentés pastel */
-html.mt-beta .ht-seg,html.mt-beta .mf-seg{ background:color-mix(in srgb,var(--b-blue) 18%,#fff)!important; border:1.5px solid color-mix(in srgb,var(--b-blue) 40%,#fff); }
-html.mt-beta .ht-seg button,html.mt-beta .mf-seg button{ color:#2B3140!important; }
-html.mt-beta .ht-seg button.on,html.mt-beta .mf-seg button.on{ background:var(--b-blue)!important; color:var(--b-ink)!important; box-shadow:0 6px 12px -6px color-mix(in srgb,var(--b-blue) 90%,#000)!important; }
+html.mt-beta .ht-seg{ background:color-mix(in srgb,var(--b-blue) 18%,#fff)!important; border:1.5px solid color-mix(in srgb,var(--b-blue) 40%,#fff); }
+html.mt-beta .ht-seg button{ color:#2B3140!important; }
+html.mt-beta .ht-seg button.on{ background:var(--b-blue)!important; color:var(--b-ink)!important; box-shadow:0 6px 12px -6px color-mix(in srgb,var(--b-blue) 90%,#000)!important; }
 /* champs blancs à bord teinté */
-html.mt-beta #mealForm .mf-name input,html.mt-beta #mealForm .mf-in,html.mt-beta #srQ,html.mt-beta #mealName input{ background:#fff!important; border:1.5px solid color-mix(in srgb,var(--b-blue) 45%,#fff)!important; border-radius:14px!important; box-shadow:none!important; color:var(--b-ink)!important; }
-html.mt-beta #srQ{ height:52px!important; }
-html.mt-beta #mealForm .mf-name input:focus,html.mt-beta #srQ:focus,html.mt-beta #mealForm .mf-in:focus-within{ border-color:var(--b-green)!important; box-shadow:0 0 0 3px rgba(125,217,87,.22)!important; }
-html.mt-beta #mealForm .mf-prev>*,html.mt-beta #mealForm .mf-pair .mf-f{ border-radius:14px; }
 /* pastilles repas */
-html.mt-beta #mealForm .mf-chip{ border:1.5px solid color-mix(in srgb,var(--b-orange) 55%,#fff)!important; background:color-mix(in srgb,var(--b-orange) 14%,#fff)!important; color:var(--b-ink)!important; }
-html.mt-beta #mealForm .mf-chip.on{ background:var(--mc)!important; border-color:var(--mc)!important; color:#fff!important; }
 /* boutons : pilules colorées sans contour noir */
-html.mt-beta #mealHist .mc-big,html.mt-beta #mealForm .mf-btns .mc-big,html.mt-beta #mealSearch .mc-big{ border:1.5px solid color-mix(in srgb,var(--b-blue) 45%,#fff)!important; background:#fff!important; color:var(--b-ink)!important; border-radius:999px!important; box-shadow:0 8px 16px -12px rgba(20,24,40,.5)!important; }
-html.mt-beta #mealHist .mc-big.red,html.mt-beta #mealForm .mc-big.red,html.mt-beta #mealSearch .sr-bar button{ background:var(--b-green)!important; border-color:var(--b-green)!important; color:#143008!important; box-shadow:0 10px 18px -10px color-mix(in srgb,var(--b-green) 95%,#000)!important; }
-html.mt-beta #mealSearch .sr-bar button{ border:0!important; border-radius:999px!important; }
-html.mt-beta #mealSearch .sr-acts button,html.mt-beta #mealForm .mf-quick button{ background:linear-gradient(180deg,color-mix(in srgb,var(--b-blue) 16%,#fff),#fff)!important; border:1.5px solid color-mix(in srgb,var(--b-blue) 45%,#fff)!important; border-radius:999px!important; color:var(--b-ink)!important; box-shadow:none!important; }
-html.mt-beta #mealSearch .sr-acts button:last-child{ background:linear-gradient(180deg,color-mix(in srgb,var(--b-green) 22%,#fff),#fff)!important; border-color:color-mix(in srgb,var(--b-green) 55%,#fff)!important; }
-html.mt-beta #mealForm .mf-quick .ibt .ibc{ background:var(--b-green)!important; border:0!important; }
+html.mt-beta #mealHist .mc-big{ border:1.5px solid color-mix(in srgb,var(--b-blue) 45%,#fff)!important; background:#fff!important; color:var(--b-ink)!important; border-radius:999px!important; box-shadow:0 8px 16px -12px rgba(20,24,40,.5)!important; }
+html.mt-beta #mealHist .mc-big.red{ background:var(--b-green)!important; border-color:var(--b-green)!important; color:#143008!important; box-shadow:0 10px 18px -10px color-mix(in srgb,var(--b-green) 95%,#000)!important; }
 /* poids / coach */
 html.mt-beta #mealHist .mc-reset{ background:#fff!important; border:1.5px solid color-mix(in srgb,var(--b-pink) 55%,#fff)!important; }
 html.mt-beta #mealHist .ht-empty,html.mt-beta #mealHist [class*=empty]{ border:1.5px dashed color-mix(in srgb,var(--b-blue) 55%,#fff)!important; background:color-mix(in srgb,var(--b-blue) 8%,#fff)!important; border-radius:18px!important; }
@@ -2846,13 +2830,10 @@ html.mt-beta #mealScan .ms-row button{ background:var(--b-green)!important; colo
 html.mt-beta #mealScan .ms-frame s{ border-color:#fff; }
 html.mt-beta #mealScan.hit .ms-frame s{ border-color:var(--b-green); }
 /* retouches */
-html.mt-beta #srQ,html.mt-beta #srQ:focus{ outline:0!important; }
 html.mt-beta #mealHist .wg-empty{ border:0!important; background:transparent!important; padding:0!important; color:#2B3140!important; }
 html.mt-beta #mealHist .wg-btns button{ background:#fff!important; border:1.5px solid color-mix(in srgb,var(--b-blue) 50%,#fff)!important; color:var(--b-ink)!important; border-radius:999px!important; box-shadow:none!important; }
 html.mt-beta #mealHist .wg-btns button:first-child{ background:var(--b-green)!important; border-color:var(--b-green)!important; color:#143008!important; box-shadow:0 10px 18px -10px color-mix(in srgb,var(--b-green) 95%,#000)!important; }
 html.mt-beta #mealHist .wg-btns button:nth-child(2){ background:color-mix(in srgb,var(--b-purple) 25%,#fff)!important; border-color:color-mix(in srgb,var(--b-purple) 60%,#fff)!important; }
-html.mt-beta #mealForm .mf-code:empty,html.mt-beta #mealForm .mf-info:empty{ display:none!important; }
-html.mt-beta #mealForm .fv-prod .mf-name input:first-child{ background:#fff!important; }
 html.mt-beta body #mealScan .ms-dock .ms-row{ background:rgba(255,255,255,.92)!important; border:1.5px solid color-mix(in srgb,var(--b-green) 65%,#fff)!important; -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); }
 html.mt-beta body #mealScan .ms-dock .ms-row input,html.mt-beta body #mealScan #msCode{ color:#15171C!important; -webkit-text-fill-color:#15171C!important; caret-color:#15171C; background:none!important; border:0!important; }
 html.mt-beta body #mealScan #msCode::placeholder{ color:#6B7280!important; -webkit-text-fill-color:#6B7280!important; }
