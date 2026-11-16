@@ -3828,8 +3828,8 @@ window.BBXBk=(function(){
   let ss0=null;
   function camAssist(tr,cp,ss){
     clearInterval(sc.sweep); sc.sweep=0;
-    // zoom de départ x2 : un petit code-barres occupe plus de pixels
-    if(cp.zoom&&cp.zoom.max>=2){ try{ tr.applyConstraints({advanced:[{zoom:Math.min(cp.zoom.max,Math.max(cp.zoom.min,2))}]}); const zr=$('msZoomR'); zr.value=Math.min(cp.zoom.max,Math.max(cp.zoom.min,2)); }catch(e){} }
+    // zoom de départ x1
+    if(cp.zoom&&cp.zoom.max>=1){ try{ tr.applyConstraints({advanced:[{zoom:Math.min(cp.zoom.max,Math.max(cp.zoom.min,1))}]}); const zr=$('msZoomR'); zr.value=Math.min(cp.zoom.max,Math.max(cp.zoom.min,1)); }catch(e){} }
     // autofocus logiciel : si rien n'est lu, on balaye la distance de mise au point (les autofocus Android sont souvent paresseux)
     const fd=cp.focusDistance; if(fd&&fd.max>fd.min){
       const pts=[0,0.06,0.12,0.2,0.32,0.5].map(f=>fd.min+(fd.max-fd.min)*f); let i=0, t0=Date.now(), manual=false;
