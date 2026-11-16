@@ -2725,6 +2725,27 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 #mealForm .mf-btns .mc-big.ib:not(.red){background:rgba(255,255,255,.85)!important;border:0!important;box-shadow:0 14px 22px -14px rgba(30,40,70,.45)}
 #mealForm .mf-btns #mfOk{height:58px!important;background:linear-gradient(135deg,color-mix(in srgb,var(--mc,#7DD957) 78%,#fff),var(--mc,#7DD957))!important;box-shadow:0 18px 28px -14px var(--mc,#7DD957)!important;font-size:17px!important}
 </style>
+<style id="cfUI">
+.cf-h{ margin:20px 4px 8px; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#6B7280 !important; }
+.cf-db{ padding:6px 12px 12px !important; }
+.cf-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 0; border-bottom:1px solid #EEF0F3; }
+.cf-n{ min-width:0; display:flex; flex-direction:column; gap:2px; }
+.cf-n b{ font-size:14px; font-weight:800; color:#15171C; }
+.cf-n span{ font-size:12px; font-weight:600; color:#6B7280; line-height:1.3; }
+.cf-on{ font-style:normal; font-size:12px; font-weight:800; color:#3E9B2A; background:#EAF7E4; padding:6px 10px; border-radius:999px; white-space:nowrap; }
+.cf-row .cm-seg{ flex:none; width:112px; padding:3px; gap:3px; border-radius:12px; }
+.cf-row .cm-seg button{ min-height:34px !important; font-size:13px !important; border-radius:9px; }
+.cf-db .cm-d{ margin-top:10px; }
+.cf-det{ margin-top:12px; background:#fff; border:1px solid #E6E9EE; border-radius:16px; padding:0 12px; }
+.cf-det>summary{ list-style:none; cursor:pointer; padding:14px 2px; font-size:14px; font-weight:800; color:#15171C; display:flex; align-items:center; justify-content:space-between; }
+.cf-det>summary::-webkit-details-marker{ display:none; }
+.cf-det>summary::after{ content:'▾'; font-size:14px; color:#6B7280; transition:transform .2s; }
+.cf-det[open]>summary::after{ transform:rotate(180deg); }
+.cf-det[open]>summary{ border-bottom:1px solid #EEF0F3; margin-bottom:10px; }
+.cf-det .bk-wrap{ border:0 !important; padding:0 0 12px !important; margin:0 !important; background:transparent !important; box-shadow:none !important; }
+.cf-det .bk-wrap>.cm-t{ display:none; }
+.cf-det #mcList{ margin-bottom:6px; }
+</style>
 </head>
 <body>
 
@@ -2838,6 +2859,7 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
     <button class="mc-big ib ibt " onclick="BBXMeal.search(null)" aria-label="Rechercher un produit" title="Rechercher un produit"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></span><em>Rechercher</em></button>
     <button class="mc-big ib ibt " onclick="BBXMeal.add(null)" aria-label="Ajouter à la main" title="Ajouter à la main"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4.2-1L18.3 8.9a2.1 2.1 0 0 0-3-3L5.2 16 4 20z"/><path d="M13.6 7.6l2.8 2.8"/></svg></span><em>Saisie</em></button>
   </div>
+  <div class="cf-h">Comptage et scanner</div>
   <div class="cm-box"><div class="cm-t">Mode de comptage</div>
     <div class="cm-seg cm3" id="cmSeg" role="group" aria-label="Mode de comptage">
       <button data-m="chk" onclick="BBXMeal.setMode('chk')" aria-label="Avec cases à cocher" title="Avec cases à cocher"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg><span>Cases à cocher</span></button>
@@ -2845,29 +2867,29 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
       <button data-m="fab" onclick="BBXMeal.setMode('fab')" aria-label="Automatique : un bouton central" title="Automatique : un bouton central"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M8 12h8"/></svg><span>Bouton central</span></button>
     </div>
     <div class="cm-d" id="cmDesc"></div></div>
-  <div class="cm-box" style="margin-top:12px"><div class="cm-t">Scanner un code-barres</div>
+  <div class="cm-box" style="margin-top:10px"><div class="cm-t">Scanner un code-barres</div>
     <div class="cm-seg" id="mcSm" role="group" aria-label="Mode du scanner">
       <button data-sm="live" onclick="BBXMeal.scanMode('live');BBXMeal.scanDesc()" aria-label="Caméra en direct" title="Caméra en direct"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M7 12h10"/></svg><span>Caméra directe</span></button>
       <button data-sm="photo" onclick="BBXMeal.scanMode('photo');BBXMeal.scanDesc()" aria-label="Photo sans autorisation" title="Photo sans autorisation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.2l1.3-2h6l1.3 2h1.2A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5v-8z"/><circle cx="12" cy="12.5" r="3.3"/></svg><span>Photo</span></button>
     </div>
     <div class="cm-d" id="mcSmD"></div></div>
-  <div class="cm-box" style="margin-top:12px"><div class="cm-t">Ciqual · ANSES (table française)</div>
-    <div class="cm-seg" id="ciqSeg" role="group" aria-label="Base Ciqual">
-      <button data-u="on" onclick="BBXMeal.setCiq('on')">Activée</button>
-      <button data-u="off" onclick="BBXMeal.setCiq('off')">Désactivée</button>
-    </div>
-    <div class="cm-d">Table de composition nutritionnelle des aliments (aliments génériques, en français). Données ANSES, licence Etalab.</div></div>
-  <div class="cm-box" style="margin-top:12px"><div class="cm-t">USDA FoodData Central</div>
-    <div class="cm-seg" id="usdaSeg" role="group" aria-label="Base USDA" style="margin-bottom:10px">
-      <button data-u="on" onclick="BBXMeal.setUsda('on')">Activée</button>
-      <button data-u="off" onclick="BBXMeal.setUsda('off')">Désactivée</button>
-    </div>
-    <input id="usdaKey" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Clé API personnelle (facultatif)" onchange="BBXMeal.setUsdaKey(this.value)" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #E6E9EE;border-radius:12px;font:600 14px system-ui;background:#F7F8FA">
-    <div class="cm-d">Sans clé, la clé de démo est limitée (≈30 recherches/h). Clé gratuite : <a href="https://fdc.nal.usda.gov/api-key-signup" target="_blank" rel="noopener" style="color:#0A7">fdc.nal.usda.gov</a>. La base USDA est en anglais.</div></div>
-    <div class="mc-hint">Change les produits de chaque repas : ▲▼ pour l’ordre, ✎ pour modifier ou changer de repas, 🗑 pour supprimer.</div>
+  <div class="cf-h">Bases de données</div>
+  <div class="cm-box cf-db">
+    <div class="cf-row"><div class="cf-n"><b>Open Food Facts</b><span>Produits de marque et code-barres</span></div><em class="cf-on">Toujours actif</em></div>
+    <div class="cf-row"><div class="cf-n"><b>Ciqual · ANSES</b><span>Aliments génériques français</span></div>
+      <div class="cm-seg" id="ciqSeg" role="group" aria-label="Base Ciqual"><button data-u="on" onclick="BBXMeal.setCiq('on')">Oui</button><button data-u="off" onclick="BBXMeal.setCiq('off')">Non</button></div></div>
+    <div class="cf-row"><div class="cf-n"><b>USDA FoodData Central</b><span>Base américaine, en anglais</span></div>
+      <div class="cm-seg" id="usdaSeg" role="group" aria-label="Base USDA"><button data-u="on" onclick="BBXMeal.setUsda('on')">Oui</button><button data-u="off" onclick="BBXMeal.setUsda('off')">Non</button></div></div>
+    <input id="usdaKey" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Clé API personnelle (facultatif)" onchange="BBXMeal.setUsdaKey(this.value)" style="margin-top:2px;width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #E6E9EE;border-radius:12px;font:600 14px system-ui;background:#F7F8FA">
+    <div class="cm-d">Clé USDA facultative : sans elle, limite d’environ 30 recherches par heure. Clé gratuite sur <a href="https://fdc.nal.usda.gov/api-key-signup" target="_blank" rel="noopener" style="color:#0A7">fdc.nal.usda.gov</a>.</div>
+  </div>
+  <details class="cf-det"><summary>Mes repas et produits</summary>
+    <div class="mc-hint" style="margin-top:10px">Change les produits de chaque repas : ▲▼ pour l’ordre, ✎ pour modifier ou changer de repas, 🗑 pour supprimer.</div>
   <div id="mcList"></div>
   <div class="ib-row"><button class="mc-big ib ibt red" onclick="BBXMeal.addMeal()" aria-label="Ajouter un repas" title="Ajouter un repas"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><em>Repas</em></button></div>
   <button class="mc-reset" onclick="BBXMeal.resetDef()" aria-label="Remettre les repas d’origine" title="Remettre les repas d’origine"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5"/><path d="M3.5 3.5v5h5"/></svg></button>
+  </details>
+  <details class="cf-det"><summary>Sauvegarde de mes données</summary>
   <div class="cm-box bk-wrap"><div class="cm-t">Sauvegarde de mes données</div>
     <div class="cm-d" id="bkStatus" style="margin:0 2px 8px">Vérification…</div>
     <textarea id="bkTxt" class="bk-ta" rows="2" spellcheck="false" autocapitalize="off" placeholder="Pour restaurer : colle ici ta sauvegarde, puis touche Restaurer."></textarea>
@@ -2878,6 +2900,7 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
     </div>
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
+  </details>
 </div>
 <script>
 window.BBXBk=(function(){
