@@ -2801,11 +2801,11 @@ html body #mealScan .ms-dock .ms-row button svg{width:26px;height:26px;fill:none
 html.mt-beta{ --b-blue:#8EC5FF; --b-green:#8DDB6F; --b-purple:#C4A9FF; --b-orange:#FFC36B; --b-pink:#FF9DB5; --b-ink:#15171C; }
 /* cartes teintées : dégradé pastel + bord coloré doux */
 html.mt-beta #mealHist .ht-card{
-  --c:var(--b-blue); background:linear-gradient(180deg,color-mix(in srgb,var(--c) 14%,#fff),#fff 70%)!important;
+  --c:var(--b-blue); background:#fff!important;
   border:1.5px solid color-mix(in srgb,var(--c) 45%,#fff)!important; border-radius:18px!important; box-shadow:0 10px 20px -16px color-mix(in srgb,var(--c) 90%,#000)!important; }
 html.mt-beta #mealHist .ht-card:nth-of-type(2n){ --c:var(--b-purple); }
 html.mt-beta #mealHist .ht-card:nth-of-type(3n){ --c:var(--b-green); }
-html.mt-beta #mealHist .ht-tiles>div{ background:linear-gradient(180deg,color-mix(in srgb,var(--b-green) 16%,#fff),#fff 75%)!important; border:1.5px solid color-mix(in srgb,var(--b-green) 45%,#fff)!important; border-radius:18px!important; }
+html.mt-beta #mealHist .ht-tiles>div{ background:#fff!important; border:1.5px solid color-mix(in srgb,var(--b-green) 45%,#fff)!important; border-radius:18px!important; }
 /* titres de section façon Réglages */
 html.mt-beta #mealHist .ht-title{ font-size:14px!important; font-weight:900!important; color:var(--b-ink)!important; letter-spacing:.01em; }
 /* segmentés pastel */
@@ -2841,7 +2841,7 @@ html.mt-beta body #mealScan .ms-dock .ms-row button{ background:var(--b-green)!i
 html.mt-beta body #mealScan .ms-dock .ms-row button svg{ stroke:#143008; }
 html.mt-beta body #mealScan .ms-dock .ms-row .ms-sep{ display:none; }
 /* ===== Fiche produit Bêta : simple et claire, même design que le Suivi Bêta ===== */
-html.mt-beta #mealForm .fv-card{ --c:var(--b-blue); background:linear-gradient(180deg,color-mix(in srgb,var(--c) 14%,#fff),#fff 70%)!important; border:1.5px solid color-mix(in srgb,var(--c) 45%,#fff)!important; border-radius:18px!important; box-shadow:0 10px 20px -16px color-mix(in srgb,var(--c) 90%,#000)!important; margin-bottom:12px!important; }
+html.mt-beta #mealForm .fv-card{ --c:var(--b-blue); background:#fff!important; border:1.5px solid color-mix(in srgb,var(--c) 45%,#fff)!important; border-radius:18px!important; box-shadow:0 10px 20px -16px color-mix(in srgb,var(--c) 90%,#000)!important; margin-bottom:12px!important; }
 html.mt-beta #mealForm .fv-nut{ --c:var(--b-purple); }
 html.mt-beta #mealForm .mf-code:empty,html.mt-beta #mealForm .mf-info:empty{ display:none!important; }
 html.mt-beta #mealForm .fv-h{ font-size:15px!important; font-weight:800!important; color:var(--b-ink)!important; }
@@ -2862,6 +2862,9 @@ html.mt-beta #mealForm .mf-seg button.on{ background:var(--b-blue)!important; co
 /* boutons : pilules comme le Suivi */
 html.mt-beta #mealForm .mf-btns .mc-big{ background:#fff!important; border:1.5px solid color-mix(in srgb,var(--b-blue) 50%,#fff)!important; color:var(--b-ink)!important; border-radius:999px!important; box-shadow:none!important; }
 html.mt-beta #mealForm .mf-btns #mfOk{ background:var(--b-green)!important; border-color:var(--b-green)!important; color:#143008!important; box-shadow:0 10px 18px -10px color-mix(in srgb,var(--b-green) 95%,#000)!important; }
+
+/* blocs sans dégradé : fond blanc uni */
+html.mt-beta .cf-sec .cm-box,html.mt-beta .cf-det{ background:#fff!important; }
 </style>
 </head>
 <body>
