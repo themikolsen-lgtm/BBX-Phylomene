@@ -2851,7 +2851,11 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
       <input id="syncEmail" type="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="E-mail" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #E6E9EE;border-radius:12px;font:600 14px system-ui;background:#F7F8FA;margin-bottom:8px">
       <input id="syncPwd" type="password" autocomplete="current-password" placeholder="Mot de passe (6 caractères min.)" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #E6E9EE;border-radius:12px;font:600 14px system-ui;background:#F7F8FA;margin-bottom:10px">
       <div class="cm-seg"><button onclick="BBXSync.signIn()">Se connecter</button><button onclick="BBXSync.signUp()">Créer le compte</button></div>
+      <button class="mc-reset" style="margin:10px auto 0;width:auto;padding:6px 10px;background:none;border:0;color:#2563EB;font:700 13px system-ui" onclick="BBXSync.forgot()">Mot de passe oublié ?</button>
     </div>
+    <div id="syncRec" hidden style="margin-bottom:10px"><div class="cm-d" style="margin:0 2px 8px"><b>Choisis un nouveau mot de passe</b></div>
+      <input id="syncNew" type="password" autocomplete="new-password" placeholder="Nouveau mot de passe" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #E6E9EE;border-radius:12px;font:600 14px system-ui;background:#F7F8FA;margin-bottom:8px">
+      <div class="cm-seg" style="grid-template-columns:1fr"><button onclick="BBXSync.newPwd()">Enregistrer</button></div></div>
     <div id="syncOut" hidden><div class="cm-seg"><button onclick="BBXSync.now()">Synchroniser</button><button onclick="BBXSync.signOut()">Déconnexion</button></div></div>
     <div class="cm-d" id="syncMsg"></div>
     <div class="cm-d">Tes repas, produits, poids, habitudes et séances sont copiés automatiquement. Même compte = mêmes données sur tous tes appareils et dans les deux apps.</div>
@@ -4777,7 +4781,8 @@ window.BBXBk=(function(){
   var URL_='https://izajghznnufkgjsafuxp.supabase.co', KEY='sb_publishable_COkI6c5lH72Lm2S6unK08g_jfTUWH2A';
   var SK='bbx-sb-session', MK='bbx-sync-meta', LS=window.localStorage;
   var INC=/^(bb9-|phy-|bbx-shared-)/, EXC=/(usdakey|shfav-1|restore-defs|-(view|auto|navmode|scanmode|wmode|wlayout|autonext|cmode|usdaon|ciqon))$/;
-  var busy=false, timer=null, msg='', lastErr='';
+  var busy=false, timer=null, msg='', lastErr='', recTok=null;
+  (function(){ try{ var h=location.hash||''; if(/type=recovery/.test(h)){ var q={}; h.replace(/^#/,'').split('&').forEach(function(x){ var a=x.split('='); q[a[0]]=decodeURIComponent(a[1]||''); }); if(q.access_token){ recTok=q.access_token; history.replaceState(null,'',location.pathname+location.search); } } }catch(e){} })();
   function jget(k,d){ try{ var v=JSON.parse(LS.getItem(k)); return v==null?d:v; }catch(e){ return d; } }
   function jset(k,v){ try{ LS.setItem(k,JSON.stringify(v)); }catch(e){} }
   function hash(s){ var h=5381,i=s.length; while(i) h=(h*33)^s.charCodeAt(--i); return (h>>>0).toString(36)+'.'+s.length; }
@@ -4791,6 +4796,7 @@ window.BBXBk=(function(){
     return api('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:{refresh_token:s.rt}}).then(function(j){ return saveSession(j).at; }).catch(function(e){ if(e.status===400||e.status===401||e.status===403){ try{ LS.removeItem(SK); }catch(x){} } throw e; }); }
   function fmt(t){ try{ return new Date(t).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
   function render(){ var el=document.getElementById('syncBox'); if(!el) return; var s=sess(), m=meta();
+    var rc=document.getElementById('syncRec'); if(rc) rc.hidden=!recTok;
     var st=document.getElementById('syncState'), li=document.getElementById('syncIn'), lo=document.getElementById('syncOut'), me=document.getElementById('syncMsg');
     if(!st) return; li.hidden=!!s; lo.hidden=!s;
     st.textContent=s?('Connecté : '+(s.email||'')+(m.last?' · dernière synchro '+fmt(m.last):'')):'Non connecté : tes données restent seulement sur ce téléphone.';
@@ -4831,6 +4837,10 @@ window.BBXBk=(function(){
       api('/auth/v1/signup',{method:'POST',body:{email:e,password:p}}).then(function(j){ if(j&&j.access_token){ saveSession(j); setMsg('✓ Compte créé et connecté.'); cycle(); } else setMsg('Compte créé. Ouvre le lien reçu par e-mail pour le confirmer, puis reviens ici et appuie sur « Se connecter ».'); }).catch(function(x){ setMsg(x.message,1); }); },
     signIn:function(){ var e=(document.getElementById('syncEmail').value||'').trim(), p=document.getElementById('syncPwd').value||''; if(!e||!p) return setMsg('Saisis ton e-mail et ton mot de passe.',1); setMsg('Connexion…');
       api('/auth/v1/token?grant_type=password',{method:'POST',body:{email:e,password:p}}).then(function(j){ saveSession(j); document.getElementById('syncPwd').value=''; setMsg('✓ Connecté.'); cycle(); }).catch(function(x){ setMsg(/Email not confirmed/i.test(x.message)?'E-mail pas encore confirmé : ouvre le lien reçu par e-mail.':(/Invalid login/i.test(x.message)?'E-mail ou mot de passe incorrect.':x.message),1); }); },
+    forgot:function(){ var e=(document.getElementById('syncEmail').value||'').trim(); if(!e) return setMsg('Saisis ton e-mail ci-dessus, puis appuie sur « Mot de passe oublié ».',1); setMsg('Envoi du lien…');
+      api('/auth/v1/recover?redirect_to='+encodeURIComponent(location.origin+location.pathname),{method:'POST',body:{email:e}}).then(function(){ setMsg('✓ Si ce compte existe, un lien de réinitialisation vient d’être envoyé par e-mail. Ouvre-le sur cet appareil.'); }).catch(function(x){ setMsg(x.message,1); }); },
+    newPwd:function(){ var p=document.getElementById('syncNew').value||''; if(p.length<6) return setMsg('Mot de passe : 6 caractères minimum.',1); if(!recTok) return;
+      api('/auth/v1/user',{method:'PUT',token:recTok,body:{password:p}}).then(function(j){ var em=(j&&j.email)||''; recTok=null; document.getElementById('syncNew').value=''; var se={at:'',rt:'',exp:0,email:em}; setMsg('✓ Mot de passe changé. Connecte-toi avec le nouveau.'); var e=document.getElementById('syncEmail'); if(e&&em) e.value=em; }).catch(function(x){ setMsg(x.message,1); }); },
     signOut:function(){ try{ LS.removeItem(SK); LS.removeItem(MK); }catch(e){} setMsg('Déconnecté. Les données restent sur ce téléphone.'); },
     now:function(){ setMsg('Synchronisation…'); cycle({reload:true}); }
   };
@@ -4838,7 +4848,7 @@ window.BBXBk=(function(){
   document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') cycle({reload:true}); else cycle({reload:false}); });
   window.addEventListener('online',function(){ cycle({reload:false}); });
   setInterval(check,15000);
-  setTimeout(function(){ render(); cycle({reload:true}); },1500);
+  setTimeout(function(){ render(); cycle({reload:true}); if(recTok&&window.BBXMeal&&BBXMeal.openCfg) BBXMeal.openCfg(); },1500);
 })();
 </script>
 </body>
