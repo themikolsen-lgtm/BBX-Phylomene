@@ -3502,7 +3502,7 @@ window.BBXBk=(function(){
         try{ if(i<pts.length) tr.applyConstraints({advanced:[{focusMode:'manual',focusDistance:pts[i]}]}); else { tr.applyConstraints({advanced:[{focusMode:(cp.focusMode||[]).includes('continuous')?'continuous':'manual'}]}); t0=Date.now()+1500; i=-1; } }catch(e){} i++; },650);
     }
     // changement d'objectif (grand‑angle / principal / téléobjectif)
-    navigator.mediaDevices.enumerateDevices().then(ds=>{ const cams=ds.filter(d=>d.kind==='videoinput'&&!/front|avant|user|selfie/i.test(d.label)); sc.cams=cams; $('msCamSw').hidden=cams.length<2; }).catch(()=>{ $('msCamSw').hidden=true; });
+    navigator.mediaDevices.enumerateDevices().then(ds=>{ const cams=ds.filter(d=>d.kind==='videoinput'&&!/front|avant|user|selfie/i.test(d.label)); sc.cams=cams; $('msCamSw').hidden=cams.length<2; if(!window.__camAuto&&cams.length>=2){ window.__camAuto=true; const cur=(cam.stream&&cam.stream.getVideoTracks()[0].getSettings().deviceId)||'', nx=cams.find(c=>c.deviceId!==cur&&/dual|double|triple/i.test(c.label))||cams.find(c=>c.deviceId!==cur); if(nx){ try{ cam.stream.getTracks().forEach(t=>t.stop()); }catch(e){} cam.stream=null; cam.deviceId=nx.deviceId; st('Objectif : '+(nx.label||'double')); startCam(); } } }).catch(()=>{ $('msCamSw').hidden=true; });
   }
   function camSwitch(){
     const cams=sc.cams||[]; if(cams.length<2) return; const cur=(cam.stream&&cam.stream.getVideoTracks()[0].getSettings().deviceId)||'', i=Math.max(0,cams.findIndex(c=>c.deviceId===cur)), nx=cams[(i+1)%cams.length];
