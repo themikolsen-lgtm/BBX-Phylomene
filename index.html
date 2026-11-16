@@ -4135,9 +4135,20 @@ window.BBXBk=(function(){
   }
   const manual=()=>{ const c=$('msCode').value.replace(/\D/g,''); if(c.length<6){ st('Code trop court : tape les chiffres sous le code-barres.'); return; } sc.done=false; onCode(c); };
   ['mfKcal','mfProt','mfFat','mfCarb','mfQty','mfUn'].forEach(id=>$(id).addEventListener('input',fmPrev));
-  { const up=el=>{ try{ el.scrollIntoView({block:'center',behavior:'smooth'}); }catch(e){} };
-    $('mealForm').addEventListener('focusin',ev=>{ const el=ev.target; if(!el||el.tagName!=='INPUT') return; setTimeout(()=>up(el),120); setTimeout(()=>{ if(document.activeElement===el) up(el); },450); });
-    if(window.visualViewport) window.visualViewport.addEventListener('resize',()=>{ const el=document.activeElement; if(el&&el.tagName==='INPUT'&&$('mealForm').contains(el)) setTimeout(()=>up(el),60); }); }
+  // clavier : le champ en cours de saisie est remonté dans la partie visible de l'écran (au-dessus du clavier)
+  { const touch=(navigator.maxTouchPoints||0)>0;
+    const place=el=>{ try{
+        const box=el.closest('.mc-ov'); if(!box||document.activeElement!==el) return;
+        const vv=window.visualViewport, ih=window.innerHeight; let top=vv?vv.offsetTop:0, vh=vv?vv.height:ih, kb=Math.max(0,ih-vh-top);
+        if(kb<60&&touch){ kb=Math.round(ih*0.42); vh=ih-kb; top=0; }   // clavier non signalé par le navigateur : hauteur estimée
+        box.style.paddingBottom=kb>=60?(kb+160)+'px':'';
+        const r=el.getBoundingClientRect(), want=top+vh*0.36, dy=(r.top+r.height/2)-want;
+        if(Math.abs(dy)>6) box.scrollTop+=dy;
+      }catch(e){} };
+    const isIn=el=>el&&(el.tagName==='INPUT'||el.tagName==='TEXTAREA')&&!/^(checkbox|radio|file|range|button|submit)$/i.test(el.type||'')&&el.closest('.mc-ov');
+    document.addEventListener('focusin',ev=>{ const el=ev.target; if(!isIn(el)) return; [60,320,650,1000].forEach(t=>setTimeout(()=>place(el),t)); });
+    document.addEventListener('focusout',ev=>{ const box=ev.target&&ev.target.closest&&ev.target.closest('.mc-ov'); if(!box) return; setTimeout(()=>{ if(!isIn(document.activeElement)) box.style.paddingBottom=''; },250); });
+    if(window.visualViewport){ const re=()=>{ const el=document.activeElement; if(isIn(el)) setTimeout(()=>place(el),40); }; window.visualViewport.addEventListener('resize',re); window.visualViewport.addEventListener('scroll',re); } }
   $('mfName').addEventListener('input',()=>{ if(fm.mode!=='add'||fm.fixed) return; if(!fm.unitTouched){ const w=liquidName($('mfName').value)?'ml':'g'; if($('mfUnit').value!==w) setUnit(w); } fm.portions=mergePortions(null,[],$('mfName').value); syncPortions(); renderUnits(); autoQty(); applyBasis(fm.basis||'g'); });
   // --- menu ＋ sous chaque repas ---
   function addMenu(m){
