@@ -3871,10 +3871,22 @@ window.BBXBk=(function(){
   }
   const FAVKEY='phy-favs';
   let FAV=null; try{ FAV=JSON.parse(localStorage.getItem(FAVKEY)||'null'); }catch(e){}
-  const saveFav=()=>{ try{ localStorage.setItem(FAVKEY,JSON.stringify(FAV)); }catch(e){} };
+  const SHK='bbx-shared-favs';   // base de produits commune à BBX-11WM et BBX-Phylomene (même domaine github.io)
+  const saveFav=()=>{ try{ const j=JSON.stringify(FAV); localStorage.setItem(FAVKEY,j); localStorage.setItem(SHK,j); }catch(e){} };
+  const shLoad=()=>{ try{ const a=JSON.parse(localStorage.getItem(SHK)||'null'); return Array.isArray(a)?a:null; }catch(e){ return null; } };
+  const SH0=shLoad();   // lu avant tout enregistrement, pour ne pas écraser la base commune
   if(!Array.isArray(FAV)){   // première fois : mes produits = ceux déjà présents dans mes repas
     FAV=[]; MEALS.forEach(([t,ic,items])=>items.forEach(it=>{ if(FAV.some(f=>f.name===it[0])) return; const q=per100(it); FAV.push({name:it[0],kcal:q.k,prot:q.p,fat:q.f,carb:q.c,serving:it[2]>0?it[2]:0,label:it[1],emoji:it[7],unit:it[6]}); })); saveFav();
   }
+  // fusion unique des produits de cette appli dans la base commune, puis la base commune fait foi
+  try{ const sh=SH0, FK='phy-shfav-1';
+    if(!localStorage.getItem(FK)){
+      const base=sh||[], seen={}; base.forEach(f=>{ seen[normS(f.name)]=1; });
+      FAV.forEach(f=>{ if(!seen[normS(f.name)]){ base.push(f); seen[normS(f.name)]=1; } });
+      FAV=base.slice(0,5000); saveFav(); localStorage.setItem(FK,'1');
+    }else if(sh){ FAV=sh; }
+  }catch(e){}
+  document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible'){ const a=shLoad(); if(a) FAV=a; } });
   function upsertFav(it,portions){
     const q=per100(it), f={name:it[0],kcal:q.k,prot:q.p,fat:q.f,carb:q.c,serving:it[2]>0?it[2]:0,label:it[1],emoji:it[7],unit:it[6],portions:portions||[]};
     FAV=FAV.filter(x=>normS(x.name)!==normS(f.name)); FAV.unshift(f); if(FAV.length>5000) FAV.length=5000; saveFav();
