@@ -2875,7 +2875,17 @@ html.mt-beta #mealForm .fv-h,html.mt-beta #mealForm .fv-nut>*{ margin-left:0!imp
 html.mt-beta .mc-ov button:not(.mc-x):not(.mc-reset),html.mt-beta .mc-ov .mc-big,html.mt-beta .mc-ov .mc-big .ibc{ border-radius:999px!important; }
 html.mt-beta .mc-ov .cm-seg,html.mt-beta .mc-ov .mf-seg,html.mt-beta .mc-ov .ht-seg,html.mt-beta .mc-ov .pl-seg{ border-radius:999px!important; }
 html.mt-beta .mc-ov .cm-seg button,html.mt-beta .mc-ov .mf-seg button{ border-radius:999px!important; }
+/* Bêta : un seul bouton « Suivi » en haut, les Réglages s'ouvrent depuis le Suivi */
+html.mt-beta #mealView .my-pill .my-cfg,html.mt-beta #mealView .my-pill .my-sep{ display:none!important; }
+html.mt-beta #mealView .my-pill > button.my-suivi::after{ display:none!important; }
+html.mt-beta #mealView .my-pill > button.my-suivi{ width:auto!important; min-width:0!important; border-radius:999px!important; display:flex!important; align-items:center; gap:7px; padding:0 12px 0 8px!important; }
+html.mt-beta #mealView .my-pill .my-sl{ display:inline; font:800 15px/1 inherit; font-family:inherit; color:var(--tx,#15171C); }
+html.mt-beta #mealHist .mc-head .ht-cfg{ display:grid; place-items:center; margin-left:auto; margin-right:8px; width:44px; height:44px; border-radius:50%!important; border:1.5px solid color-mix(in srgb,var(--b-blue) 50%,#fff); background:#fff; color:var(--b-ink); cursor:pointer; padding:0; }
+html.mt-beta #mealHist .mc-head .ht-cfg svg{ width:22px; height:22px; fill:currentColor; }
 </style>
+<style id="mfMicroCss">#mealForm #mfMicro:empty{display:none}#mealForm #mfMicro{margin:0 0 10px}#mealForm #mfMicro .mf-micro{margin-top:0}</style>
+<style id="betaNav">.my-sl,.ht-cfg{display:none}
+#mealView .my-fixed .sum-full{padding-bottom:10px!important}</style>
 </head>
 <body>
 
@@ -2885,7 +2895,7 @@ html.mt-beta .mc-ov .cm-seg button,html.mt-beta .mc-ov .mf-seg button{ border-ra
   <div class="my-head">
     <div class="my-brand"><img class="app-logo" id="mlLogo" alt="BBX"></div>
     <div class="my-hr my-pill">
-      <button class="my-suivi" onclick="BBXMeal.openHist()" aria-label="Suivi des jours"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V9M9.7 20V4M14.3 20V8M19 20V13"/></svg></button>
+      <button class="my-suivi" onclick="BBXMeal.openHist()" aria-label="Suivi des jours"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V9M9.7 20V4M14.3 20V8M19 20V13"/></svg><span class="my-sl">Suivi</span></button>
       <i class="my-sep" aria-hidden="true"></i>
       <button class="my-cfg" onclick="BBXMeal.openCfg()" aria-label="Réglages Meal"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg></button>
     </div>
@@ -2976,7 +2986,7 @@ html.mt-beta .mc-ov .cm-seg button,html.mt-beta .mc-ov .mf-seg button{ border-ra
   <div class="mf-btns" style="margin-top:14px"><button class="mc-big ib red" id="mwOk" onclick="BBXMeal.saveWeigh()" aria-label="Enregistrer" title="Enregistrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button><button class="mc-big ib " id="mwLater" onclick="BBXMeal.closeWeigh(true)" aria-label="Plus tard" title="Plus tard"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
 </div>
 <div id="mealHist" class="mc-ov" aria-label="Suivi">
-  <div class="mc-head"><b>Suivi</b><button class="mc-x" onclick="BBXMeal.closeHist()" aria-label="Fermer">✕</button></div>
+  <div class="mc-head"><b>Suivi</b><button class="ht-cfg" onclick="BBXMeal.closeHist();BBXMeal.openCfg()" aria-label="Réglages Meal" title="Réglages Meal"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg></button><button class="mc-x" onclick="BBXMeal.closeHist()" aria-label="Fermer">✕</button></div>
   <div class="ht-seg" id="htSeg"><button type="button" data-n="7" class="on">7 jours</button><button type="button" data-n="30">30 jours</button></div>
   <div id="htBody"></div>
   <button class="mc-reset" onclick="BBXMeal.clearHist()" aria-label="Effacer l’historique" title="Effacer l’historique"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V4.5h4V7M7 7l1 12.5h8L17 7M10 11v5.5M14 11v5.5"/></svg></button>
@@ -3121,6 +3131,7 @@ window.BBXBk=(function(){
   </section>
   <section class="fv-card fv-qty">
   <div class="mf-seg" id="mfBasis" style="margin:6px 0 8px"><button type="button" data-b="u" class="on" onclick="BBXMeal.basis('u')">À l’unité</button><button type="button" data-b="g" onclick="BBXMeal.basis('g')">Pour 100 g</button></div>
+  <div id="mfMicro"></div>
   <div class="mf-qty" id="mfUq" style="display:none"><button type="button" onclick="BBXMeal.uqty(-1)" aria-label="Moins">−</button><div class="mf-in big"><input id="mfUn" type="text" inputmode="decimal" placeholder="1" aria-label="Nombre d’unités"><i id="mfUl">unité</i></div><button type="button" onclick="BBXMeal.uqty(1)" aria-label="Plus">+</button></div>
   <div class="mf-ug" id="mfUg" style="display:none"></div>
   <div class="mf-mult" id="mfMult"><button type="button" onclick="BBXMeal.uset(2)">×2</button><button type="button" onclick="BBXMeal.uset(3)">×3</button><button type="button" onclick="BBXMeal.uset(4)">×4</button><button type="button" onclick="BBXMeal.uset(5)">×5</button><button type="button" onclick="BBXMeal.uset(6)">×6</button></div>
@@ -3349,7 +3360,7 @@ window.BBXBk=(function(){
     [...$('mfBasis').children].forEach(x=>{ x.classList.toggle('on',x.dataset.b===b); });
     $('mfBasis').children[0].style.display=hasUnit()?'':'none'; $('mfBasis').style.display=hasUnit()?'':'none';
     $('mfUq').style.display=b==='u'?'':'none'; $('mfUg').style.display=b==='u'?'':'none'; $('mfMult').style.display=b==='u'?'':'none'; $('mfGq').style.display=b==='u'?'none':'';
-    if(b==='u'){ $('mfUl').textContent=unitLabel()+(fm.serving>0?' · '+r1(fm.serving)+' '+($('mfUnit').value||'g'):''); const g=num($('mfQty').value); const n=g>0?Math.round(g/fm.serving*100)/100:1; $('mfUn').value=r2(n>0?n:1); $('mfQty').value=r1((n>0?n:1)*fm.serving); }
+    if(b==='u'){ $('mfUl').textContent=unitLabel(); const g=num($('mfQty').value); const n=g>0?Math.round(g/fm.serving*100)/100:1; $('mfUn').value=r2(n>0?n:1); $('mfQty').value=r1((n>0?n:1)*fm.serving); }
     if($('mfUnits')) renderUnits(); if(b==='u'){ if($('mfUnits')) $('mfUnits').style.display='none'; $('mfSeg').style.display='none'; } else $('mfSeg').style.display='';
     fmPrev();
   }
@@ -3366,12 +3377,12 @@ window.BBXBk=(function(){
         pv.innerHTML='<small class="mp-for"></small><div class="mf-micro mf-mac">'+D.map(x=>'<span style="--c:'+x[4]+'"><i>'+x[0]+'</i><b><input type="text" inputmode="decimal" placeholder="0" data-s="'+x[1]+'" data-d="'+x[2]+'"><u>'+x[3]+'</u></b></span>').join('')+'</div>'; mac=pv.querySelector('.mf-mac'); }
       pv.querySelector('.mp-for').textContent='pour '+r1(eff)+' '+u;
       mac.querySelectorAll('input').forEach(inp=>{ if(document.activeElement===inp) return; const v=num($(inp.dataset.s).value); inp.value=(isNaN(v)||v<0)?'':String(+(v*eff/100).toFixed(+inp.dataset.d)); });
-      pv.querySelectorAll('.mf-micro:not(.mf-mac),.mf-warn').forEach(x=>x.remove()); { const kk=num($('mfKcal').value), okk=$('mfOkK'); if(okk) okk.textContent=(q>0&&kk>=0)?' · '+r(kk*q/100)+' kcal':''; } }
+      pv.querySelectorAll('.mf-micro:not(.mf-mac),.mf-warn').forEach(x=>x.remove()); { const mm=$('mfMicro'); if(mm) mm.innerHTML=''; } { const kk=num($('mfKcal').value), okk=$('mfOkK'); if(okk) okk.textContent=(q>0&&kk>=0)?' · '+r(kk*q/100)+' kcal':''; } }
     { const MC={'Sucres':'#C026D3','Gras saturés':'#92400E','Fibres':'#4D7C0F','Sel':'#475569','Calcium':'#0369A1','Fer':'#9F1239','Potassium':'#6D28D9','Magnésium':'#0D9488','Vit. C':'#EA580C'}; const h=fm.hv, q2=q>0?q/100:0, L=[];
       if(h&&q2){ const a=(l,v,d,u,m)=>{ if(v!=null&&isFinite(v)) L.push([l,v*(m||1)*q2,d,u]); };
         a('Sucres',h.sug,1,'g'); a('Gras saturés',h.sat,1,'g'); a('Fibres',h.fib,1,'g'); a('Sel',h.salt,2,'g');
         a('Calcium',h.ca,0,'mg',1000); a('Fer',h.fe,1,'mg',1000); a('Potassium',h.k,0,'mg',1000); a('Magnésium',h.mg,0,'mg',1000); a('Vit. C',h.vc,1,'mg',1000); }
-      if(L.length) $('mfPrev').insertAdjacentHTML('beforeend','<div class="mf-micro"><div class="mm-t">Détail pour '+r1(q)+' '+u+'</div>'+L.map(x=>'<span style="--c:'+(MC[x[0]]||'#374151')+'"><i>'+x[0]+'</i><b>'+(+x[1].toFixed(x[2]))+' '+x[3]+'</b></span>').join('')+'</div>'); }
+      if(L.length) ($('mfMicro')||$('mfPrev')).insertAdjacentHTML('beforeend','<div class="mf-micro"><div class="mm-t">Détail pour '+r1(q)+' '+u+'</div>'+L.map(x=>'<span style="--c:'+(MC[x[0]]||'#374151')+'"><i>'+x[0]+'</i><b>'+(+x[1].toFixed(x[2]))+' '+x[3]+'</b></span>').join('')+'</div>'); }
     { const P=p>=0?p:0, F=fa>=0?fa:null, C=ca>=0?ca:null; let w='';
       if(k>=0&&F!=null&&C!=null){ const est=4*P+9*F+4*C; if(P+F+C>100.5) w='⚠️ Protéines + lipides + glucides dépassent 100 g : ces valeurs ne sont probablement pas « pour 100 g ».'; else if(est>=20&&Math.abs(k-est)>Math.max(40,est*0.3)) w='⚠️ Les calories ('+r(k)+') ne collent pas avec les macros (≈ '+r(est)+' kcal attendues). <button type="button" onclick="BBXMeal.fixKcal('+Math.round(est)+')">Utiliser '+r(est)+'</button>'; }
       $('mfPrev').insertAdjacentHTML('beforeend',w?'<div class="mf-warn">'+w+'</div>':''); }
