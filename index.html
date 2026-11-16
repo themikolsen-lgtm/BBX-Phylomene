@@ -2851,6 +2851,9 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
       <button data-sm="photo" onclick="BBXMeal.scanMode('photo');BBXMeal.scanDesc()" aria-label="Photo sans autorisation" title="Photo sans autorisation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.2l1.3-2h6l1.3 2h1.2A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5v-8z"/><circle cx="12" cy="12.5" r="3.3"/></svg><span>Photo</span></button>
     </div>
     <div class="cm-d" id="mcSmD"></div></div>
+  <div class="cm-box" style="margin-top:12px"><div class="cm-t">USDA FoodData Central</div>
+    <input id="usdaKey" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Clé API personnelle (facultatif)" onchange="BBXMeal.setUsdaKey(this.value)" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #E6E9EE;border-radius:12px;font:600 14px system-ui;background:#F7F8FA">
+    <div class="cm-d">Sans clé, la clé de démo est limitée (≈30 recherches/h). Clé gratuite : <a href="https://fdc.nal.usda.gov/api-key-signup" target="_blank" rel="noopener" style="color:#0A7">fdc.nal.usda.gov</a>. La base USDA est en anglais.</div></div>
     <div class="mc-hint">Change les produits de chaque repas : ▲▼ pour l’ordre, ✎ pour modifier ou changer de repas, 🗑 pour supprimer.</div>
   <div id="mcList"></div>
   <div class="ib-row"><button class="mc-big ib ibt red" onclick="BBXMeal.addMeal()" aria-label="Ajouter un repas" title="Ajouter un repas"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><em>Repas</em></button></div>
@@ -3122,6 +3125,7 @@ window.BBXBk=(function(){
   const num=v=>parseFloat(String(v).replace(',','.'));
   function refresh(){ saveDef(); save(); build(); calc(); renderCfg(); }
   function renderCfg(){
+    try{ const k=$('usdaKey'); if(k) k.value=localStorage.getItem('phy-usdakey')||''; }catch(e){}
     applyMode(); if(window.BBXBk) BBXBk.refresh(); { const d=$('cmDesc'); if(d) d.textContent=MODE==='fab'?'Bouton central : comptage automatique, sans case. Un seul bouton ＋ en bas de l’écran propose le repas de l’heure (modifiable), puis Idées, Scanner, Rechercher ou Récurrent. Chaque nouveau jour, les repas repartent vides.':AUTO?'Sans case : chaque produit présent dans un repas est compté tout de suite (kcal et macros). Supprime-le pour le retirer du total. Chaque nouveau jour, les repas repartent vides (l’historique est gardé) : le bouton Récurrent remet tes produits habituels en un geste.':'Avec cases : tu coches un produit pour le compter dans ta journée.'; }
     $('mcList').innerHTML=MEALS.map(([t,ic,items],m)=>`<section class="mc-meal" style="--mc:${mcol(t)[0]};--mx:${mcx(t)};--md:${mcd(t)};--mt:${mcol(t)[1]}"><div class="mc-mh"><span class="mc-mi">${esc(ic)}</span><b>${esc(t)}</b><button class="mc-sm" onclick="BBXMeal.renameMeal(${m})" aria-label="Renommer ${esc(t)}">✎</button><button class="mc-sm del" onclick="BBXMeal.delMeal(${m})" aria-label="Supprimer le repas ${esc(t)}">🗑</button><button class="mc-plus" onclick="BBXMeal.add(${m})" aria-label="Ajouter à ${esc(t)}">＋</button></div>`+
       (items.length?items.map((it,i)=>{ const q=per100(it); return `<div class="mc-it"><span class="mc-th">${esc(it[7])}</span><div class="mc-nm"><b>${esc(it[0])}</b><span>${r(q.k)} kcal · ${r1(q.p)} g prot.${q.f!=null&&q.c!=null?' · '+r1(q.f)+' g lip. · '+r1(q.c)+' g gluc.':''} / 100 ${it[6]}</span></div><div class="mc-acts"><button onclick="BBXMeal.move(${m},${i},-1)" ${i===0?'disabled':''} aria-label="Monter">▲</button><button onclick="BBXMeal.move(${m},${i},1)" ${i===items.length-1?'disabled':''} aria-label="Descendre">▼</button><button onclick="BBXMeal.edit(${m},${i})" aria-label="Modifier">✎</button><button class="del" onclick="BBXMeal.del(${m},${i})" aria-label="Supprimer">🗑</button></div></div>`; }).join(''):'<div class="mc-empty">Aucun produit dans ce repas</div>')+`</section>`).join('');
@@ -3895,7 +3899,7 @@ window.BBXBk=(function(){
     const L=sr.list; L.forEach((x,i)=>{ x._i=i; });
     const row=x=>`<div class="sr-row"><button class="sr-it" onclick="BBXMeal.pick(${x._i},event)"><span class="sr-th">${esc(x.emoji||'🛒')}</span><span class="sr-nm"><b>${esc(x.name)}</b><span>${x.kcal!=null?r(x.kcal):'?'} kcal · ${x.prot!=null?r1(x.prot):'?'} g prot.${x.fat!=null&&x.carb!=null?' · '+r1(x.fat)+' g lip. · '+r1(x.carb)+' g gluc.':''} / 100 ${x.unit||'g'}${x.serving>0&&x.label&&!/^portion de /.test(x.label)?' · 1 '+esc(x.label)+' ≈ '+r(x.serving)+' '+(x.unit||'g'):''}</span></span><span class="sr-go">＋</span></button>${x.fav?`<button class="sr-del" onclick="BBXMeal.favDel(${x._fi})" aria-label="Retirer de mes produits">✕</button>`:''}</div>`;
     const sec=(t,arr)=>arr.length?`<div class="sr-sec">${t}</div>`+arr.map(row).join(''):'';
-    const h=sec('Mes produits (enregistrés sur ton téléphone)',L.filter(x=>x.fav))+sec('Aliments courants',L.filter(x=>x.db))+sec('Open Food Facts',L.filter(x=>x.off));
+    const h=sec('Mes produits (enregistrés sur ton téléphone)',L.filter(x=>x.fav))+sec('Aliments courants',L.filter(x=>x.db))+sec('Open Food Facts',L.filter(x=>x.off))+sec('USDA FoodData Central',L.filter(x=>x.usda));
     const qv=$('srQ').value.trim();
     $('srList').innerHTML=(h||'<div class="sr-note">Aucun résultat pour le moment.</div>')+(extra||'')+(qv.length>=2?'<button class="sr-manual" onclick="BBXMeal.addTyped()">＋ Ajouter « '+esc(qv)+' » à la main</button>':'');
   }
@@ -4009,6 +4013,31 @@ window.BBXBk=(function(){
     if(!ok) throw {multi:errs};
     return [];
   }
+  const USDAKEY='phy-usdakey';
+  const usdaKey=()=>{ try{ return (localStorage.getItem(USDAKEY)||'').trim()||'DEMO_KEY'; }catch(e){ return 'DEMO_KEY'; } };
+  function usdaItem(f){
+    const N={}; (f.foodNutrients||[]).forEach(n=>{ const id=n.nutrientId!=null?n.nutrientId:(n.nutrient&&n.nutrient.id), v=n.value!=null?n.value:n.amount; if(id!=null&&v!=null&&N[id]==null) N[id]=+v; });
+    const g=(...ids)=>{ for(const i of ids) if(N[i]!=null&&isFinite(N[i])) return N[i]; return null; };
+    let kcal=g(1008,2047,2048); const prot=g(1003), fat=g(1004), carb=g(1005);
+    if(kcal==null&&prot!=null&&fat!=null&&carb!=null) kcal=4*prot+9*fat+4*carb;
+    let nm=String(f.description||'').trim(); if(!nm) return null;
+    if(nm===nm.toUpperCase()) nm=nm.toLowerCase();
+    nm=nm.charAt(0).toUpperCase()+nm.slice(1);
+    const na=g(1093), h={}; const sug=g(2000), sat=g(1258), fib=g(1079);
+    if(sug!=null) h.sug=sug; if(sat!=null) h.sat=sat; if(fib!=null) h.fib=fib; if(na!=null) h.salt=na*2.5/1000;
+    return {name:nm,kcal:kcal==null?null:Math.round(kcal),prot:prot,fat:fat,carb:carb,serving:0,label:'',portions:[],unit:'g',emoji:'🇺🇸',usda:true,h:Object.keys(h).length?h:undefined};
+  }
+  async function fetchUSDA(q){
+    const url='https://api.nal.usda.gov/fdc/v1/foods/search?api_key='+enc(usdaKey())+'&query='+enc(q)+'&dataType='+enc('Foundation,SR Legacy')+'&pageSize=15';
+    const ctl=new AbortController(), t=setTimeout(()=>ctl.abort(),8000);
+    try{
+      const res=await fetch(url,{signal:ctl.signal});
+      if(!res.ok){ const e=new Error('HTTP '+res.status); e.status=res.status; throw e; }
+      const j=await res.json();
+      return {items:(j.foods||[]).map(usdaItem).filter(Boolean)};
+    }catch(e){ return {items:[],err:e}; }
+    finally{ clearTimeout(t); }
+  }
   const isCodeQ=q=>/^\d{8,14}$/.test(String(q).replace(/[\s.-]/g,''));
   async function searchCode(q){   // code-barres tapé dans la recherche : on retrouve directement le produit
     const code=String(q).replace(/\D/g,''), my=++sr.n;
@@ -4024,18 +4053,22 @@ window.BBXBk=(function(){
     }
   }
   async function doSearch(){
+    let lx=''; const R=e=>{ lx=e; srRender(e); };
     clearTimeout(srTimer);
-    const q=$('srQ').value.trim(); if(isCodeQ(q)){ searchCode(q); return; } if(q.length<2){ srRender('<div class="sr-note">Tape au moins 2 lettres.</div>'); return; }
-    const my=++sr.n, base=localResults(q); sr.list=base;
-    srRender('<div class="sr-note" id="srWait">Recherche sur Open Food Facts…</div>');
+    const q=$('srQ').value.trim(); if(isCodeQ(q)){ searchCode(q); return; } if(q.length<2){ R('<div class="sr-note">Tape au moins 2 lettres.</div>'); return; }
+    const my=++sr.n, base=localResults(q); sr.list=base; const usdaP=fetchUSDA(q);
+    R('<div class="sr-note" id="srWait">Recherche sur Open Food Facts…</div>');
     try{
       const net=await fetchOFF(q); if(my!==sr.n) return;
       sr.list=base.concat(net);
-      srRender(net.length?'':'<div class="sr-note">Rien de plus trouvé en ligne pour « '+esc(q)+' ».'+(base.length?'':' Ajoute-le à la main avec le bouton ＋.')+'</div>');
+      R(net.length?'':'<div class="sr-note">Rien de plus trouvé en ligne pour « '+esc(q)+' ».'+(base.length?'':' Ajoute-le à la main avec le bouton ＋.')+'</div>');
     }catch(e){
       if(my!==sr.n) return;
-      srRender('<div class="sr-note">Open Food Facts n’a pas répondu'+(e&&e.multi?' ('+esc(e.multi.join(' · '))+')':'')+'.'+(base.length?' Les résultats ci-dessus viennent de ton téléphone.':' Ajoute-le à la main ci-dessous.')+'</div>');
+      R('<div class="sr-note">Open Food Facts n’a pas répondu'+(e&&e.multi?' ('+esc(e.multi.join(' · '))+')':'')+'.'+(base.length?' Les résultats ci-dessus viennent de ton téléphone.':' Ajoute-le à la main ci-dessous.')+'</div>');
     }
+    const u=await usdaP; if(my!==sr.n) return;
+    if(u.items.length){ sr.list=sr.list.concat(u.items); srRender(/Rien de plus trouvé/.test(lx)?'':lx); }
+    else if(u.err&&u.err.status===429){ srRender(lx+'<div class="sr-note">USDA : limite de la clé de démo atteinte. Ajoute ta clé gratuite dans les réglages Meal (⚙).</div>'); }
   }
   function addTyped(){ const q=$('srQ').value.trim(); sr.fromForm=false; openForm('add',sr.target,null,{name:q,info:'Renseigne les calories et les protéines pour 100 g.'}); }
   // ajout direct d'un produit (bouton ＋) : pas de formulaire, quantité habituelle ou portion
@@ -4063,7 +4096,7 @@ window.BBXBk=(function(){
       if(directAdd(sr.target,Object.assign({},x,{h:x.h||hlGet(x.name)}),0,null,()=>{ gb.textContent='✓'; gb.classList.add('added'); setTimeout(()=>{ gb.textContent='＋'; gb.classList.remove('added'); },1600); })) return;
     }
     sr.fromForm=false;
-    const src=x.fav?'Dans tes produits.':(x.db?'Valeurs moyennes pour 100 '+(x.unit||'g')+'.':'Produit Open Food Facts.');
+    const src=x.fav?'Dans tes produits.':(x.db?'Valeurs moyennes pour 100 '+(x.unit||'g')+'.':(x.usda?'Base USDA FoodData Central (valeurs pour 100 g).':'Produit Open Food Facts.'));
     const w=(x.serving>0&&x.label&&!/^portion de /.test(x.label))?' Poids moyen : 1 '+x.label+' ≈ '+r(x.serving)+' '+(x.unit||'g')+' (modifiable).':'';
     openForm('add',sr.target,null,{h:x.h||hlGet(x.name),name:x.name,kcal:x.kcal,prot:x.prot,fat:x.fat,carb:x.carb,serving:x.serving,label:x.label,portions:x.portions,unit:x.unit,emoji:x.emoji,
       info:src+w+' Indique la quantité puis valide.'+(x.kcal==null?' Les calories ne sont pas renseignées : complète-les.':'')});
@@ -4639,6 +4672,7 @@ window.BBXBk=(function(){
   function fabSel(i){ if(!MEALS[i]) return; fab.m=i; fabRender(); }
   function fabGo(a){ const m=fab.m; fabClose(); ({ideas:openIdeas,scan:m=>BBXMeal.scan(m),search:m=>srOpen(m),habits:openHabits})[a](m); }
   window.BBXMeal={
+    setUsdaKey:v=>{ try{ v=String(v||'').trim(); if(v) localStorage.setItem(USDAKEY,v); else localStorage.removeItem(USDAKEY); }catch(e){} },
     fab:fabOpen, fabClose:fabClose, fabSel:fabSel, fabGo:fabGo,
     setMode:v=>{ MODE=(v==='auto'||v==='fab')?v:'chk'; AUTO=MODE!=='chk'; FABM=MODE==='fab'; try{ localStorage.setItem('phy-cmode',MODE); }catch(e){} applyMode(); calc(); renderCfg(); },
     openCfg:()=>{ renderCfg(); $('mealCfg').classList.add('show'); }, closeCfg:()=>$('mealCfg').classList.remove('show'),
