@@ -2996,6 +2996,8 @@ html.mt-beta body #mealForm #mfBasis .bz.on{ background:#8EC5FF; box-shadow:0 6p
 #mealForm{ scroll-padding-bottom:120px; }
 #mealForm .mf-code:empty{ display:none !important; }
 </style>
+<style id="verCss">.cf-ver{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin:16px 2px 8px; font-size:13px; font-weight:700; color:#4B5563; }
+.cf-ver button{ flex:none; height:40px; padding:0 16px; border-radius:999px; border:1.5px solid #C9CED6; background:#fff; color:#15171C; font-size:14px; font-weight:800; cursor:pointer; }</style>
 </head>
 <body>
 
@@ -3175,6 +3177,7 @@ html.mt-beta body #mealForm #mfBasis .bz.on{ background:#8EC5FF; box-shadow:0 6p
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
+  <div class="cf-ver"><span id="appVer">Version du 16/11 · 20 h 25</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
 </div>
 <script>
 window.BBXBk=(function(){
@@ -4143,10 +4146,10 @@ window.BBXBk=(function(){
         if(kb<60&&touch){ kb=Math.round(ih*0.42); vh=ih-kb; top=0; }   // clavier non signalé par le navigateur : hauteur estimée
         box.style.paddingBottom=kb>=60?(kb+160)+'px':'';
         const r=el.getBoundingClientRect(), want=top+vh*0.36, dy=(r.top+r.height/2)-want;
-        if(Math.abs(dy)>6) box.scrollTop+=dy;
+        if(Math.abs(dy)>6){ const b0=box.scrollTop; box.scrollTop=b0+dy; if(Math.abs(box.scrollTop-b0)<1&&dy>0){ try{ el.scrollIntoView({block:'start'}); box.scrollTop=Math.max(0,box.scrollTop-vh*0.25); }catch(e){} } }
       }catch(e){} };
     const isIn=el=>el&&(el.tagName==='INPUT'||el.tagName==='TEXTAREA')&&!/^(checkbox|radio|file|range|button|submit)$/i.test(el.type||'')&&el.closest('.mc-ov');
-    document.addEventListener('focusin',ev=>{ const el=ev.target; if(!isIn(el)) return; [60,320,650,1000].forEach(t=>setTimeout(()=>place(el),t)); });
+    document.addEventListener('focusin',ev=>{ const el=ev.target; if(!isIn(el)) return; place(el); [60,200,400,700,1100,1600].forEach(t=>setTimeout(()=>place(el),t)); });
     document.addEventListener('focusout',ev=>{ const box=ev.target&&ev.target.closest&&ev.target.closest('.mc-ov'); if(!box) return; setTimeout(()=>{ if(!isIn(document.activeElement)) box.style.paddingBottom=''; },250); });
     if(window.visualViewport){ const re=()=>{ const el=document.activeElement; if(isIn(el)) setTimeout(()=>place(el),40); }; window.visualViewport.addEventListener('resize',re); window.visualViewport.addEventListener('scroll',re); } }
   $('mfName').addEventListener('input',()=>{ if(fm.mode!=='add'||fm.fixed) return; if(!fm.unitTouched){ const w=liquidName($('mfName').value)?'ml':'g'; if($('mfUnit').value!==w) setUnit(w); } fm.portions=mergePortions(null,[],$('mfName').value); syncPortions(); renderUnits(); autoQty(); applyBasis(fm.basis||'g'); });
