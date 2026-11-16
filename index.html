@@ -2656,8 +2656,8 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 /* ===== Nutriments accueil : tuiles à anneau ===== */
 #mealView .my-fixed .sum-full{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:7px!important;padding:12px 10px 14px!important;justify-content:stretch!important;align-items:stretch!important}
 #mealView .my-fixed .sum-full.two{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-#mealView .sum-full .sx-c{position:relative;border:0!important;border-radius:20px!important;padding:9px 4px 8px!important;background:var(--t)!important;display:grid!important;grid-template-rows:auto 48px auto;justify-items:center;align-items:center;row-gap:6px;min-width:0}
-#mealView .sum-full .sx-c:first-child,#mealView .sum-full .sx-c:last-child{padding:9px 4px 8px!important}
+#mealView .sum-full .sx-c{position:relative;border:0!important;border-radius:20px!important;padding:8px 7px 7px!important;background:var(--t)!important;display:grid!important;grid-template-rows:auto auto 5px auto;justify-items:center;align-items:center;row-gap:4px;min-width:0}
+#mealView .sum-full .sx-c:first-child,#mealView .sum-full .sx-c:last-child{padding:8px 7px 7px!important}
 #mealView .sum-full .sx-c.k{--c:#2E7D1E;--t:#E7F6DD;--f:#4FA64A}
 #mealView .sum-full .sx-c.p{--c:#0F7C8A;--t:#DFF4F6;--f:#2FB8C8}
 #mealView .sum-full .sx-c.f{--c:#B45F06;--t:#FFF0D8;--f:#F2A33A}
@@ -2665,9 +2665,9 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 #mealView .sum-full .sx-c.over{--c:#E3213B;--t:#FFE1E4;--f:#E3213B}
 #mealView .sum-full .sx-h{display:contents!important}
 #mealView .sum-full .sx-c .sx-t,#mealView .sum-full .sx-c.k .sx-h .sx-t{font-size:10px!important;font-weight:900;text-transform:uppercase;letter-spacing:.09em;color:var(--c)!important;opacity:.85;line-height:1}
-#mealView .sum-full .sx-bar{width:48px!important;height:48px!important;flex:none!important;border-radius:50%!important;overflow:visible;background:conic-gradient(var(--f) calc(var(--pct,0) * 1%),rgba(255,255,255,.9) 0)!important;-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 6px),#000 calc(100% - 5px));mask:radial-gradient(farthest-side,transparent calc(100% - 6px),#000 calc(100% - 5px))}
+#mealView .sum-full .sx-bar{width:100%!important;height:5px!important;flex:none!important;border-radius:99px!important;overflow:hidden;position:relative;background:linear-gradient(90deg,var(--f) calc(var(--pct,0) * 1%),rgba(255,255,255,.9) 0)!important;-webkit-mask:none!important;mask:none!important}
 #mealView .sum-full .sx-bar i{display:none!important}
-#mealView .sum-full .sx-h b{position:absolute;left:0;right:0;top:calc(9px + 10px + 6px + 24px);transform:translateY(-50%);text-align:center;font-size:14px!important;line-height:1!important;color:var(--c)!important;letter-spacing:-.04em}
+#mealView .sum-full .sx-h b{position:static!important;transform:none!important;text-align:center;font-size:14px!important;line-height:1!important;color:var(--c)!important;letter-spacing:-.04em}
 #mealView .sum-full .sx-l{font-size:9px!important;color:var(--c)!important;opacity:.95;white-space:nowrap;letter-spacing:-.03em;text-align:center}
 #mealView .sum-full .sx-c .sm-in{width:23px}
 #mealView .sum-full .sx-c.k .sm-in{width:27px}
