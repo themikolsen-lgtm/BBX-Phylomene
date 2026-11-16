@@ -3177,7 +3177,7 @@ html.mt-beta body #mealForm #mfBasis .bz.on{ background:#8EC5FF; box-shadow:0 6p
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 16/11 · 20 h 25</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 16/11 · 21 h 00</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
 </div>
 <script>
 window.BBXBk=(function(){
@@ -3550,8 +3550,13 @@ window.BBXBk=(function(){
     $('mfQty').value=r1(Math.max(1,q+dir*step)); fmPrev();
   }
   // ---------- produit inconnu : lecture du tableau nutritionnel par photo (OCR) + codes-barres mémorisés ----------
-  const CODEKEY='phy-codes'; let CODES={}; try{ CODES=JSON.parse(localStorage.getItem(CODEKEY)||'{}')||{}; }catch(e){ CODES={}; }
-  const saveCodes=()=>{ try{ localStorage.setItem(CODEKEY,JSON.stringify(CODES)); }catch(e){} };
+  // produits par code-barres : base commune à BBX-11WM et BBX-Phylomene (clé partagée, synchronisée) + copie propre à l'appli
+  const CODEKEY='phy-codes', SHCK='bbx-shared-codes'; let CODES={};
+  const codesRead=k=>{ try{ const o=JSON.parse(localStorage.getItem(k)||'{}'); return (o&&typeof o==='object'&&!Array.isArray(o))?o:{}; }catch(e){ return {}; } };
+  const codesMerge=()=>{ const own=codesRead(CODEKEY), sh=codesRead(SHCK), out=Object.assign({},sh); Object.keys(own).forEach(k=>{ if(!out[k]||((own[k]&&own[k].t)||0)>((out[k]&&out[k].t)||0)) out[k]=own[k]; }); return out; };
+  const saveCodes=()=>{ try{ const j=JSON.stringify(CODES); localStorage.setItem(CODEKEY,j); localStorage.setItem(SHCK,j); }catch(e){} };
+  CODES=codesMerge(); try{ if(Object.keys(CODES).length!==Object.keys(codesRead(SHCK)).length) saveCodes(); }catch(e){}
+  document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') CODES=codesMerge(); });
   // ---- lecture OCR du tableau nutritionnel (v2 : plusieurs passes + vote + cohérence énergétique) ----
   const OCRU={ num:x=>{ const v=parseFloat(String(x).replace(',','.')); return isNaN(v)?null:v; } };
   function ocrCands(s,g){   // toutes les lectures plausibles d'un nombre (g collé lu comme 9, virgule perdue…), avec une pénalité
@@ -3904,7 +3909,8 @@ window.BBXBk=(function(){
     if(fm.unitEdited&&fm.serving>0) portSet(nm,fm.serving,unit);
     upsertFav(it,fm.portions); bumpHabit(MEALS[mt][0],nm,q);
     QTY[hlKey(nm)]={g:Math.round(q*10)/10,u:unit}; saveQty();
-    if(fm.code&&!edit){ CODES[fm.code]={name:nm,kcal:k,prot:p,fat:isNaN(fa)?null:fa,carb:isNaN(ca)?null:ca,serving:fm.serving||0,label:fm.newLabel||'',portions:fm.portions||[],liquid:$('mfUnit').value==='ml'}; saveCodes(); }
+    { const cd0=fm.code||(edit?codeFor(nm):null); if(cd0){ fm.code=cd0; } }
+    if(fm.code){ CODES=codesMerge(); CODES[fm.code]={t:Date.now(),name:nm,kcal:k,prot:p,fat:isNaN(fa)?null:fa,carb:isNaN(ca)?null:ca,serving:fm.serving||0,label:fm.newLabel||'',portions:fm.portions||[],liquid:$('mfUnit').value==='ml'}; saveCodes(); }
     if(fm.h&&(fm.h.ns||fm.h.nova)){ HL[hlKey(nm)]=Object.assign({t:Date.now()},fm.h); saveHL(); }
     if(edit){
       const wasDone=!!S.d[key(fm.m,fm.i)]; dropState(fm.m,fm.i);
@@ -4502,7 +4508,9 @@ window.BBXBk=(function(){
     if(u.items.length){ sr.list=sr.list.concat(u.items); srRender(/Rien de plus trouvé/.test(lx)?'':lx); }
     else if(u.err&&u.err.status===429){ srRender(lx+'<div class="sr-note">USDA : limite de la clé de démo atteinte. Ajoute ta clé gratuite dans les réglages Meal (⚙).</div>'); }
   }
-  function addTyped(){ const q=$('srQ').value.trim(); sr.fromForm=false; openForm('add',sr.target,null,{name:q,info:'Renseigne les calories et les protéines pour 100 g.'}); }
+  function addTyped(){ const q=$('srQ').value.trim(), cd=q.replace(/\s+/g,''); sr.fromForm=false;
+    if(/^\d{8,14}$/.test(cd)){ openForm('add',sr.target,null,{name:'',code:cd,info:'Nouveau produit (code '+cd+') : donne-lui un nom et ses valeurs pour 100 g, ou photographie son tableau avec « Tableau ». Il sera enregistré avec son code-barres.'}); return; }
+    openForm('add',sr.target,null,{name:q,info:'Renseigne les calories et les protéines pour 100 g.'}); }
   // ajout direct d'un produit (bouton ＋) : pas de formulaire, quantité habituelle ou portion
   function directAdd(m,x,g,closeFn,after){
     if(!MEALS[m]) return false; const unit=x.unit||'g', uw=x.serving>0?x.serving:100;
@@ -5197,7 +5205,7 @@ window.BBXBk=(function(){
         rows.forEach(function(r){ if(!INC.test(r.key)||EXC.test(r.key)) return; if(!maxT||r.updated_at>maxT) maxT=r.updated_at;
           var cur=LS.getItem(r.key), curH=cur==null?null:hash(cur);
           if(cur!=null&&curH!==m.h[r.key]){
-            if(r.key==='bbx-shared-portions'){ try{ var pa=JSON.parse(cur)||{}, pb=JSON.parse(r.value)||{}; Object.keys(pb).forEach(function(k){ if(!pa[k]||(pb[k].t||0)>(pa[k].t||0)) pa[k]=pb[k]; }); var pm=JSON.stringify(pa); if(pm!==cur){ LS.setItem(r.key,pm); changed++; } if(pm===r.value) m.h[r.key]=hash(pm); }catch(e){} return; }
+            if(r.key==='bbx-shared-portions'||r.key==='bbx-shared-codes'){ try{ var pa=JSON.parse(cur)||{}, pb=JSON.parse(r.value)||{}; Object.keys(pb).forEach(function(k){ if(!pa[k]||(pb[k].t||0)>(pa[k].t||0)) pa[k]=pb[k]; }); var pm=JSON.stringify(pa); if(pm!==cur){ LS.setItem(r.key,pm); changed++; } if(pm===r.value) m.h[r.key]=hash(pm); }catch(e){} return; }
             if(m.h[r.key]!==undefined) return;                  // modification locale non envoyée : elle gagne
             if(cur===r.value){ m.h[r.key]=curH; return; }
             var nv=cur;                                          // première connexion : on garde le plus complet, sans rien perdre
