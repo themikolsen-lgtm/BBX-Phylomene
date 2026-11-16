@@ -2840,6 +2840,28 @@ html.mt-beta body #mealScan #msCode::placeholder{ color:#6B7280!important; -webk
 html.mt-beta body #mealScan .ms-dock .ms-row button{ background:var(--b-green)!important; border-radius:50%!important; }
 html.mt-beta body #mealScan .ms-dock .ms-row button svg{ stroke:#143008; }
 html.mt-beta body #mealScan .ms-dock .ms-row .ms-sep{ display:none; }
+/* ===== Fiche produit Bêta : simple et claire, même design que le Suivi Bêta ===== */
+html.mt-beta #mealForm .fv-card{ --c:var(--b-blue); background:linear-gradient(180deg,color-mix(in srgb,var(--c) 14%,#fff),#fff 70%)!important; border:1.5px solid color-mix(in srgb,var(--c) 45%,#fff)!important; border-radius:18px!important; box-shadow:0 10px 20px -16px color-mix(in srgb,var(--c) 90%,#000)!important; margin-bottom:12px!important; }
+html.mt-beta #mealForm .fv-nut{ --c:var(--b-purple); }
+html.mt-beta #mealForm .mf-code:empty,html.mt-beta #mealForm .mf-info:empty{ display:none!important; }
+html.mt-beta #mealForm .fv-h{ font-size:15px!important; font-weight:800!important; color:var(--b-ink)!important; }
+/* nom du produit : champs blancs, sans bandeau coloré */
+html.mt-beta #mealForm .fv-prod .mf-name{ background:transparent!important; padding:12px 12px 4px!important; gap:8px; }
+html.mt-beta #mealForm .mf-name input{ background:#fff!important; border:1.5px solid color-mix(in srgb,var(--b-blue) 50%,#fff)!important; border-radius:14px!important; box-shadow:none!important; color:var(--b-ink)!important; height:50px!important; }
+html.mt-beta #mealForm .mf-name input:first-child{ width:54px!important; border-radius:14px!important; }
+html.mt-beta #mealForm .mf-name input:focus,html.mt-beta #mealForm .mf-in:focus-within{ border-color:var(--b-green)!important; box-shadow:0 0 0 3px rgba(125,217,87,.22)!important; outline:0!important; }
+/* pastilles repas */
+html.mt-beta #mealForm .mf-chip{ background:#fff!important; border:1.5px solid color-mix(in srgb,var(--b-blue) 50%,#fff)!important; color:var(--b-ink)!important; box-shadow:none!important; }
+html.mt-beta #mealForm .mf-chip.on{ background:var(--b-blue)!important; border-color:var(--b-blue)!important; color:var(--b-ink)!important; box-shadow:0 6px 12px -6px color-mix(in srgb,var(--b-blue) 90%,#000)!important; }
+/* quantité */
+html.mt-beta #mealForm .mf-in.big{ background:#fff!important; border:1.5px solid color-mix(in srgb,var(--b-blue) 50%,#fff)!important; border-radius:14px!important; box-shadow:none!important; }
+html.mt-beta #mealForm .mf-qty>button,html.mt-beta #mealForm .mf-mult button{ background:#fff!important; border:1.5px solid color-mix(in srgb,var(--b-blue) 50%,#fff)!important; color:var(--b-ink)!important; box-shadow:none!important; }
+html.mt-beta #mealForm .mf-seg{ background:color-mix(in srgb,var(--b-blue) 18%,#fff)!important; border:1.5px solid color-mix(in srgb,var(--b-blue) 40%,#fff); }
+html.mt-beta #mealForm .mf-seg button{ color:#2B3140!important; }
+html.mt-beta #mealForm .mf-seg button.on{ background:var(--b-blue)!important; color:var(--b-ink)!important; box-shadow:0 6px 12px -6px color-mix(in srgb,var(--b-blue) 90%,#000)!important; }
+/* boutons : pilules comme le Suivi */
+html.mt-beta #mealForm .mf-btns .mc-big{ background:#fff!important; border:1.5px solid color-mix(in srgb,var(--b-blue) 50%,#fff)!important; color:var(--b-ink)!important; border-radius:999px!important; box-shadow:none!important; }
+html.mt-beta #mealForm .mf-btns #mfOk{ background:var(--b-green)!important; border-color:var(--b-green)!important; color:#143008!important; box-shadow:0 10px 18px -10px color-mix(in srgb,var(--b-green) 95%,#000)!important; }
 </style>
 </head>
 <body>
