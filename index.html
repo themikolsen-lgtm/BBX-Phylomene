@@ -2852,6 +2852,10 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
     </div>
     <div class="cm-d" id="mcSmD"></div></div>
   <div class="cm-box" style="margin-top:12px"><div class="cm-t">USDA FoodData Central</div>
+    <div class="cm-seg" id="usdaSeg" role="group" aria-label="Base USDA" style="margin-bottom:10px">
+      <button data-u="on" onclick="BBXMeal.setUsda('on')">Activée</button>
+      <button data-u="off" onclick="BBXMeal.setUsda('off')">Désactivée</button>
+    </div>
     <input id="usdaKey" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Clé API personnelle (facultatif)" onchange="BBXMeal.setUsdaKey(this.value)" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #E6E9EE;border-radius:12px;font:600 14px system-ui;background:#F7F8FA">
     <div class="cm-d">Sans clé, la clé de démo est limitée (≈30 recherches/h). Clé gratuite : <a href="https://fdc.nal.usda.gov/api-key-signup" target="_blank" rel="noopener" style="color:#0A7">fdc.nal.usda.gov</a>. La base USDA est en anglais.</div></div>
     <div class="mc-hint">Change les produits de chaque repas : ▲▼ pour l’ordre, ✎ pour modifier ou changer de repas, 🗑 pour supprimer.</div>
@@ -3125,6 +3129,7 @@ window.BBXBk=(function(){
   const num=v=>parseFloat(String(v).replace(',','.'));
   function refresh(){ saveDef(); save(); build(); calc(); renderCfg(); }
   function renderCfg(){
+    usdaSeg();
     try{ const k=$('usdaKey'); if(k) k.value=localStorage.getItem('phy-usdakey')||''; }catch(e){}
     applyMode(); if(window.BBXBk) BBXBk.refresh(); { const d=$('cmDesc'); if(d) d.textContent=MODE==='fab'?'Bouton central : comptage automatique, sans case. Un seul bouton ＋ en bas de l’écran propose le repas de l’heure (modifiable), puis Idées, Scanner, Rechercher ou Récurrent. Chaque nouveau jour, les repas repartent vides.':AUTO?'Sans case : chaque produit présent dans un repas est compté tout de suite (kcal et macros). Supprime-le pour le retirer du total. Chaque nouveau jour, les repas repartent vides (l’historique est gardé) : le bouton Récurrent remet tes produits habituels en un geste.':'Avec cases : tu coches un produit pour le compter dans ta journée.'; }
     $('mcList').innerHTML=MEALS.map(([t,ic,items],m)=>`<section class="mc-meal" style="--mc:${mcol(t)[0]};--mx:${mcx(t)};--md:${mcd(t)};--mt:${mcol(t)[1]}"><div class="mc-mh"><span class="mc-mi">${esc(ic)}</span><b>${esc(t)}</b><button class="mc-sm" onclick="BBXMeal.renameMeal(${m})" aria-label="Renommer ${esc(t)}">✎</button><button class="mc-sm del" onclick="BBXMeal.delMeal(${m})" aria-label="Supprimer le repas ${esc(t)}">🗑</button><button class="mc-plus" onclick="BBXMeal.add(${m})" aria-label="Ajouter à ${esc(t)}">＋</button></div>`+
@@ -4014,6 +4019,8 @@ window.BBXBk=(function(){
     return [];
   }
   const USDAKEY='phy-usdakey';
+  const USDAON=USDAKEY.replace('key','on'); const usdaOn=()=>{ try{ return localStorage.getItem(USDAON)!=='off'; }catch(e){ return true; } };
+  function usdaSeg(){ const on=usdaOn(); document.querySelectorAll('#usdaSeg [data-u]').forEach(b=>{ const o=(b.dataset.u==='on')===on; b.classList.toggle('on',o); b.setAttribute('aria-pressed',o); }); }
   const usdaKey=()=>{ try{ return (localStorage.getItem(USDAKEY)||'').trim()||'DEMO_KEY'; }catch(e){ return 'DEMO_KEY'; } };
   function usdaItem(f){
     const N={}; (f.foodNutrients||[]).forEach(n=>{ const id=n.nutrientId!=null?n.nutrientId:(n.nutrient&&n.nutrient.id), v=n.value!=null?n.value:n.amount; if(id!=null&&v!=null&&N[id]==null) N[id]=+v; });
@@ -4028,6 +4035,7 @@ window.BBXBk=(function(){
     return {name:nm,kcal:kcal==null?null:Math.round(kcal),prot:prot,fat:fat,carb:carb,serving:0,label:'',portions:[],unit:'g',emoji:'🇺🇸',usda:true,h:Object.keys(h).length?h:undefined};
   }
   async function fetchUSDA(q){
+    if(!usdaOn()) return {items:[]};
     const url='https://api.nal.usda.gov/fdc/v1/foods/search?api_key='+enc(usdaKey())+'&query='+enc(q)+'&dataType='+enc('Foundation,SR Legacy')+'&pageSize=15';
     const ctl=new AbortController(), t=setTimeout(()=>ctl.abort(),8000);
     try{
@@ -4672,6 +4680,7 @@ window.BBXBk=(function(){
   function fabSel(i){ if(!MEALS[i]) return; fab.m=i; fabRender(); }
   function fabGo(a){ const m=fab.m; fabClose(); ({ideas:openIdeas,scan:m=>BBXMeal.scan(m),search:m=>srOpen(m),habits:openHabits})[a](m); }
   window.BBXMeal={
+    setUsda:v=>{ try{ localStorage.setItem(USDAON,v==='off'?'off':'on'); }catch(e){} usdaSeg(); },
     setUsdaKey:v=>{ try{ v=String(v||'').trim(); if(v) localStorage.setItem(USDAKEY,v); else localStorage.removeItem(USDAKEY); }catch(e){} },
     fab:fabOpen, fabClose:fabClose, fabSel:fabSel, fabGo:fabGo,
     setMode:v=>{ MODE=(v==='auto'||v==='fab')?v:'chk'; AUTO=MODE!=='chk'; FABM=MODE==='fab'; try{ localStorage.setItem('phy-cmode',MODE); }catch(e){} applyMode(); calc(); renderCfg(); },
