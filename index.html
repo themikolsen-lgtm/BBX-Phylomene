@@ -3877,7 +3877,7 @@ window.BBXBk=(function(){
   }
   function upsertFav(it,portions){
     const q=per100(it), f={name:it[0],kcal:q.k,prot:q.p,fat:q.f,carb:q.c,serving:it[2]>0?it[2]:0,label:it[1],emoji:it[7],unit:it[6],portions:portions||[]};
-    FAV=FAV.filter(x=>normS(x.name)!==normS(f.name)); FAV.unshift(f); if(FAV.length>500) FAV.length=500; saveFav();
+    FAV=FAV.filter(x=>normS(x.name)!==normS(f.name)); FAV.unshift(f); if(FAV.length>5000) FAV.length=5000; saveFav();
   }
   function migrateMac(){
     let ch=false;
