@@ -1155,12 +1155,7 @@ html,body{ background:#090102 !important; }
   /* ---- pause entre les séries : compteur actif en rouge ---- */
   .ex-row.resting:not(.abdo) .rt-left{ color:#FF2D3F !important; text-shadow:0 0 14px rgba(255,45,63,.55) !important; }
   .ex-row.resting:not(.abdo) .rt-bar i{ background:#FF2D3F !important; }
-  /* ---- lecteur Apple Music ---- */
-    box-sizing:border-box; padding:14px; color:#fff; border-radius:26px; border:1px solid rgba(255,70,80,.25);
-    background:linear-gradient(160deg,#1A0207,#060001 70%); box-shadow:0 0 30px -8px rgba(240,20,47,.5), 0 20px 40px -16px rgba(0,0,0,.9);
-    transform-origin:top right; transform:scale(.7); opacity:0; pointer-events:none; transition:transform .22s cubic-bezier(.2,.9,.3,1.2), opacity .18s ease; }
   /* ---- menu courbe : plein écran ---- */
-  .prog-overlay{ padding:0 !important; align-items:stretch !important; justify-content:stretch !important; }
   .prog-card{ width:100% !important; max-width:none !important; height:100% !important; max-height:none !important; border-radius:0 !important; border:none !important;
     padding:calc(16px + env(safe-area-inset-top,0px)) 20px calc(24px + env(safe-area-inset-bottom,0px)) !important; box-sizing:border-box; overflow-y:auto; }
   .prog-head{ top:calc(-16px - env(safe-area-inset-top,0px)) !important; padding-top:calc(16px + env(safe-area-inset-top,0px)) !important; margin-top:calc(-16px - env(safe-area-inset-top,0px)) !important; margin-left:-20px; margin-right:-20px; padding-left:20px !important; padding-right:20px !important; padding-bottom:8px !important; background:#1A0207 !important; z-index:5; }
@@ -2886,6 +2881,20 @@ html.mt-beta #mealHist .mc-head .ht-cfg svg{ width:22px; height:22px; fill:curre
 <style id="mfMicroCss">#mealForm #mfMicro:empty{display:none}#mealForm #mfMicro{margin:0 0 10px}#mealForm #mfMicro .mf-micro{margin-top:0}</style>
 <style id="betaNav">.my-sl,.ht-cfg{display:none}
 #mealView .my-fixed .sum-full{padding-bottom:10px!important}</style>
+<style id="auditFix">
+/* contrôle général : lisibilité et confort */
+.mh-ns span:not(.on),.mh-nv span:not(.on){ color:#5B6472 !important; background:#EEF0F3 !important; }
+.mh-d,.mh-src{ color:#4B5563 !important; }
+.pl-hint,.pg-hint,.pl-note{ color:#374151 !important; }
+#mealForm .mf-micro:not(.mf-mac) b,#mealForm .mf-micro:not(.mf-mac) i{ color:color-mix(in srgb,var(--c) 82%,#000) !important; }
+#mealView .sum-full .sx-c .sx-l{ white-space:nowrap; letter-spacing:-.01em; }
+#mealView .sum-full .sx-c.k .sx-l{ font-size:9.5px !important; }
+#mealView .sum-full .sx-c .sx-l .sm-in{ width:4.2ch !important; min-width:0; }
+#mealView .my-mt b{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block; max-width:100%; }
+.mc-ov .mc-plus{ min-width:36px; }
+#mealForm .mf-mac i,#mealForm .mf-mac u{ color:color-mix(in srgb,var(--c) 80%,#000) !important; }
+.cm-d a{ display:inline-block; padding:6px 0; }
+</style>
 </head>
 <body>
 
