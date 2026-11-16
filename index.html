@@ -2967,7 +2967,7 @@ html.mt-beta #mealView .my-card:has(.my-empty) .my-mh{ border-radius:inherit!imp
 #mealView .sum-full .sx-c .sx-l{ white-space:nowrap; letter-spacing:-.01em; }
 #mealView .sum-full .sx-c.k .sx-l{ font-size:9.5px !important; }
 #mealView .sum-full .sx-c .sx-l .sm-in{ width:4.2ch !important; min-width:0; }
-#mealView .my-mt b{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block; max-width:100%; }
+#mealView .my-mt b{ display:block; max-width:100%; white-space:normal; overflow-wrap:anywhere; line-height:1.1; }
 .mc-ov .mc-plus{ min-width:36px; }
 #mealForm .mf-mac i,#mealForm .mf-mac u{ color:color-mix(in srgb,var(--c) 80%,#000) !important; }
 .cm-d a{ display:inline-block; padding:6px 0; }
@@ -2998,6 +2998,40 @@ html.mt-beta body #mealForm #mfBasis .bz.on{ background:#8EC5FF; box-shadow:0 6p
 </style>
 <style id="verCss">.cf-ver{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin:16px 2px 8px; font-size:13px; font-weight:700; color:#4B5563; }
 .cf-ver button{ flex:none; height:40px; padding:0 16px; border-radius:999px; border:1.5px solid #C9CED6; background:#fff; color:#15171C; font-size:14px; font-weight:800; cursor:pointer; }</style>
+<style id="respFix">
+/* affichage adaptatif : tuiles des nutriments et en-têtes de repas sur écrans étroits */
+html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+html body #mealView .sum-full .sx-c{ min-width:0; overflow:hidden; }
+html body #mealView .sum-full .sx-c .sx-h{ min-width:0; max-width:100%; }
+html body #mealView .sum-full .sx-c .sx-t{ font-size:clamp(7px,2.45vw,11.5px) !important; letter-spacing:.01em !important; max-width:100%; }
+html body #mealView .sum-full .sx-c .sx-l{ font-size:clamp(8px,2.45vw,10px) !important; letter-spacing:-.03em !important; display:flex; align-items:baseline; justify-content:center; gap:2px; max-width:100%; }
+html body #mealView .sum-full .sx-c.k .sx-l{ font-size:clamp(6.8px,2.05vw,9.5px) !important; gap:1.5px; }
+html body #mealView .sum-full .sx-c .sx-l .sm-in{ width:auto !important; min-width:0; field-sizing:content; max-width:4.4ch; font-size:inherit !important; padding:0 !important; margin:0 !important; text-align:center; }
+@media (max-width:430px){
+  html body #mealView .my-mh{ gap:7px !important; }
+  html body #mealView .my-mh .my-hb{ gap:6px !important; }
+  html body #mealView .my-mh .my-hbtn{ width:38px !important; height:38px !important; min-width:38px !important; flex-basis:38px !important; }
+  html body #mealView .my-mh .my-hbtn svg{ width:20px !important; height:20px !important; }
+  html body #mealView .my-mt{ min-width:0; flex:1 1 0; }
+}
+@media (max-width:340px){
+  html body #mealView .my-mh .my-hbtn{ width:30px !important; height:30px !important; min-width:30px !important; flex-basis:30px !important; }
+  html body #mealView .my-mh .my-hb{ gap:4px !important; }
+  html body #mealView .my-mh .my-mi{ display:none !important; }
+  html body #mealView .sum-full .sx-c.k .sx-l{ font-size:6.2px !important; gap:1px; }
+}
+@media (max-width:400px){
+  html body #mealView .sum-full{ gap:5px !important; padding-left:7px !important; padding-right:7px !important; }
+  html body #mealView .sum-full .sx-c{ padding-left:4px !important; padding-right:4px !important; }
+  html body #mealView .sum-full .sx-c .sx-h b{ font-size:clamp(14px,4.3vw,17px) !important; }
+  html body #mealView .my-mh{ gap:6px !important; padding-left:10px !important; padding-right:8px !important; }
+  html body #mealView .my-mh .my-hb{ gap:5px !important; }
+  html body #mealView .my-mh .my-hbtn{ width:34px !important; height:34px !important; min-width:34px !important; flex-basis:34px !important; }
+  html body #mealView .my-mh .my-hbtn svg{ width:18px !important; height:18px !important; }
+  html body #mealView .my-mt span{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; max-width:100%; }
+  html body #mealView .my-mt{ min-width:0; flex:1 1 0; }
+}
+</style>
 </head>
 <body>
 
@@ -3177,7 +3211,7 @@ html.mt-beta body #mealForm #mfBasis .bz.on{ background:#8EC5FF; box-shadow:0 6p
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 16/11 · 21 h 00</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 16/11 · 21 h 30</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
 </div>
 <script>
 window.BBXBk=(function(){
