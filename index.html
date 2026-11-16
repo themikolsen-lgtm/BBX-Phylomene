@@ -2746,6 +2746,47 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 .cf-det .bk-wrap>.cm-t{ display:none; }
 .cf-det #mcList{ margin-bottom:6px; }
 </style>
+<style id="formBright">
+/* ===== Fiche produit : lisibilité en pleine lumière (contrastes forts, fonds opaques) ===== */
+#mealForm{background:#F4F8F1!important}
+#mealForm,#mealForm *{text-shadow:none!important}
+#mealForm .mc-head b{color:#0B0D12!important}
+#mealForm .mc-x{background:#fff!important;border:2px solid #0B0D12!important;color:#0B0D12!important}
+#mealForm .mf-name{background:#fff!important;border:2px solid #0B0D12!important;box-shadow:0 4px 0 #0B0D12!important}
+#mealForm .mf-name input:last-child{color:#0B0D12!important;font-weight:900!important;font-size:20px!important}
+#mealForm .mf-info{color:#1F2937!important;font-weight:700!important;font-size:14px!important}
+#mealForm .mf-chip{background:#fff!important;border:2px solid #9CA3AF!important;color:#0B0D12!important;font-weight:800!important}
+#mealForm .mf-chip.on{background:var(--mc)!important;border-color:#0B0D12!important;color:#0B0D12!important}
+#mealForm .fv-h,#mealForm .mf-sec{opacity:1!important;color:#1F2937!important;font-weight:900!important;font-size:13px!important}
+#mealForm .mf-f>span{color:#1F2937!important;font-weight:800!important;opacity:1!important}
+#mealForm .mf-in{background:#fff!important;border:2px solid #4B5563!important;color:#0B0D12!important}
+#mealForm .mf-in input{color:#0B0D12!important;font-weight:900!important;-webkit-text-fill-color:#0B0D12!important}
+#mealForm .mf-in i,#mealForm .mf-mac u{color:#374151!important;opacity:1!important;font-weight:800!important}
+#mealForm .mf-micro span{background:#fff!important;border:2px solid color-mix(in srgb,var(--c) 70%,#000)!important}
+#mealForm .mf-micro i{opacity:1!important;color:#1F2937!important;font-weight:900!important}
+#mealForm .mf-micro b,#mealForm .mf-mac b,#mealForm .mf-mac input{color:#0B0D12!important;-webkit-text-fill-color:#0B0D12!important}
+#mealForm .mf-seg{background:#E5E7EB!important;border:2px solid #4B5563!important}
+#mealForm .mf-seg button{color:#111827!important;font-weight:800!important}
+#mealForm .mf-seg button.on{background:#0B0D12!important;color:#fff!important}
+#mealForm .mf-qty>button{background:#fff!important;border:2px solid #0B0D12!important;color:#0B0D12!important;box-shadow:0 3px 0 #0B0D12!important}
+#mealForm .mf-in.big{background:#fff!important}
+#mealForm .mf-mult button{background:#fff!important;border:2px solid #4B5563!important;color:#0B0D12!important;font-weight:900!important}
+#mealForm .mf-ug,#mealForm .mf-prev{color:#1F2937!important;font-weight:700!important}
+#mealForm .mf-btns{background:linear-gradient(0deg,#F4F8F1 60%,rgba(244,248,241,0))!important}
+#mealForm .mf-btns .mc-big.ib:not(.red){background:#fff!important;border:2px solid #0B0D12!important;color:#0B0D12!important}
+#mealForm .mf-btns #mfOk{border:2px solid #0B0D12!important;color:#0B0D12!important;font-weight:900!important}
+#mealForm .mf-mac b{font-size:19px!important}
+#mealForm .mf-mac b u,#mealForm .mf-micro b u,#mealForm .mf-micro u{font-size:11px!important;color:#374151!important;opacity:1!important}
+#mealForm .mp-for{background:#fff!important;border:2px solid #0B0D12!important;color:#0B0D12!important;font-weight:800!important}
+#mealForm .mf-health,#mealForm .mf-health *{opacity:1!important}
+#mealForm .mh-t{color:#1F2937!important;opacity:1!important}
+#mealForm .mh-v{background:#fff!important;border:2px solid #4B5563!important;color:#0B0D12!important;font-weight:800!important}
+#mealForm .mf-health span,#mealForm .mf-health small{color:#1F2937!important}
+#mealForm .mf-code{margin:0 0 14px;padding:10px 14px 8px;background:#fff;border:2px solid #0B0D12;border-radius:18px;text-align:center}
+#mealForm .mfc-h{font-size:12px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#1F2937;text-align:left}
+#mealForm .mf-code svg{display:block;width:100%;max-width:280px;height:58px;margin:4px auto 0}
+#mealForm .mfc-n{font:900 17px/1.2 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.14em;color:#0B0D12}
+</style>
 </head>
 <body>
 
@@ -2944,6 +2985,7 @@ window.BBXBk=(function(){
   <div class="mf-name"><input id="mfEmoji" type="text" maxlength="4" placeholder="🍽️" aria-label="Emoji"><input id="mfName" type="text" autocomplete="off" placeholder="Nom du produit" aria-label="Nom du produit"></div>
   <div class="mf-chips" id="mfChips"></div><input type="hidden" id="mfMeal" value="0">
   </section>
+  <div class="mf-code" id="mfCode" hidden></div>
   <div class="mf-health fv-card" id="mfHealth" hidden></div>
   <section class="fv-card fv-nut">
   <div class="fv-h">Valeurs nutritionnelles</div>
@@ -3517,8 +3559,26 @@ window.BBXBk=(function(){
     html+='<div class="mh-src">Données Open Food Facts · pour 100 g · à titre indicatif</div>';
     box.innerHTML=html; box.hidden=false;
   }
+  // --- code-barres affiché dans la fiche produit ---
+  const EAN_L=['0001101','0011001','0010011','0111101','0100011','0110001','0101111','0111011','0110111','0001011'], EAN_G=['0100111','0110011','0011011','0100001','0011101','0111001','0000101','0010001','0001001','0010111'], EAN_R=['1110010','1100110','1101100','1000010','1011100','1001110','1010000','1000100','1001000','1110100'], EAN_P=['LLLLLL','LLGLGG','LLGGLG','LLGGGL','LGLLGG','LGGLLG','LGGGLL','LGLGLG','LGLGGL','LGGLGL'];
+  function eanBits(c){
+    if(!/^\d+$/.test(c)) return null; let b='101';
+    if(c.length===13){ const p=EAN_P[+c[0]]; for(let i=1;i<7;i++) b+=(p[i-1]==='L'?EAN_L:EAN_G)[+c[i]]; b+='01010'; for(let i=7;i<13;i++) b+=EAN_R[+c[i]]; return b+'101'; }
+    if(c.length===8){ for(let i=0;i<4;i++) b+=EAN_L[+c[i]]; b+='01010'; for(let i=4;i<8;i++) b+=EAN_R[+c[i]]; return b+'101'; }
+    return null;
+  }
+  function renderCode(code){
+    const el=$('mfCode'); if(!el) return; code=code?String(code).replace(/\D/g,''):'';
+    if(!code){ el.hidden=true; el.innerHTML=''; return; }
+    const bits=eanBits(code); let svg='';
+    if(bits){ let x=0,rects=''; for(let i=0;i<bits.length;){ let j=i; while(j<bits.length&&bits[j]===bits[i]) j++; if(bits[i]==='1') rects+='<rect x="'+i+'" y="0" width="'+(j-i)+'" height="46"/>'; i=j; }
+      svg='<svg viewBox="-9 -4 '+(bits.length+18)+' 54" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><rect x="-9" y="-4" width="'+(bits.length+18)+'" height="54" fill="#fff"/><g fill="#000">'+rects+'</g></svg>'; }
+    el.innerHTML='<div class="mfc-h">Code-barres</div>'+svg+'<div class="mfc-n">'+code.replace(/(\d)(?=(\d{4})+$)/g,'$1 ')+'</div>';
+    el.hidden=false;
+  }
+  function codeFor(name){ const n=normS(String(name||'').replace(/ \(\d+\)$/,'')); return Object.keys(CODES).find(c=>CODES[c]&&normS(String(CODES[c].name||''))===n)||null; }
   function openForm(mode,m,i,pref){
-    pref=pref||{}; fm.code=pref.code||null; $('mfOcrBtn').classList.remove('pulse','busy'); fm.h=mode==='edit'?null:pref.h; renderHealth(mode==='edit'?hlGet(MEALS[m][2][i][0]):(pref.h||hlGet(pref.name||'')));
+    pref=pref||{}; fm.code=pref.code||null; renderCode(pref.code||(mode==='edit'?codeFor(MEALS[m][2][i][0]):null)); $('mfOcrBtn').classList.remove('pulse','busy'); fm.h=mode==='edit'?null:pref.h; renderHealth(mode==='edit'?hlGet(MEALS[m][2][i][0]):(pref.h||hlGet(pref.name||'')));
     $('mfChips').innerHTML=MEALS.map(([t,ic],x)=>`<button type="button" class="mf-chip" style="--mc:${mcol(t)[0]};--mx:${mcx(t)};--md:${mcd(t)};--mt:${mcol(t)[1]}" onclick="BBXMeal.setMeal(${x})">${esc(ic)} ${esc(t)}</button>`).join('');
     fm.mode=mode; fm.unitTouched=0; fm.serving=pref.serving||0;
     $('mfInfo').className='mf-info';
@@ -4038,7 +4098,7 @@ window.BBXBk=(function(){
         kcal=Math.round(kcal); } }
     const nm=(txt(pr.product_name_fr)||txt(pr.product_name)).trim(), br=txt(pr.brands).split(',')[0].trim(), full=nm+(br&&nm.toLowerCase().indexOf(br.toLowerCase())<0?' ('+br+')':'');
     const P=offPortions({serving_quantity:pr.serving_quantity,serving_size:txt(pr.serving_size),product_quantity:pr.product_quantity},full);
-    return {name:full,kcal:kcal==null?null:+kcal,prot:n.proteins_100g==null?null:+n.proteins_100g,fat:n.fat_100g==null?null:+n.fat_100g,carb:n.carbohydrates_100g==null?null:+n.carbohydrates_100g,serving:P[0]?P[0].g:0,label:P[0]?P[0].label:'',portions:P,unit:offLiquid(pr,full)?'ml':'g',emoji:'🛒',off:true,_nm:nm,h:offHealth(pr,n)};
+    return {name:full,kcal:kcal==null?null:+kcal,prot:n.proteins_100g==null?null:+n.proteins_100g,fat:n.fat_100g==null?null:+n.fat_100g,carb:n.carbohydrates_100g==null?null:+n.carbohydrates_100g,serving:P[0]?P[0].g:0,label:P[0]?P[0].label:'',portions:P,unit:offLiquid(pr,full)?'ml':'g',emoji:'🛒',off:true,code:(/^\d{8,14}$/.test(String(pr.code||''))?String(pr.code):null),_nm:nm,h:offHealth(pr,n)};
   }
   async function fetchOFF(q){
     const nq=normS(q), qs=[q]; if(nq!==q.toLowerCase()) qs.push(nq);
@@ -4161,7 +4221,7 @@ window.BBXBk=(function(){
     sr.fromForm=false;
     const src=x.fav?'Dans tes produits.':(x.db?'Valeurs moyennes pour 100 '+(x.unit||'g')+'.':(x.ciq?'Table Ciqual (ANSES) : valeurs moyennes pour 100 g.':x.usda?'Base USDA FoodData Central (valeurs pour 100 g).':'Produit Open Food Facts.'));
     const w=(x.serving>0&&x.label&&!/^portion de /.test(x.label))?' Poids moyen : 1 '+x.label+' ≈ '+r(x.serving)+' '+(x.unit||'g')+' (modifiable).':'';
-    openForm('add',sr.target,null,{h:x.h||hlGet(x.name),name:x.name,kcal:x.kcal,prot:x.prot,fat:x.fat,carb:x.carb,serving:x.serving,label:x.label,portions:x.portions,unit:x.unit,emoji:x.emoji,
+    openForm('add',sr.target,null,{code:x.code||null,h:x.h||hlGet(x.name),name:x.name,kcal:x.kcal,prot:x.prot,fat:x.fat,carb:x.carb,serving:x.serving,label:x.label,portions:x.portions,unit:x.unit,emoji:x.emoji,
       info:src+w+' Indique la quantité puis valide.'+(x.kcal==null?' Les calories ne sont pas renseignées : complète-les.':'')});
   }
   $('srQ').addEventListener('input',liveSearch);
