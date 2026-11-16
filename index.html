@@ -2946,6 +2946,8 @@ html.mt-beta #mealForm #mfPrev{ order:9; margin-bottom:0!important; }
 html.mt-beta #mealForm .mf-sec.mf-s,html.mt-beta #mealForm .mf-four{ order:10; }
 html.mt-beta #mealForm #mfMicro{ order:11; margin:6px 0 0!important; }
 html.mt-beta #mealForm #mfBasis{ order:12; margin:16px 0 12px!important; }
+/* les grandes lignes de liste (idées, résultats) restent des cartes, pas des pilules */
+html.mt-beta .mc-ov button.sr-it{ border-radius:22px!important; }
 </style>
 <style id="mfMicroCss">#mealForm #mfMicro:empty{display:none}#mealForm #mfMicro{margin:0 0 10px}#mealForm #mfMicro .mf-micro{margin-top:0}</style>
 <style id="betaNav">.my-sl,.ht-cfg,.mf-hscan{display:none}
@@ -2963,6 +2965,14 @@ html.mt-beta #mealForm #mfBasis{ order:12; margin:16px 0 12px!important; }
 .mc-ov .mc-plus{ min-width:36px; }
 #mealForm .mf-mac i,#mealForm .mf-mac u{ color:color-mix(in srgb,var(--c) 80%,#000) !important; }
 .cm-d a{ display:inline-block; padding:6px 0; }
+</style>
+<style id="idWantCss">
+.id-want{ display:flex; align-items:center; gap:8px; margin:0 0 12px; }
+.id-want input{ flex:1; min-width:0; height:48px; border-radius:999px; border:1.5px solid #DDE0E6; background:#fff; color:#15171C; font:700 16px/1 inherit; font-family:inherit; padding:0 18px; box-sizing:border-box; outline:0; }
+.id-want input:focus{ border-color:#7DD957; box-shadow:0 0 0 3px rgba(125,217,87,.22); }
+.id-want input::placeholder{ color:#6B7280; font-weight:600; }
+.id-want button{ flex:none; width:44px; height:44px; border-radius:50%; border:1.5px solid #DDE0E6; background:#fff; color:#15171C; font-size:15px; cursor:pointer; }
+.id-want button[hidden]{ display:none; }
 </style>
 </head>
 <body>
@@ -3009,6 +3019,7 @@ html.mt-beta #mealForm #mfBasis{ order:12; margin:16px 0 12px!important; }
   <div class="mc-head"><b>Idées</b><button class="mc-x" onclick="BBXMeal.closeIdeas()" aria-label="Fermer">✕</button></div>
   <div class="id-sub" id="idSub"></div>
   <div class="id-rem" id="idRem"></div>
+  <div class="id-want"><input id="idWant" type="text" inputmode="numeric" autocomplete="off" placeholder="Kcal souhaitées (ex. 300)" aria-label="Nombre de kcal souhaité" oninput="BBXMeal.ideaWant(this.value)"><button type="button" id="idWantX" onclick="BBXMeal.ideaWant('',1)" aria-label="Effacer le filtre" hidden>✕</button></div>
   <div id="idList"></div>
 </div>
 <div id="mealPick" class="m-pick" onclick="if(event.target===this)BBXMeal.closePick()"><div class="m-pick-card"><b>Tableau nutritionnel</b><div class="m-pick-row"><button class="mc-big ib ibt red" onclick="BBXMeal.pickCam()" aria-label="Prendre une photo" title="Prendre une photo"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5h3l1.5-2.5h7L17 8.5h3V19H4z"/><circle cx="12" cy="13.3" r="3.4"/></svg></span><em>Prendre une photo</em></button><button class="mc-big ib ibt" onclick="BBXMeal.pickGal()" aria-label="Choisir dans la galerie" title="Choisir dans la galerie"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17.5l5.2-5 3.8 3.5 2.6-2.4 4.4 4"/></svg></span><em>Galerie</em></button></div></div></div>
@@ -3697,7 +3708,7 @@ window.BBXBk=(function(){
     else if(kind==='shk'){ if(T.shake) b+=.6; if(/^lait|lait /.test(n)) b+=.4; if(/banane/.test(n)) b+=.2; if(T.dairy) b+=.1; if(/cacahuete|amande/.test(n)) b+=.15; if(/flocon|avoine/.test(n)) b+=.15; if(!T.shake&&!T.dairy&&!T.fruit&&!T.nuts&&!/flocon|avoine|miel/.test(n)) b-=.4; }
     return b;
   }
-  function buildIdeas(R,mi){
+  function buildIdeas(R,mi,want){
     const title=(MEALS[mi]&&MEALS[mi][0])||'', kind=mealKind(title), habs=HAB[title]||{};
     const light=R.k<60, cap=Math.max(50,Math.min(R.k*0.5,250)), cands=[], seen=new Set();
     const add=(src,mine)=>{ const n=normS(src.name); if(seen.has(n)) return; if(![src.kcal,src.prot,src.fat,src.carb].every(v=>v!=null&&!isNaN(v))) return; if(src.unit&&src.unit!=='g') return; seen.add(n); cands.push({src:src,mine:mine}); };
@@ -3705,6 +3716,12 @@ window.BBXBk=(function(){
     const out=[];
     cands.forEach(({src,mine})=>{
       const base=src.serving>0?src.serving:100, kd=src.kcal; let best=null;
+      if(want>0){   // filtre : la portion la plus proche du nombre de kcal demandé
+        for(const mult of [0.5,1,1.5,2,3]){ const g=base*mult, k=kd*g/100; if(!best||Math.abs(k-want)<Math.abs(best.k-want)) best={g:g,mult:mult,k:k,p:src.prot*g/100,f:src.fat*g/100,c:src.carb*g/100}; }
+        const tol=Math.max(40,want*0.2); if(!best||Math.abs(best.k-want)>tol) return;
+        let sw=1-Math.abs(best.k-want)/tol+kindBonus(kind,src.name)+(mine?0.1:0); const hw=habs[src.name]; if(hw&&hw.n) sw+=Math.min(.3,hw.n*.06);
+        out.push({src:src,mine:mine,h:hlGet(src.name),v:best,sc:sw}); return;
+      }
       for(const mult of [1,2,3,0.5]){   // une portion habituelle ; on double / triple seulement si elle est très légère, on la réduit si elle dépasse
         const g=base*mult, k=kd*g/100, p=src.prot*g/100, f=src.fat*g/100, c=src.carb*g/100;
         if(k>(light?60:cap)||p>R.p+2||f>R.f+2||c>R.c+3) continue;
@@ -3727,13 +3744,15 @@ window.BBXBk=(function(){
     const T=dayTotals(), R={k:Math.max(0,S.kg-T.K),p:Math.max(0,S.pg-T.P),f:Math.max(0,S.fg-T.F),c:Math.max(0,S.cg-T.C)};
     $('idSub').textContent='Ajout dans : '+(MEALS[ideaState.m]?MEALS[ideaState.m][0]:'')+(R.k<60?' · objectifs presque atteints : options très légères':' · idées adaptées à ce repas et à tes restes du jour');
     $('idRem').innerHTML=[['k',r(R.k),'kcal'],['p',r(R.p),'g prot.'],['f',r(R.f),'g lip.'],['c',r(R.c),'g gluc.']].map(x=>'<span class="'+x[0]+'"><b>'+x[1]+'</b> '+x[2]+'</span>').join('')+'<small>restants aujourd’hui</small>';
-    const L=ideaState.list=buildIdeas(R,ideaState.m);
+    const want=+ideaState.want||0; { const xb=$('idWantX'); if(xb) xb.hidden=!(want>0); }
+    const L=ideaState.list=buildIdeas(R,ideaState.m,want);
     $('idList').innerHTML=L.length?L.map((x,i)=>{ const s=x.src,v=x.v, lbl=s.serving>0?s.label:'portion de 100 g', n=r2(v.g/(s.serving>0?s.serving:100));
       const chips=[]; if(R.p>2&&v.p>=2) chips.push('<span class="p">'+r(v.p/R.p*100)+' % des prot.</span>'); if(R.c>3&&v.c>=3) chips.push('<span class="c">'+r(v.c/R.c*100)+' % des gluc.</span>'); if(R.f>2&&v.f>=1.5) chips.push('<span class="f">'+r(v.f/R.f*100)+' % des lip.</span>');
       const hb=x.h?((x.h.ns?'<i class="hl-b" style="--c:'+NSC[x.h.ns]+'">'+x.h.ns.toUpperCase()+'</i>':'')+(x.h.nova?'<i class="hl-n" style="--c:'+NVC[x.h.nova]+'">'+x.h.nova+'</i>':'')):'';
-      return '<button class="sr-it id-it" onclick="BBXMeal.ideaPick('+i+',event)"><span class="sr-th">'+esc(s.emoji||'🍽️')+'</span><span class="sr-nm"><b>'+esc(s.name)+hb+'</b><span>'+n+' '+esc(lbl)+' · '+r(v.g)+' g</span><span class="id-n"><i class="vv">'+r(v.k)+'</i> kcal · P <i class="vv">'+r1(v.p)+'</i> · L <i class="vv">'+r1(v.f)+'</i> · G <i class="vv">'+r1(v.c)+'</i></span>'+(chips.length?'<span class="id-c">'+chips.join('')+'</span>':'')+'</span><span class="sr-go">＋</span></button>'; }).join(''):'<div class="mc-empty" style="padding:18px 4px">Aucune idée légère ne rentre dans ce qu’il te reste aujourd’hui.</div>';
+      return '<button class="sr-it id-it" onclick="BBXMeal.ideaPick('+i+',event)"><span class="sr-th">'+esc(s.emoji||'🍽️')+'</span><span class="sr-nm"><b>'+esc(s.name)+hb+'</b><span>'+n+' '+esc(lbl)+' · '+r(v.g)+' g</span><span class="id-n"><i class="vv">'+r(v.k)+'</i> kcal · P <i class="vv">'+r1(v.p)+'</i> · L <i class="vv">'+r1(v.f)+'</i> · G <i class="vv">'+r1(v.c)+'</i></span>'+(chips.length?'<span class="id-c">'+chips.join('')+'</span>':'')+'</span><span class="sr-go">＋</span></button>'; }).join(''):'<div class="mc-empty" style="padding:18px 4px">'+(want>0?'Aucune idée autour de '+r(want)+' kcal. Essaie un autre nombre.':'Aucune idée légère ne rentre dans ce qu’il te reste aujourd’hui.')+'</div>';
   }
-  function openIdeas(m){ ideaState.m=m; renderIdeas(); $('mealIdeas').scrollTop=0; $('mealIdeas').classList.add('show'); }
+  function ideaWant(v,clr){ const n=parseInt(String(v).replace(/[^0-9]/g,''),10); ideaState.want=(n>0&&n<=3000)?n:0; if(clr){ const i=$('idWant'); if(i) i.value=''; } renderIdeas(); }
+  function openIdeas(m){ ideaState.m=m; ideaState.want=0; { const i=$('idWant'); if(i) i.value=''; } renderIdeas(); $('mealIdeas').scrollTop=0; $('mealIdeas').classList.add('show'); }
   function ideaPick(i,ev){
     const x=ideaState.list[i]; if(!x) return; const s=x.src;
     if(ev&&ev.target&&ev.target.closest&&ev.target.closest('.sr-go')){
@@ -5041,7 +5060,7 @@ window.BBXBk=(function(){
     fab:fabOpen, fabClose:fabClose, fabSel:fabSel, fabGo:fabGo,
     setMode:v=>{ MODE=(v==='auto'||v==='fab')?v:'chk'; AUTO=MODE!=='chk'; FABM=MODE==='fab'; try{ localStorage.setItem('phy-cmode',MODE); }catch(e){} applyMode(); calc(); renderCfg(); },
     openCfg:()=>{ renderCfg(); $('mealCfg').classList.add('show'); }, closeCfg:()=>$('mealCfg').classList.remove('show'),
-    add:m=>openForm('add',m), edit:(m,i)=>openForm('edit',m,i), del:delItem, move:moveItem, resetDef:resetDef,
+    ideaWant:ideaWant, add:m=>openForm('add',m), edit:(m,i)=>openForm('edit',m,i), del:delItem, move:moveItem, resetDef:resetDef,
     saveForm:saveForm, basis:setBasis, uqty:uqty, uset:uset, uset:uset, fixKcal:fixKcal, closeForm:()=>$('mealForm').classList.remove('show'),
     ideas:openIdeas, closeIdeas:()=>$('mealIdeas').classList.remove('show'), ideaPick:ideaPick,
     ocr:()=>$('mealPick').classList.add('show'), closePick:()=>$('mealPick').classList.remove('show'), pickCam:()=>{ $('mealPick').classList.remove('show'); $('mfOcrFile').click(); }, pickGal:()=>{ $('mealPick').classList.remove('show'); $('mfOcrGal').click(); },
