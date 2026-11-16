@@ -2851,6 +2851,12 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
       <button data-sm="photo" onclick="BBXMeal.scanMode('photo');BBXMeal.scanDesc()" aria-label="Photo sans autorisation" title="Photo sans autorisation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.2l1.3-2h6l1.3 2h1.2A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5v-8z"/><circle cx="12" cy="12.5" r="3.3"/></svg><span>Photo</span></button>
     </div>
     <div class="cm-d" id="mcSmD"></div></div>
+  <div class="cm-box" style="margin-top:12px"><div class="cm-t">Ciqual · ANSES (table française)</div>
+    <div class="cm-seg" id="ciqSeg" role="group" aria-label="Base Ciqual">
+      <button data-u="on" onclick="BBXMeal.setCiq('on')">Activée</button>
+      <button data-u="off" onclick="BBXMeal.setCiq('off')">Désactivée</button>
+    </div>
+    <div class="cm-d">Table de composition nutritionnelle des aliments (aliments génériques, en français). Données ANSES, licence Etalab.</div></div>
   <div class="cm-box" style="margin-top:12px"><div class="cm-t">USDA FoodData Central</div>
     <div class="cm-seg" id="usdaSeg" role="group" aria-label="Base USDA" style="margin-bottom:10px">
       <button data-u="on" onclick="BBXMeal.setUsda('on')">Activée</button>
@@ -3130,6 +3136,7 @@ window.BBXBk=(function(){
   function refresh(){ saveDef(); save(); build(); calc(); renderCfg(); }
   function renderCfg(){
     usdaSeg();
+    ciqSeg();
     try{ const k=$('usdaKey'); if(k) k.value=localStorage.getItem('phy-usdakey')||''; }catch(e){}
     applyMode(); if(window.BBXBk) BBXBk.refresh(); { const d=$('cmDesc'); if(d) d.textContent=MODE==='fab'?'Bouton central : comptage automatique, sans case. Un seul bouton ＋ en bas de l’écran propose le repas de l’heure (modifiable), puis Idées, Scanner, Rechercher ou Récurrent. Chaque nouveau jour, les repas repartent vides.':AUTO?'Sans case : chaque produit présent dans un repas est compté tout de suite (kcal et macros). Supprime-le pour le retirer du total. Chaque nouveau jour, les repas repartent vides (l’historique est gardé) : le bouton Récurrent remet tes produits habituels en un geste.':'Avec cases : tu coches un produit pour le compter dans ta journée.'; }
     $('mcList').innerHTML=MEALS.map(([t,ic,items],m)=>`<section class="mc-meal" style="--mc:${mcol(t)[0]};--mx:${mcx(t)};--md:${mcd(t)};--mt:${mcol(t)[1]}"><div class="mc-mh"><span class="mc-mi">${esc(ic)}</span><b>${esc(t)}</b><button class="mc-sm" onclick="BBXMeal.renameMeal(${m})" aria-label="Renommer ${esc(t)}">✎</button><button class="mc-sm del" onclick="BBXMeal.delMeal(${m})" aria-label="Supprimer le repas ${esc(t)}">🗑</button><button class="mc-plus" onclick="BBXMeal.add(${m})" aria-label="Ajouter à ${esc(t)}">＋</button></div>`+
@@ -3897,14 +3904,14 @@ window.BBXBk=(function(){
       .map(o=>({name:o.f.name,kcal:o.f.kcal,prot:o.f.prot,fat:o.f.fat,carb:o.f.carb,serving:o.f.serving,label:o.f.label,emoji:o.f.emoji,unit:o.f.unit,portions:mergePortions(o.f.serving>0&&o.f.label?{label:o.f.label,g:o.f.serving}:null,parseExtras(o.f.extras),o.f.name),db:true,_sc:o.sc}));
   }
   function localResults(q){   // les fautes de frappe ne comptent que si rien d'autre n'est trouvé
-    const all=favMatches(q).concat(dbMatches(q)), direct=all.filter(x=>x._sc<2);
+    const all=favMatches(q).concat(dbMatches(q),xMatches(q)), direct=all.filter(x=>x._sc<2);
     return direct.length?direct:all;
   }
   function srRender(extra){
     const L=sr.list; L.forEach((x,i)=>{ x._i=i; });
     const row=x=>`<div class="sr-row"><button class="sr-it" onclick="BBXMeal.pick(${x._i},event)"><span class="sr-th">${esc(x.emoji||'🛒')}</span><span class="sr-nm"><b>${esc(x.name)}</b><span>${x.kcal!=null?r(x.kcal):'?'} kcal · ${x.prot!=null?r1(x.prot):'?'} g prot.${x.fat!=null&&x.carb!=null?' · '+r1(x.fat)+' g lip. · '+r1(x.carb)+' g gluc.':''} / 100 ${x.unit||'g'}${x.serving>0&&x.label&&!/^portion de /.test(x.label)?' · 1 '+esc(x.label)+' ≈ '+r(x.serving)+' '+(x.unit||'g'):''}</span></span><span class="sr-go">＋</span></button>${x.fav?`<button class="sr-del" onclick="BBXMeal.favDel(${x._fi})" aria-label="Retirer de mes produits">✕</button>`:''}</div>`;
     const sec=(t,arr)=>arr.length?`<div class="sr-sec">${t}</div>`+arr.map(row).join(''):'';
-    const h=sec('Mes produits (enregistrés sur ton téléphone)',L.filter(x=>x.fav))+sec('Aliments courants',L.filter(x=>x.db))+sec('Open Food Facts',L.filter(x=>x.off))+sec('USDA FoodData Central',L.filter(x=>x.usda));
+    const h=sec('Mes produits (enregistrés sur ton téléphone)',L.filter(x=>x.fav))+sec('Aliments courants',L.filter(x=>x.db))+sec('Ciqual · ANSES (base française)',L.filter(x=>x.ciq))+sec('Open Food Facts',L.filter(x=>x.off))+sec('USDA FoodData Central',L.filter(x=>x.usda));
     const qv=$('srQ').value.trim();
     $('srList').innerHTML=(h||'<div class="sr-note">Aucun résultat pour le moment.</div>')+(extra||'')+(qv.length>=2?'<button class="sr-manual" onclick="BBXMeal.addTyped()">＋ Ajouter « '+esc(qv)+' » à la main</button>':'');
   }
@@ -3918,6 +3925,7 @@ window.BBXBk=(function(){
     if(q.length<1){ showFavs(); return; }
     if(isCodeQ(q)){ srTimer=setTimeout(()=>searchCode(q),250); return; }
     sr.n++; sr.list=localResults(q); srRender();
+    xEnsure(q);
     if(q.length>=3) srTimer=setTimeout(doSearch,900);
   }
   const OFF_FIELDS='code,product_name,product_name_fr,brands,nutriments,serving_quantity,serving_size,product_quantity,quantity,product_quantity_unit,categories_tags,nutriscore_grade,nova_group';
@@ -4046,6 +4054,18 @@ window.BBXBk=(function(){
     }catch(e){ return {items:[],err:e}; }
     finally{ clearTimeout(t); }
   }
+  // --- Ciqual (ANSES, France) : chargée à la demande, jamais au démarrage ---
+  const CIQON=USDAKEY.replace('usdakey','ciqon'), XDBC={rows:null,p:null};
+  const ciqOn=()=>{ try{ return localStorage.getItem(CIQON)!=='off'; }catch(e){ return true; } };
+  function ciqSeg(){ const on=ciqOn(); document.querySelectorAll('#ciqSeg [data-u]').forEach(b=>{ const o=(b.dataset.u==='on')===on; b.classList.toggle('on',o); b.setAttribute('aria-pressed',o); }); }
+  function xLoad(){ if(XDBC.rows) return Promise.resolve(XDBC.rows);
+    if(!XDBC.p) XDBC.p=fetch('db-ciqual.json').then(r=>r.ok?r.json():Promise.reject()).then(a=>{ XDBC.rows=a.map(r=>({r:r,words:wordsOf(r[0])})); return XDBC.rows; }).catch(()=>{ XDBC.p=null; return null; });
+    return XDBC.p; }
+  function xMatches(q){ if(!XDBC.rows||!ciqOn()) return [];
+    return XDBC.rows.map(o=>({o:o,sc:rank(q,o.words)})).filter(o=>o.sc>=0).sort((a,b)=>a.sc-b.sc||a.o.r[0].length-b.o.r[0].length).slice(0,20).map(m=>{ const r=m.o.r;
+      return {name:r[0],kcal:r[1],prot:r[2],fat:r[3],carb:r[4],emoji:'🇫🇷',serving:0,label:'',portions:[],unit:'g',h:{sug:r[5],sat:r[6],fib:r[7],salt:r[8]},_sc:m.sc,ciq:true}; }); }
+  function xMerge(q){ if($('srQ').value.trim()!==q) return; sr.list=sr.list.filter(x=>!x.ciq).concat(xMatches(q)); srRender(); }
+  function xEnsure(q){ if(q.length>=2&&ciqOn()&&!XDBC.rows) xLoad().then(()=>xMerge(q)); }
   const isCodeQ=q=>/^\d{8,14}$/.test(String(q).replace(/[\s.-]/g,''));
   async function searchCode(q){   // code-barres tapé dans la recherche : on retrouve directement le produit
     const code=String(q).replace(/\D/g,''), my=++sr.n;
@@ -4064,7 +4084,7 @@ window.BBXBk=(function(){
     let lx=''; const R=e=>{ lx=e; srRender(e); };
     clearTimeout(srTimer);
     const q=$('srQ').value.trim(); if(isCodeQ(q)){ searchCode(q); return; } if(q.length<2){ R('<div class="sr-note">Tape au moins 2 lettres.</div>'); return; }
-    const my=++sr.n, base=localResults(q); sr.list=base; const usdaP=fetchUSDA(q);
+    const my=++sr.n, base=localResults(q); sr.list=base; const usdaP=fetchUSDA(q); xEnsure(q);
     R('<div class="sr-note" id="srWait">Recherche sur Open Food Facts…</div>');
     try{
       const net=await fetchOFF(q); if(my!==sr.n) return;
@@ -4104,7 +4124,7 @@ window.BBXBk=(function(){
       if(directAdd(sr.target,Object.assign({},x,{h:x.h||hlGet(x.name)}),0,null,()=>{ gb.textContent='✓'; gb.classList.add('added'); setTimeout(()=>{ gb.textContent='＋'; gb.classList.remove('added'); },1600); })) return;
     }
     sr.fromForm=false;
-    const src=x.fav?'Dans tes produits.':(x.db?'Valeurs moyennes pour 100 '+(x.unit||'g')+'.':(x.usda?'Base USDA FoodData Central (valeurs pour 100 g).':'Produit Open Food Facts.'));
+    const src=x.fav?'Dans tes produits.':(x.db?'Valeurs moyennes pour 100 '+(x.unit||'g')+'.':(x.ciq?'Table Ciqual (ANSES) : valeurs moyennes pour 100 g.':x.usda?'Base USDA FoodData Central (valeurs pour 100 g).':'Produit Open Food Facts.'));
     const w=(x.serving>0&&x.label&&!/^portion de /.test(x.label))?' Poids moyen : 1 '+x.label+' ≈ '+r(x.serving)+' '+(x.unit||'g')+' (modifiable).':'';
     openForm('add',sr.target,null,{h:x.h||hlGet(x.name),name:x.name,kcal:x.kcal,prot:x.prot,fat:x.fat,carb:x.carb,serving:x.serving,label:x.label,portions:x.portions,unit:x.unit,emoji:x.emoji,
       info:src+w+' Indique la quantité puis valide.'+(x.kcal==null?' Les calories ne sont pas renseignées : complète-les.':'')});
@@ -4680,6 +4700,7 @@ window.BBXBk=(function(){
   function fabSel(i){ if(!MEALS[i]) return; fab.m=i; fabRender(); }
   function fabGo(a){ const m=fab.m; fabClose(); ({ideas:openIdeas,scan:m=>BBXMeal.scan(m),search:m=>srOpen(m),habits:openHabits})[a](m); }
   window.BBXMeal={
+    setCiq:v=>{ try{ localStorage.setItem(CIQON,v==='off'?'off':'on'); }catch(e){} ciqSeg(); },
     setUsda:v=>{ try{ localStorage.setItem(USDAON,v==='off'?'off':'on'); }catch(e){} usdaSeg(); },
     setUsdaKey:v=>{ try{ v=String(v||'').trim(); if(v) localStorage.setItem(USDAKEY,v); else localStorage.removeItem(USDAKEY); }catch(e){} },
     fab:fabOpen, fabClose:fabClose, fabSel:fabSel, fabGo:fabGo,
