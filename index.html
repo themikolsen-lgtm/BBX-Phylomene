@@ -3140,7 +3140,7 @@ window.BBXBk=(function(){
     [...$('mfBasis').children].forEach(x=>{ x.classList.toggle('on',x.dataset.b===b); });
     $('mfBasis').children[0].style.display=hasUnit()?'':'none'; $('mfBasis').style.display=hasUnit()?'':'none';
     $('mfUq').style.display=b==='u'?'':'none'; $('mfUg').style.display=b==='u'?'':'none'; $('mfMult').style.display=b==='u'?'':'none'; $('mfGq').style.display=b==='u'?'none':'';
-    if(b==='u'){ $('mfUl').textContent=unitLabel(); const g=num($('mfQty').value); const n=g>0?Math.round(g/fm.serving*100)/100:1; $('mfUn').value=r2(n>0?n:1); $('mfQty').value=r1((n>0?n:1)*fm.serving); }
+    if(b==='u'){ $('mfUl').textContent=unitLabel()+(fm.serving>0?' · '+r1(fm.serving)+' '+($('mfUnit').value||'g'):''); const g=num($('mfQty').value); const n=g>0?Math.round(g/fm.serving*100)/100:1; $('mfUn').value=r2(n>0?n:1); $('mfQty').value=r1((n>0?n:1)*fm.serving); }
     if($('mfUnits')) renderUnits(); if(b==='u'){ if($('mfUnits')) $('mfUnits').style.display='none'; $('mfSeg').style.display='none'; } else $('mfSeg').style.display='';
     fmPrev();
   }
