@@ -2725,6 +2725,23 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 #syncState{ font-weight:700; color:#1F2937; }
 #syncIn .cm-seg button:first-child,#syncOut .cm-seg button:first-child{ background:var(--c); color:#15171C; box-shadow:0 6px 12px -6px color-mix(in srgb,var(--c) 90%,#000); }
 </style>
+<style id="mealContrast">
+/* ===== Suivi Meal : textes plus foncés et plus grands (lisibilité en pleine lumière) ===== */
+html body #mealView .sum-full .sx-c.k{ --c:#1B5E12 !important; }
+html body #mealView .sum-full .sx-c.p{ --c:#0B5D68 !important; }
+html body #mealView .sum-full .sx-c.f{ --c:#8A4B00 !important; }
+html body #mealView .sum-full .sx-c.c{ --c:#A3122C !important; }
+html body #mealView .sum-full .sx-c .sx-t,html body #mealView .sum-full .sx-c.k .sx-h .sx-t{ font-size:11.5px !important; opacity:1 !important; font-weight:900 !important; }
+html body #mealView .sum-full .sx-h b{ font-size:15px !important; font-weight:900 !important; }
+html body #mealView .sum-full .sx-l{ font-size:10.5px !important; opacity:1 !important; font-weight:900 !important; letter-spacing:-.02em !important; }
+html body #mealView .sum-full .sx-l *{ font-size:inherit !important; opacity:1 !important; }
+html body #mealView .my-card .my-mh > .my-mt > span{ font-size:11px !important; font-weight:700 !important; color:#374151 !important; opacity:1 !important; white-space:normal !important; line-height:1.25 !important; overflow:visible !important; text-overflow:clip !important; }
+html body #mealView .my-card .my-mk small,html body #mealView .my-card .my-kc small,html body #mealView .my-mk small,html body #mealView .my-kc small{ font-size:11px !important; font-weight:800 !important; color:#374151 !important; opacity:1 !important; }
+html body #mealView .my-card .my-mk b{ color:color-mix(in srgb,var(--mc,#E5173A) 62%,#000) !important; }
+html body #mealView .my-nm b{ color:#0B0D12 !important; }
+html body #mealView .my-nm span{ font-size:12px !important; font-weight:600 !important; line-height:1.35 !important; color:#374151 !important; opacity:1 !important; }
+html body #mealView .my-kc b{ color:#0B0D12 !important; }
+</style>
 </head>
 <body>
 
