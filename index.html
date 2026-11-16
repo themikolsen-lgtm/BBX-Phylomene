@@ -2706,6 +2706,25 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
 #mealForm .mfc-h{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#4B5563}
 #mealForm .mfc-n{font:800 16px/1.2 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.08em;color:#111}
 </style>
+<style id="cfColor">
+.cf-sec{ margin-top:6px; }
+.cf-h{ display:flex; align-items:center; gap:10px; margin:22px 4px 10px !important; font-size:13px !important; font-weight:900 !important; letter-spacing:.07em; color:#15171C !important; }
+.cf-h i,.cf-det>summary i{ font-style:normal; width:30px; height:30px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; font-size:16px; background:color-mix(in srgb,var(--c) 38%,#fff); box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--c) 70%,#fff); flex:none; }
+.cf-sec .cm-box{ background:linear-gradient(180deg,color-mix(in srgb,var(--c) 14%,#fff),#fff 70%) !important; border:1.5px solid color-mix(in srgb,var(--c) 45%,#fff) !important; border-radius:18px !important; box-shadow:0 10px 20px -16px color-mix(in srgb,var(--c) 90%,#000); }
+.cf-sec .cm-t{ font-size:14px; }
+.cf-sec .cm-seg{ background:color-mix(in srgb,var(--c) 14%,#fff) !important; }
+.cf-sec .cm-seg button.on{ background:var(--c) !important; box-shadow:0 6px 12px -6px color-mix(in srgb,var(--c) 90%,#000) !important; }
+.cf-sec .cf-row{ border-bottom-color:color-mix(in srgb,var(--c) 30%,#fff); }
+.cf-sec .cf-row:last-of-type{ border-bottom:0; }
+.cf-sec input{ background:#fff !important; border-color:color-mix(in srgb,var(--c) 45%,#fff) !important; }
+.cf-sec .cf-on{ background:color-mix(in srgb,var(--c) 40%,#fff); color:#15171C; }
+.cf-det{ border:1.5px solid color-mix(in srgb,var(--c) 50%,#fff) !important; background:linear-gradient(180deg,color-mix(in srgb,var(--c) 14%,#fff),#fff 80%) !important; border-radius:18px !important; margin-top:14px !important; }
+.cf-det>summary{ gap:10px; justify-content:flex-start !important; font-weight:900 !important; }
+.cf-det>summary::after{ margin-left:auto; }
+.cf-det[open]>summary{ border-bottom-color:color-mix(in srgb,var(--c) 40%,#fff) !important; }
+#syncState{ font-weight:700; color:#1F2937; }
+#syncIn .cm-seg button:first-child,#syncOut .cm-seg button:first-child{ background:var(--c); color:#15171C; box-shadow:0 6px 12px -6px color-mix(in srgb,var(--c) 90%,#000); }
+</style>
 </head>
 <body>
 
@@ -2819,31 +2838,7 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
     <button class="mc-big ib ibt " onclick="BBXMeal.search(null)" aria-label="Rechercher un produit" title="Rechercher un produit"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></span><em>Rechercher</em></button>
     <button class="mc-big ib ibt " onclick="BBXMeal.add(null)" aria-label="Ajouter à la main" title="Ajouter à la main"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4.2-1L18.3 8.9a2.1 2.1 0 0 0-3-3L5.2 16 4 20z"/><path d="M13.6 7.6l2.8 2.8"/></svg></span><em>Saisie</em></button>
   </div>
-  <div class="cf-h">Comptage et scanner</div>
-  <div class="cm-box"><div class="cm-t">Mode de comptage</div>
-    <div class="cm-seg cm3" id="cmSeg" role="group" aria-label="Mode de comptage">
-      <button data-m="chk" onclick="BBXMeal.setMode('chk')" aria-label="Avec cases à cocher" title="Avec cases à cocher"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg><span>Cases à cocher</span></button>
-      <button data-m="auto" onclick="BBXMeal.setMode('auto')" aria-label="Automatique : boutons sur chaque repas" title="Automatique : boutons sur chaque repas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6L13 3z"/></svg><span>Automatique</span></button>
-      <button data-m="fab" onclick="BBXMeal.setMode('fab')" aria-label="Automatique : un bouton central" title="Automatique : un bouton central"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M8 12h8"/></svg><span>Bouton central</span></button>
-    </div>
-    <div class="cm-d" id="cmDesc"></div></div>
-  <div class="cm-box" style="margin-top:10px"><div class="cm-t">Scanner un code-barres</div>
-    <div class="cm-seg" id="mcSm" role="group" aria-label="Mode du scanner">
-      <button data-sm="live" onclick="BBXMeal.scanMode('live');BBXMeal.scanDesc()" aria-label="Caméra en direct" title="Caméra en direct"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M7 12h10"/></svg><span>Caméra directe</span></button>
-      <button data-sm="photo" onclick="BBXMeal.scanMode('photo');BBXMeal.scanDesc()" aria-label="Photo sans autorisation" title="Photo sans autorisation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.2l1.3-2h6l1.3 2h1.2A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5v-8z"/><circle cx="12" cy="12.5" r="3.3"/></svg><span>Photo</span></button>
-    </div>
-    <div class="cm-d" id="mcSmD"></div></div>
-  <div class="cf-h">Bases de données</div>
-  <div class="cm-box cf-db">
-    <div class="cf-row"><div class="cf-n"><b>Open Food Facts</b><span>Produits de marque et code-barres</span></div><em class="cf-on">Toujours actif</em></div>
-    <div class="cf-row"><div class="cf-n"><b>Ciqual · ANSES</b><span>Aliments génériques français</span></div>
-      <div class="cm-seg" id="ciqSeg" role="group" aria-label="Base Ciqual"><button data-u="on" onclick="BBXMeal.setCiq('on')">Oui</button><button data-u="off" onclick="BBXMeal.setCiq('off')">Non</button></div></div>
-    <div class="cf-row"><div class="cf-n"><b>USDA FoodData Central</b><span>Base américaine, en anglais</span></div>
-      <div class="cm-seg" id="usdaSeg" role="group" aria-label="Base USDA"><button data-u="on" onclick="BBXMeal.setUsda('on')">Oui</button><button data-u="off" onclick="BBXMeal.setUsda('off')">Non</button></div></div>
-    <input id="usdaKey" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Clé API personnelle (facultatif)" onchange="BBXMeal.setUsdaKey(this.value)" style="margin-top:2px;width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #E6E9EE;border-radius:12px;font:600 14px system-ui;background:#F7F8FA">
-    <div class="cm-d">Clé USDA facultative : sans elle, limite d’environ 30 recherches par heure. Clé gratuite sur <a href="https://fdc.nal.usda.gov/api-key-signup" target="_blank" rel="noopener" style="color:#0A7">fdc.nal.usda.gov</a>.</div>
-  </div>
-  <div class="cf-h">Synchronisation</div>
+  <div class="cf-sec" style="--c:#7CB9FF"><div class="cf-h"><i>☁️</i>Synchronisation</div>
   <div class="cm-box" id="syncBox">
     <div class="cm-t">Sauvegarde en ligne (Supabase)</div>
     <div class="cm-d" id="syncState" style="margin:0 2px 10px">…</div>
@@ -2860,13 +2855,40 @@ body:has(.mc-ov.show) #mealFab, body:has(.mc-scan.show) #mealFab, body:has(#meal
     <div class="cm-d" id="syncMsg"></div>
     <div class="cm-d">Tes repas, produits, poids, habitudes et séances sont copiés automatiquement. Même compte = mêmes données sur tous tes appareils et dans les deux apps.</div>
   </div>
-  <details class="cf-det"><summary>Mes repas et produits</summary>
+  </div>
+  <div class="cf-sec" style="--c:#7DD957"><div class="cf-h"><i>✅</i>Comptage et scanner</div>
+  <div class="cm-box"><div class="cm-t">Mode de comptage</div>
+    <div class="cm-seg cm3" id="cmSeg" role="group" aria-label="Mode de comptage">
+      <button data-m="chk" onclick="BBXMeal.setMode('chk')" aria-label="Avec cases à cocher" title="Avec cases à cocher"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg><span>Cases à cocher</span></button>
+      <button data-m="auto" onclick="BBXMeal.setMode('auto')" aria-label="Automatique : boutons sur chaque repas" title="Automatique : boutons sur chaque repas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6L13 3z"/></svg><span>Automatique</span></button>
+      <button data-m="fab" onclick="BBXMeal.setMode('fab')" aria-label="Automatique : un bouton central" title="Automatique : un bouton central"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M8 12h8"/></svg><span>Bouton central</span></button>
+    </div>
+    <div class="cm-d" id="cmDesc"></div></div>
+  <div class="cm-box" style="margin-top:10px"><div class="cm-t">Scanner un code-barres</div>
+    <div class="cm-seg" id="mcSm" role="group" aria-label="Mode du scanner">
+      <button data-sm="live" onclick="BBXMeal.scanMode('live');BBXMeal.scanDesc()" aria-label="Caméra en direct" title="Caméra en direct"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M7 12h10"/></svg><span>Caméra directe</span></button>
+      <button data-sm="photo" onclick="BBXMeal.scanMode('photo');BBXMeal.scanDesc()" aria-label="Photo sans autorisation" title="Photo sans autorisation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.2l1.3-2h6l1.3 2h1.2A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5v-8z"/><circle cx="12" cy="12.5" r="3.3"/></svg><span>Photo</span></button>
+    </div>
+    <div class="cm-d" id="mcSmD"></div></div>
+  </div>
+  <div class="cf-sec" style="--c:#FFBE55"><div class="cf-h"><i>🗄️</i>Bases de données</div>
+  <div class="cm-box cf-db">
+    <div class="cf-row"><div class="cf-n"><b>Open Food Facts</b><span>Produits de marque et code-barres</span></div><em class="cf-on">Toujours actif</em></div>
+    <div class="cf-row"><div class="cf-n"><b>Ciqual · ANSES</b><span>Aliments génériques français</span></div>
+      <div class="cm-seg" id="ciqSeg" role="group" aria-label="Base Ciqual"><button data-u="on" onclick="BBXMeal.setCiq('on')">Oui</button><button data-u="off" onclick="BBXMeal.setCiq('off')">Non</button></div></div>
+    <div class="cf-row"><div class="cf-n"><b>USDA FoodData Central</b><span>Base américaine, en anglais</span></div>
+      <div class="cm-seg" id="usdaSeg" role="group" aria-label="Base USDA"><button data-u="on" onclick="BBXMeal.setUsda('on')">Oui</button><button data-u="off" onclick="BBXMeal.setUsda('off')">Non</button></div></div>
+    <input id="usdaKey" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Clé API personnelle (facultatif)" onchange="BBXMeal.setUsdaKey(this.value)" style="margin-top:2px;width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #E6E9EE;border-radius:12px;font:600 14px system-ui;background:#F7F8FA">
+    <div class="cm-d">Clé USDA facultative : sans elle, limite d’environ 30 recherches par heure. Clé gratuite sur <a href="https://fdc.nal.usda.gov/api-key-signup" target="_blank" rel="noopener" style="color:#0A7">fdc.nal.usda.gov</a>.</div>
+  </div>
+  </div>
+  <details class="cf-det" style="--c:#FF8FB8"><summary><i>🍽️</i>Mes repas et produits</summary>
     <div class="mc-hint" style="margin-top:10px">Change les produits de chaque repas : ▲▼ pour l’ordre, ✎ pour modifier ou changer de repas, 🗑 pour supprimer.</div>
   <div id="mcList"></div>
   <div class="ib-row"><button class="mc-big ib ibt red" onclick="BBXMeal.addMeal()" aria-label="Ajouter un repas" title="Ajouter un repas"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><em>Repas</em></button></div>
   <button class="mc-reset" onclick="BBXMeal.resetDef()" aria-label="Remettre les repas d’origine" title="Remettre les repas d’origine"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5"/><path d="M3.5 3.5v5h5"/></svg></button>
   </details>
-  <details class="cf-det"><summary>Sauvegarde de mes données</summary>
+  <details class="cf-det" style="--c:#B79CFF"><summary><i>🛡️</i>Sauvegarde de mes données</summary>
   <div class="cm-box bk-wrap"><div class="cm-t">Sauvegarde de mes données</div>
     <div class="cm-d" id="bkStatus" style="margin:0 2px 8px">Vérification…</div>
     <textarea id="bkTxt" class="bk-ta" rows="2" spellcheck="false" autocapitalize="off" placeholder="Pour restaurer : colle ici ta sauvegarde, puis touche Restaurer."></textarea>
