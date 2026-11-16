@@ -2877,9 +2877,72 @@ html.mt-beta #mealView .my-pill > button.my-suivi{ width:auto!important; min-wid
 html.mt-beta #mealView .my-pill .my-sl{ display:inline; font:800 15px/1 inherit; font-family:inherit; color:var(--tx,#15171C); }
 html.mt-beta #mealHist .mc-head .ht-cfg{ display:grid; place-items:center; margin-left:auto; margin-right:8px; width:44px; height:44px; border-radius:50%!important; border:1.5px solid color-mix(in srgb,var(--b-blue) 50%,#fff); background:#fff; color:var(--b-ink); cursor:pointer; padding:0; }
 html.mt-beta #mealHist .mc-head .ht-cfg svg{ width:22px; height:22px; fill:currentColor; }
+/* ===== Fiche produit Bêta : mise en page de la maquette ===== */
+html.mt-beta #mealForm.show{ display:flex!important; flex-direction:column; }
+html.mt-beta #mealForm>*,html.mt-beta #mealForm .fv-card:not(.mf-health)>*{ flex:none; }
+html.mt-beta #mealForm .fv-card:not(.mf-health){ display:contents!important; }
+html.mt-beta #mealForm .mc-head{ order:1; gap:10px; }
+html.mt-beta #mealForm .mc-head b{ margin-right:auto; }
+html.mt-beta #mealForm .mf-quick{ order:2; }
+html.mt-beta #mealForm .mf-info{ order:3; }
+html.mt-beta #mealForm .mf-chips{ order:4; justify-content:safe center; margin:0 -16px 10px!important; padding:2px 16px 6px!important; }
+html.mt-beta #mealForm .mf-name{ order:5; padding:0!important; margin:0 0 10px; }
+html.mt-beta #mealForm .mf-code{ order:6; }
+html.mt-beta #mealForm .mf-health{ order:7; }
+html.mt-beta #mealForm #mfBasis{ order:8; margin:6px 0 14px!important; }
+html.mt-beta #mealForm .fv-h{ order:9; text-align:center; margin:0 0 8px!important; padding:0!important; font-size:16px!important; }
+html.mt-beta #mealForm #mfPrev{ order:10; }
+html.mt-beta #mealForm .mf-sec.mf-s{ order:11; }
+html.mt-beta #mealForm .mf-four{ order:11; }
+html.mt-beta #mealForm #mfMicro{ order:12; margin:6px 0 14px!important; }
+html.mt-beta #mealForm #mfUq,html.mt-beta #mealForm #mfGq{ order:13; }
+html.mt-beta #mealForm #mfUg{ order:13; }
+html.mt-beta #mealForm #mfMult{ order:14; }
+html.mt-beta #mealForm #mfUnits{ order:14; }
+html.mt-beta #mealForm #mfSeg{ order:15; }
+html.mt-beta #mealForm .mf-btns{ order:16; margin-top:auto!important; justify-content:center; background:none!important; }
+/* en-tête : bouton scanner + « Retour » */
+html.mt-beta #mealForm .mc-head .mc-x{ width:auto!important; height:46px!important; padding:0 22px!important; border-radius:999px!important; font-size:0!important; background:#fff!important; border:0!important; box-shadow:none!important; }
+html.mt-beta #mealForm .mc-head .mc-x::after{ content:"Retour"; font-size:17px; font-weight:800; line-height:1; color:#2E1F2A; }
+html.mt-beta #mealForm .mc-head .mf-hscan{ display:none; place-items:center; width:64px; height:46px; border-radius:999px!important; background:#fff; border:0; color:#111; cursor:pointer; padding:0; }
+html.mt-beta #mealForm:has(#mfQuick[style*="none"]) .mc-head .mf-hscan{ display:grid; }
+html.mt-beta #mealForm .mc-head .mf-hscan svg{ width:28px; height:28px; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+/* nom : une seule pilule blanche centrée */
+html.mt-beta #mealForm #mfEmoji{ display:none!important; }
+html.mt-beta #mealForm .mf-name input#mfName{ width:100%; height:52px!important; border:0!important; border-radius:999px!important; background:#fff!important; text-align:center; font-size:20px!important; font-weight:800!important; color:#2E1F2A!important; padding:0 18px!important; }
+/* code-barres : simple ligne centrée */
+html.mt-beta #mealForm .mf-code{ background:transparent!important; border:0!important; justify-content:center!important; gap:18px!important; padding:0!important; margin:0 0 12px!important; }
+/* carte santé blanche */
+html.mt-beta #mealForm .mf-health{ background:#fff!important; border:0!important; border-radius:36px!important; padding:16px 20px 18px!important; margin:0 14px 18px!important; box-shadow:none!important; }
+html.mt-beta #mealForm .mf-health[hidden]{ display:none!important; }
+html.mt-beta #mealForm .mf-health .mh-v{ border-radius:999px!important; justify-content:flex-start; text-align:center; }
+html.mt-beta #mealForm .mf-health .mh-v>div{ flex:1; padding-right:36px; }
+/* valeurs : pas de pastille « pour … » */
+html.mt-beta #mealForm .mp-for{ display:none!important; }
+/* quantité : une pilule blanche − 1 + */
+html.mt-beta #mealForm .mf-qty{ background:#fff; border-radius:999px; padding:4px 10px; gap:0!important; margin:0 0 12px!important; }
+html.mt-beta #mealForm .mf-qty>button{ background:transparent!important; border:0!important; box-shadow:none!important; font-size:30px; font-weight:900; color:#111!important; }
+html.mt-beta #mealForm .mf-qty .mf-in.big{ background:transparent!important; border:0!important; box-shadow:none!important; }
+html.mt-beta #mealForm .mf-qty .mf-in.big input{ text-align:center; }
+html.mt-beta #mealForm #mfUl{ display:none!important; }
+html.mt-beta #mealForm #mfMult{ justify-content:center; gap:10px; }
+html.mt-beta #mealForm #mfMult button{ flex:0 0 auto!important; min-width:74px; }
+html.mt-beta #mealForm #mfMult button:nth-child(n+5){ display:none; }
+/* bas : seulement le bouton vert */
+html.mt-beta #mealForm .mf-btns .mc-big:not(#mfOk){ display:none!important; }
+html.mt-beta #mealForm .mf-btns #mfOk{ flex:0 1 340px!important; height:58px!important; font-size:20px!important; }
+html.mt-beta #mealForm .mc-head b{ font-size:21px!important; white-space:nowrap; }
+html.mt-beta #mealForm .mc-head b{ font-size:17.5px!important; letter-spacing:-.01em; }
+html.mt-beta #mealForm .mc-head .mf-hscan{ width:52px; height:42px; }
+html.mt-beta #mealForm .mc-head .mc-x{ height:42px!important; padding:0 16px!important; }
+html.mt-beta #mealForm .mf-chip{ height:34px!important; padding:0 12px!important; font-size:13px!important; }
+html.mt-beta #mealForm .mf-chips{ margin-bottom:6px!important; }
+html.mt-beta #mealForm .mf-btns{ padding-top:14px!important; }
+html.mt-beta #mealForm #mfPrev{ margin-bottom:12px!important; }
+html.mt-beta #mealForm .mf-name{ margin:4px 0 14px!important; }
 </style>
 <style id="mfMicroCss">#mealForm #mfMicro:empty{display:none}#mealForm #mfMicro{margin:0 0 10px}#mealForm #mfMicro .mf-micro{margin-top:0}</style>
-<style id="betaNav">.my-sl,.ht-cfg{display:none}
+<style id="betaNav">.my-sl,.ht-cfg,.mf-hscan{display:none}
 #mealView .my-fixed .sum-full{padding-bottom:10px!important}</style>
 <style id="auditFix">
 /* contrôle général : lisibilité et confort */
@@ -3109,7 +3172,7 @@ window.BBXBk=(function(){
   <div class="mf-btns" style="margin-top:20px"><button class="mc-big ib red" id="mnOk" onclick="BBXMeal.saveName()" aria-label="Créer le repas" title="Créer le repas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button><button class="mc-big ib " onclick="BBXMeal.closeName()" aria-label="Annuler" title="Annuler"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
 </div>
 <div id="mealForm" class="mc-ov mc-sheet" aria-label="Produit">
-  <div class="mc-head"><b id="mfTitle">Ajouter un produit</b><button class="mc-x" onclick="BBXMeal.closeForm()" aria-label="Fermer">✕</button></div>
+  <div class="mc-head"><b id="mfTitle">Ajouter un produit</b><button class="mf-hscan" type="button" onclick="BBXMeal.scan('form')" aria-label="Scanner un code-barres" title="Scanner un code-barres"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M8 12h8"/></svg></button><button class="mc-x" onclick="BBXMeal.closeForm()" aria-label="Fermer">✕</button></div>
   <div class="mf-quick" id="mfQuick"><button class="mc-big ib ibt red" onclick="BBXMeal.scan('form')" aria-label="Scanner un code-barres" title="Scanner un code-barres"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M7 12h10"/></svg></span><em>Scanner</em></button><button class="mc-big ib ibt " onclick="BBXMeal.search('form')" aria-label="Rechercher un produit" title="Rechercher un produit"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></span><em>Rechercher</em></button><button class="mc-big ib ibt" id="mfOcrBtn" onclick="BBXMeal.ocr()" aria-label="Photographier le tableau nutritionnel" title="Photographier le tableau nutritionnel"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M4 9.5h16M4 14.5h16M12 9.5V20"/></svg></span><em>Tableau</em></button><input type="file" id="mfOcrFile" accept="image/*" capture="environment" hidden></div>
   <div class="mf-info" id="mfInfo"></div>
   <section class="fv-card fv-prod">
