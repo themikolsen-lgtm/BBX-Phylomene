@@ -3853,7 +3853,9 @@ window.BBXBk=(function(){
     }
     { let g=num($('mfQty').value); fm.basis='g';
       if(hasUnit()){ if(!(g>0)) g=fm.serving; if(mode!=='edit'&&!(memQty(pref.name,pref.unit||((pref.liquid||liquidName(pref.name))?'ml':'g'))>0)) g=fm.serving; $('mfQty').value=r1(g); { const nn=g/fm.serving, whole=Math.abs(nn*4-Math.round(nn*4))<0.02; applyBasis(mode==='edit'&&!whole?'g':'u'); } } else applyBasis('g'); }
-    if(mode!=='edit'){ const cp=portGet($('mfName').value); if(cp){ fm.cust=true; $('mfQty').value=r1(cp.g); applyBasis('g'); } }
+    if(mode!=='edit'){ const cp=portGet($('mfName').value); if(cp){   // la portion personnalisée devient l'unité du produit
+      const P0=fm.portions||[], lb=(P0[0]&&P0[0].label)||'portion'; fm.portions=[{label:lb,g:cp.g}].concat(P0.filter(x=>x.label!==lb)); fm.fixed=true; syncPortions();
+      fm.cust=false; $('mfQty').value=r1(cp.g); applyBasis('u'); } }
     $('mealForm').classList.add('show'); $('mealForm').scrollTop=0;
     { const bx=$('mfChips'), ch=bx.querySelector('.on'); if(ch) bx.scrollLeft=ch.offsetLeft-(bx.clientWidth-ch.offsetWidth)/2; }
   }
@@ -3867,10 +3869,12 @@ window.BBXBk=(function(){
     let n=2; while(MEALS[mt][2].some((x,xi)=>x[0]===nm&&xi!==same)){ nm=name+' ('+n+')'; n++; }
     const emoji=$('mfEmoji').value.trim()||'🍽️';
     const edit=fm.mode==='edit';
+    const custNow=fm.basis==='g'&&(fm.cust||Math.abs(q-100)>0.01);   // quantité personnalisée = nouvelle portion standard = 1 unité
+    if(custNow&&!edit){ const lb=fm.newLabel||'portion'; fm.portions=[{label:lb,g:Math.round(q*10)/10}].concat((fm.portions||[]).filter(x=>x.label!==lb)); syncPortions(); }
     const unitW=edit?fm.unitW:(fm.serving>0?fm.serving:100);
     const label=edit?fm.label:(fm.serving>0?(fm.newLabel||'portion'):'portion de 100 '+unit);
     const it=[nm,label,unitW,q/unitW,k*q/100,p*q/100,unit,emoji,isNaN(fa)?null:fa*q/100,isNaN(ca)?null:ca*q/100];
-    if(fm.basis==='g'&&(fm.cust||Math.abs(q-100)>0.01)) portSet(nm,q,unit);
+    if(custNow) portSet(nm,q,unit);
     upsertFav(it,fm.portions); bumpHabit(MEALS[mt][0],nm,q);
     QTY[hlKey(nm)]={g:Math.round(q*10)/10,u:unit}; saveQty();
     if(fm.code&&!edit){ CODES[fm.code]={name:nm,kcal:k,prot:p,fat:isNaN(fa)?null:fa,carb:isNaN(ca)?null:ca,serving:fm.serving||0,label:fm.newLabel||'',portions:fm.portions||[],liquid:$('mfUnit').value==='ml'}; saveCodes(); }
