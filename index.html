@@ -2980,6 +2980,8 @@ html.mt-beta #mealView .my-card:has(.my-empty) .my-mh{ border-radius:inherit!imp
 .id-want button{ flex:none; width:44px; height:44px; border-radius:50%; border:1.5px solid #DDE0E6; background:#fff; color:#15171C; font-size:15px; cursor:pointer; }
 .id-want button[hidden]{ display:none; }
 </style>
+<style id="basis3">html body #mealForm #mfBasis button{ font-size:13px !important; letter-spacing:-.01em; padding-left:2px !important; padding-right:2px !important; white-space:nowrap; min-width:0; }
+#mealForm #mfBasis button[data-b="u"]{ flex:1.25; }</style>
 </head>
 <body>
 
@@ -3219,7 +3221,7 @@ window.BBXBk=(function(){
   
   </section>
   <section class="fv-card fv-qty">
-  <div class="mf-seg" id="mfBasis" style="margin:6px 0 8px"><button type="button" data-b="u" class="on" onclick="BBXMeal.basis('u')">À l’unité</button><button type="button" data-b="g" onclick="BBXMeal.basis('g')">Pour 100 g</button></div>
+  <div class="mf-seg" id="mfBasis" style="margin:6px 0 8px"><button type="button" data-b="u" class="on" onclick="BBXMeal.basis('u')">À l’unité</button><button type="button" data-b="g" onclick="BBXMeal.basis('g')">100 g</button><button type="button" data-b="c" onclick="BBXMeal.basis('c')">Personnalisé</button></div>
   <div id="mfMicro"></div>
   <div class="mf-qty" id="mfUq" style="display:none"><button type="button" onclick="BBXMeal.uqty(-1)" aria-label="Moins">−</button><div class="mf-in big"><input id="mfUn" type="text" inputmode="decimal" placeholder="1" aria-label="Nombre d’unités"><i id="mfUl">unité</i></div><button type="button" onclick="BBXMeal.uqty(1)" aria-label="Plus">+</button></div>
   <div class="mf-ug" id="mfUg" style="display:none"></div>
@@ -3443,21 +3445,25 @@ window.BBXBk=(function(){
   function hasUnit(){ const d=fm.portions&&fm.portions[0]; return !!(fm.serving>0&&d&&!/^portion de 100\b/i.test(d.label||'')); }
   function unitLabel(){ const d=fm.portions&&fm.portions[0], l=(d&&d.label)||'unité'; return l.length>14?'unité':l; }
   function fmUnitBtn(){ const bb=$('mfBasis'); if(bb&&bb.children[0]) bb.children[0].textContent='À l’unité'+(fm.serving>0?' · '+r1(fm.serving)+' '+($('mfUnit').value||'g'):''); }
+  function basisHi(){ const b=fm.basis, qv=num($('mfQty').value), onB=(b==='g'&&(fm.cust||!(Math.abs((qv||0)-100)<0.01)))?'c':b; [...$('mfBasis').children].forEach(x=>{ x.classList.toggle('on',x.dataset.b===onB); }); }
   function applyBasis(b){
     fmUnitBtn();
     if(b==='u'&&!hasUnit()) b='g'; fm.basis=b;
-    [...$('mfBasis').children].forEach(x=>{ x.classList.toggle('on',x.dataset.b===b); });
-    $('mfBasis').children[0].style.display=hasUnit()?'':'none'; $('mfBasis').style.display=hasUnit()?'':'none';
+    basisHi();
+    $('mfBasis').children[0].style.display=hasUnit()?'':'none'; $('mfBasis').style.display='';
     $('mfUq').style.display=b==='u'?'':'none'; $('mfUg').style.display=b==='u'?'':'none'; $('mfMult').style.display=b==='u'?'':'none'; $('mfGq').style.display=b==='u'?'none':'';
     if(b==='u'){ $('mfUl').textContent=unitLabel(); const g=num($('mfQty').value); const n=g>0?Math.round(g/fm.serving*100)/100:1; $('mfUn').value=r2(n>0?n:1); $('mfQty').value=r1((n>0?n:1)*fm.serving); }
     if($('mfUnits')) renderUnits(); if(b==='u'){ if($('mfUnits')) $('mfUnits').style.display='none'; $('mfSeg').style.display='none'; } else $('mfSeg').style.display='';
     fmPrev();
   }
-  function setBasis(b){ if(b==='g'&&fm.basis==='u'){ $('mfQty').value='100'; } if(b==='u'&&fm.basis==='g'){ $('mfQty').value=r1(fm.serving); } applyBasis(b); }
+  function setBasis(b){
+    if(b==='c'){ fm.cust=true; $('mfQty').value=''; applyBasis('g'); try{ $('mfQty').focus(); }catch(e){} return; }
+    fm.cust=false; if(b==='g'){ $('mfQty').value='100'; } if(b==='u'&&fm.basis==='g'){ $('mfQty').value=r1(fm.serving); } applyBasis(b);
+  }
   function uset(n){ $('mfUn').value=n; $('mfQty').value=r1(n*fm.serving); fmPrev(); }
   function uqty(dir){ const n=num($('mfUn').value)||0, st=n>=2?1:0.5; const v=Math.max(0.5,Math.round((n+dir*st)*100)/100); $('mfUn').value=r2(v); $('mfQty').value=r1(v*fm.serving); fmPrev(); }
   document.addEventListener('input',e=>{ const t=e.target; if(!t||!t.dataset||!t.dataset.s||!t.closest||!t.closest('#mfPrev')) return; const v=num(t.value), q=num($('mfQty').value), eff=q>0?q:100; $(t.dataset.s).value=isNaN(v)?'':String(+(v*100/eff).toFixed(2)); fmPrev(); });
-  function fmPrev(){
+  function fmPrev(){ try{ basisHi(); }catch(e){}
     fmUnitBtn();
     if(fm.basis==='u'&&fm.serving>0){ const g=num($('mfQty').value); if(document.activeElement===$('mfUn')){ const n=num($('mfUn').value); if(n>=0) $('mfQty').value=r1(n*fm.serving); } else if(g>0) $('mfUn').value=r2(g/fm.serving); $('mfUg').textContent='= '+r1(num($('mfQty').value)||0)+' '+$('mfUnit').value+' · 1 '+unitLabel()+' ≈ '+r1(fm.serving)+' '+$('mfUnit').value; }
     const k=num($('mfKcal').value), p=num($('mfProt').value), q=num($('mfQty').value), u=$('mfUnit').value, fa=num($('mfFat').value), ca=num($('mfCarb').value);
@@ -3814,7 +3820,7 @@ window.BBXBk=(function(){
     el.hidden=false;
   }
   function codeFor(name){ const n=normS(String(name||'').replace(/ \(\d+\)$/,'')); return Object.keys(CODES).find(c=>CODES[c]&&normS(String(CODES[c].name||''))===n)||null; }
-  function openForm(mode,m,i,pref){
+  function openForm(mode,m,i,pref){ fm.cust=false;
     pref=pref||{}; fm.code=pref.code||null; renderCode(pref.code||(mode==='edit'?codeFor(MEALS[m][2][i][0]):null)); $('mfOcrBtn').classList.remove('pulse','busy'); fm.h=mode==='edit'?null:pref.h; renderHealth(mode==='edit'?hlGet(MEALS[m][2][i][0]):(pref.h||hlGet(pref.name||'')));
     $('mfChips').innerHTML=MEALS.map(([t,ic],x)=>`<button type="button" class="mf-chip" style="--mc:${mcol(t)[0]};--mx:${mcx(t)};--md:${mcd(t)};--mt:${mcol(t)[1]}" onclick="BBXMeal.setMeal(${x})">${esc(ic)} ${esc(t)}</button>`).join('');
     fm.mode=mode; fm.unitTouched=0; fm.serving=pref.serving||0;
@@ -3840,7 +3846,7 @@ window.BBXBk=(function(){
       if(pref.info) $('mfInfo').className='mf-info ok';
     }
     { let g=num($('mfQty').value); fm.basis='g';
-      if(hasUnit()){ if(!(g>0)) g=fm.serving; if(mode!=='edit'&&!(memQty(pref.name,pref.unit||((pref.liquid||liquidName(pref.name))?'ml':'g'))>0)) g=fm.serving; $('mfQty').value=r1(g); applyBasis('u'); } else applyBasis('g'); }
+      if(hasUnit()){ if(!(g>0)) g=fm.serving; if(mode!=='edit'&&!(memQty(pref.name,pref.unit||((pref.liquid||liquidName(pref.name))?'ml':'g'))>0)) g=fm.serving; $('mfQty').value=r1(g); { const nn=g/fm.serving, whole=Math.abs(nn*4-Math.round(nn*4))<0.02; applyBasis(mode==='edit'&&!whole?'g':'u'); } } else applyBasis('g'); }
     $('mealForm').classList.add('show'); $('mealForm').scrollTop=0;
     { const bx=$('mfChips'), ch=bx.querySelector('.on'); if(ch) bx.scrollLeft=ch.offsetLeft-(bx.clientWidth-ch.offsetWidth)/2; }
   }
