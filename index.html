@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<script>try{if(localStorage.getItem('phy-mtheme')==='beta')document.documentElement.classList.add('mt-beta');}catch(e){}</script>
+
 <script id="bbxSafe">
 /* Sauvegarde automatique : copie des données (bb9*) dans IndexedDB à chaque changement + restauration si le navigateur efface le stockage */
 (function(){
@@ -2794,6 +2796,86 @@ html body #mealScan .ms-sep{width:1.5px;height:26px;background:rgba(255,255,255,
 html body #mealScan .ms-dock .ms-row button{width:52px!important;height:52px!important;border:0!important;background:none!important;border-radius:50%!important;display:grid;place-items:center;padding:0}
 html body #mealScan .ms-dock .ms-row button svg{width:26px;height:26px;fill:none;stroke:#fff;stroke-width:2.3;stroke-linecap:round}
 </style>
+<style id="themeBeta">
+/* ===== Thème Bêta · iOS 27 (Liquid Glass) — Meal uniquement ===== */
+html.mt-beta{
+  --g-fill:rgba(255,255,255,.62); --g-fill2:rgba(255,255,255,.78); --g-blur:blur(28px) saturate(190%);
+  --g-edge:inset 0 0 0 .5px rgba(15,20,40,.16), inset 0 1.5px 0 rgba(255,255,255,.95), inset 0 -1px 0 rgba(255,255,255,.45);
+  --g-sh:0 14px 34px -16px rgba(30,40,80,.30), 0 2px 6px -2px rgba(30,40,80,.10);
+  --ios-font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Inter",system-ui,sans-serif;
+  --ios-green:#34C759; --ios-blue:#0A84FF; --ios-orange:#FF9F0A; --ios-pink:#FF375F; --ios-teal:#30B0C7; --ios-ink:#0B0D12;
+}
+html.mt-beta #mealView,html.mt-beta .mc-ov{ font-family:var(--ios-font)!important; letter-spacing:-.011em;
+  background:
+   radial-gradient(70% 38% at 8% -4%,rgba(52,199,89,.34),transparent 70%),
+   radial-gradient(60% 34% at 100% 6%,rgba(10,132,255,.24),transparent 70%),
+   radial-gradient(70% 40% at 90% 62%,rgba(255,159,10,.20),transparent 72%),
+   radial-gradient(60% 36% at 0% 88%,rgba(255,55,95,.16),transparent 72%),
+   #EEF2F8 !important; color:var(--ios-ink); }
+html.mt-beta #mealView *,html.mt-beta .mc-ov *{ font-family:var(--ios-font); }
+/* titres larges façon iOS */
+html.mt-beta .mc-head b,html.mt-beta #mealView .mc-head b{ font-style:normal!important; text-transform:none!important; font-size:34px!important; font-weight:800!important; letter-spacing:-.03em!important; color:var(--ios-ink)!important; font-family:var(--ios-font)!important; }
+html.mt-beta .mc-x{ width:40px!important; height:40px!important; border-radius:50%!important; background:var(--g-fill)!important; -webkit-backdrop-filter:var(--g-blur); backdrop-filter:var(--g-blur); border:0!important; box-shadow:var(--g-edge),var(--g-sh)!important; color:var(--ios-ink)!important; }
+/* barre du haut : verre uniforme */
+html.mt-beta #mealView .my-head{ background:transparent!important; }
+html.mt-beta #mealView .my-pill{ background:var(--g-fill)!important; -webkit-backdrop-filter:var(--g-blur); backdrop-filter:var(--g-blur); border:0!important; box-shadow:var(--g-edge),var(--g-sh)!important; border-radius:999px!important; }
+/* cartes en verre */
+html.mt-beta #mealView .my-dsum,html.mt-beta #mealView .my-card,html.mt-beta .cm-box,html.mt-beta .cf-det,html.mt-beta .ht-card,html.mt-beta .fv-card,html.mt-beta .sr-row,html.mt-beta .mc-meal,html.mt-beta .my-plan{
+  background:var(--g-fill)!important; -webkit-backdrop-filter:var(--g-blur); backdrop-filter:var(--g-blur); border:0!important; border-radius:30px!important; box-shadow:var(--g-edge),var(--g-sh)!important; }
+html.mt-beta .cf-sec .cm-box{ background:linear-gradient(180deg,color-mix(in srgb,var(--c) 22%,rgba(255,255,255,.6)),var(--g-fill))!important; border-radius:26px!important; }
+html.mt-beta .cf-det{ background:linear-gradient(180deg,color-mix(in srgb,var(--c) 22%,rgba(255,255,255,.6)),var(--g-fill))!important; border-radius:26px!important; }
+html.mt-beta #mealView .my-card .my-mh{ background:linear-gradient(180deg,color-mix(in srgb,var(--mc,#34C759) 20%,rgba(255,255,255,.35)),rgba(255,255,255,0))!important; border-radius:30px 30px 0 0!important; }
+/* tuiles du haut */
+html.mt-beta #mealView .sx-c{ background:color-mix(in srgb,var(--c,#34C759) 16%,rgba(255,255,255,.72))!important; border-radius:22px!important; border:0!important; box-shadow:var(--g-edge)!important; }
+html.mt-beta #mealView .sx-bar{ background:rgba(255,255,255,.7)!important; border-radius:99px!important; height:6px!important; box-shadow:inset 0 0 0 .5px rgba(0,0,0,.08); }
+html.mt-beta #mealView .sx-bar i{ border-radius:99px!important; }
+/* lignes d'aliments */
+html.mt-beta #mealView .my-row{ border-color:rgba(15,20,40,.08)!important; }
+html.mt-beta #mealView .my-th{ background:rgba(255,255,255,.75)!important; border-radius:16px!important; box-shadow:var(--g-edge)!important; }
+html.mt-beta #mealView .my-ck span{ border-radius:50%!important; border:1.5px solid rgba(60,60,67,.35)!important; background:rgba(255,255,255,.7)!important; }
+html.mt-beta #mealView .my-ck input:checked + span{ background:var(--ios-green)!important; border-color:var(--ios-green)!important; box-shadow:0 0 0 4px rgba(52,199,89,.22); }
+/* boutons ronds en verre */
+html.mt-beta #mealView .my-hbtn{ background:var(--g-fill2)!important; border:0!important; box-shadow:var(--g-edge),0 6px 14px -8px rgba(30,40,80,.4)!important; -webkit-backdrop-filter:var(--g-blur); backdrop-filter:var(--g-blur); color:color-mix(in srgb,var(--mc,#34C759) 72%,#000)!important; }
+html.mt-beta #mealView .my-hbtn.plus{ background:linear-gradient(180deg,color-mix(in srgb,var(--mc,#34C759) 82%,#fff),var(--mc,#34C759))!important; color:#fff!important; box-shadow:inset 0 1.5px 0 rgba(255,255,255,.7),0 10px 18px -8px var(--mc,#34C759)!important; }
+html.mt-beta .mc-big.ib:not(.ibt),html.mt-beta .mc-big:not(.ibt){ background:var(--g-fill2)!important; border:0!important; box-shadow:var(--g-edge),var(--g-sh)!important; -webkit-backdrop-filter:var(--g-blur); backdrop-filter:var(--g-blur); }
+html.mt-beta .mc-big.red:not(.ibt),html.mt-beta .sr-go,html.mt-beta #mealForm .mf-btns #mfOk{ background:linear-gradient(180deg,#5BE07B,#34C759)!important; color:#06280F!important; box-shadow:inset 0 1.5px 0 rgba(255,255,255,.75),0 12px 22px -10px rgba(52,199,89,.8)!important; border:0!important; }
+/* contrôles segmentés iOS */
+html.mt-beta .cm-seg,html.mt-beta .mf-seg{ background:rgba(118,118,128,.16)!important; border:0!important; border-radius:14px!important; padding:3px!important; }
+html.mt-beta .cm-seg button,html.mt-beta .mf-seg button{ border-radius:11px!important; background:transparent!important; box-shadow:none!important; color:#3A3A3F!important; font-weight:600!important; }
+html.mt-beta .cm-seg button.on,html.mt-beta .mf-seg button.on,html.mt-beta .cf-sec .cm-seg button.on{ background:#fff!important; color:var(--ios-ink)!important; box-shadow:0 3px 8px rgba(0,0,0,.16),0 0 0 .5px rgba(0,0,0,.04)!important; }
+html.mt-beta #syncIn .cm-seg button:first-child,html.mt-beta #syncOut .cm-seg button:first-child{ background:#fff!important; }
+/* barre de navigation flottante */
+/* champs */
+html.mt-beta .mc-ov input[type=text],html.mt-beta .mc-ov input[type=email],html.mt-beta .mc-ov input[type=password],html.mt-beta .mc-ov input[type=number],html.mt-beta .mc-ov input[type=date],html.mt-beta .mf-in.big,html.mt-beta #srQ{ background:rgba(255,255,255,.7)!important; border:0!important; box-shadow:var(--g-edge)!important; border-radius:16px!important; }
+html.mt-beta .cf-h{ color:#3A3A3F!important; }
+html.mt-beta .cf-h i,html.mt-beta .cf-det>summary i{ border-radius:11px!important; box-shadow:var(--g-edge)!important; background:color-mix(in srgb,var(--c) 45%,#fff)!important; }
+html.mt-beta .cf-det>summary{ font-weight:700!important; }
+html.mt-beta #mealView .my-sum,html.mt-beta #mealView .my-it,html.mt-beta #mealView .my-row,html.mt-beta #mealView .my-day{ background:transparent!important; box-shadow:none!important; }
+html.mt-beta #mealView .my-it{ border-color:rgba(15,20,40,.08)!important; }
+html.mt-beta #mealView .my-card .my-mh .my-mt b{ color:var(--ios-ink)!important; font-weight:800!important; letter-spacing:-.02em; }
+html.mt-beta #mealView .my-dt b{ font-weight:800!important; letter-spacing:-.03em!important; font-size:24px!important; }
+html.mt-beta #mealView .my-dn{ background:var(--g-fill2)!important; border:0!important; box-shadow:var(--g-edge)!important; border-radius:50%!important; }
+html.mt-beta #mealView .sum-full,html.mt-beta #mealView .my-dsum>div,html.mt-beta #mealView .sum-mini,html.mt-beta #mealView #pastSum{ background:transparent!important; box-shadow:none!important; }
+html.mt-beta .mc-big.ibt{ background:transparent!important; box-shadow:none!important; border:0!important; -webkit-backdrop-filter:none!important; backdrop-filter:none!important; }
+html.mt-beta .mc-big.ibt .ibc{ background:var(--g-fill2)!important; box-shadow:var(--g-edge),0 10px 20px -12px rgba(30,40,80,.5)!important; -webkit-backdrop-filter:var(--g-blur); backdrop-filter:var(--g-blur); color:var(--ios-ink)!important; }
+html.mt-beta .mc-big.ibt.red .ibc{ background:linear-gradient(180deg,#5BE07B,#34C759)!important; color:#06280F!important; box-shadow:inset 0 1.5px 0 rgba(255,255,255,.75),0 12px 22px -10px rgba(52,199,89,.8)!important; }
+html.mt-beta .mc-big.ibt em{ color:#2B2B30!important; font-weight:700!important; font-style:normal!important; }
+html.mt-beta .sr-row{ border-radius:24px!important; margin-bottom:10px!important; overflow:hidden; }
+html.mt-beta .sr-it{ background:transparent!important; box-shadow:none!important; border:0!important; border-radius:0!important; -webkit-backdrop-filter:none!important; backdrop-filter:none!important; }
+html.mt-beta .sr-th{ background:rgba(255,255,255,.75)!important; border-radius:16px!important; box-shadow:var(--g-edge)!important; }
+html.mt-beta #srQ{ border:0!important; outline:none!important; box-shadow:var(--g-edge),var(--g-sh)!important; height:52px!important; border-radius:18px!important; font-weight:600; }
+html.mt-beta .mc-search .sr-bar button,html.mt-beta .sr-bar button{ border-radius:18px!important; background:linear-gradient(180deg,#5BE07B,#34C759)!important; box-shadow:inset 0 1.5px 0 rgba(255,255,255,.75),0 12px 22px -10px rgba(52,199,89,.8)!important; }
+html.mt-beta .sr-sec{ color:#3A3A3F!important; letter-spacing:.04em; }
+html.mt-beta .sr-row{ display:flex!important; align-items:center!important; }
+html.mt-beta .sr-row .sr-it{ flex:1 1 auto!important; min-width:0!important; width:auto!important; }
+html.mt-beta .sr-row .sr-del{ flex:none!important; margin:0 10px 0 0!important; width:38px!important; height:38px!important; }
+html.mt-beta [hidden]{ display:none!important; }
+html.mt-beta #mealForm .mf-mac .mf-in,html.mt-beta #mealForm .mf-four .mf-in{ background:transparent!important; box-shadow:none!important; border-radius:0!important; }
+html.mt-beta #mealForm .mf-mac input,html.mt-beta #mealForm .mf-in input{ background:transparent!important; box-shadow:none!important; }
+html.mt-beta #mealForm .mf-name{ background:linear-gradient(180deg,color-mix(in srgb,var(--mc,#34C759) 24%,rgba(255,255,255,.5)),rgba(255,255,255,.2))!important; }
+html.mt-beta .wg-btns button{ border:0!important; border-radius:18px!important; background:var(--g-fill2)!important; box-shadow:var(--g-edge),0 8px 18px -10px rgba(30,40,80,.4)!important; }
+html.mt-beta .wg-btns button:first-child{ background:linear-gradient(180deg,#5BE07B,#34C759)!important; box-shadow:inset 0 1.5px 0 rgba(255,255,255,.75),0 12px 22px -10px rgba(52,199,89,.8)!important; }
+</style>
 </head>
 <body>
 
@@ -2906,6 +2988,11 @@ html body #mealScan .ms-dock .ms-row button svg{width:26px;height:26px;fill:none
     <button class="mc-big ib ibt red" onclick="BBXMeal.scan(null)" aria-label="Scanner un code-barres" title="Scanner un code-barres"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M7 12h10"/></svg></span><em>Scanner</em></button>
     <button class="mc-big ib ibt " onclick="BBXMeal.search(null)" aria-label="Rechercher un produit" title="Rechercher un produit"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></span><em>Rechercher</em></button>
     <button class="mc-big ib ibt " onclick="BBXMeal.add(null)" aria-label="Ajouter à la main" title="Ajouter à la main"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4.2-1L18.3 8.9a2.1 2.1 0 0 0-3-3L5.2 16 4 20z"/><path d="M13.6 7.6l2.8 2.8"/></svg></span><em>Saisie</em></button>
+  </div>
+  <div class="cf-sec" style="--c:#B79CFF"><div class="cf-h"><i>🎨</i>Thème</div>
+    <div class="cm-box"><div class="cm-t">Apparence de Meal</div>
+      <div class="cm-seg" id="themeSeg" role="group" aria-label="Thème"><button data-u="normal" onclick="BBXMeal.setTheme('normal')">Normal</button><button data-u="beta" onclick="BBXMeal.setTheme('beta')">Bêta · iOS 27</button></div>
+      <div class="cm-d" id="themeD"></div></div>
   </div>
   <div class="cf-sec" style="--c:#7CB9FF"><div class="cf-h"><i>☁️</i>Synchronisation</div>
   <div class="cm-box" id="syncBox">
@@ -3236,6 +3323,7 @@ window.BBXBk=(function(){
   function refresh(){ saveDef(); save(); build(); calc(); renderCfg(); }
   function renderCfg(){
     usdaSeg();
+    themeSeg();
     lensSeg();
     if(window.BBXSync) BBXSync.render();
     ciqSeg();
@@ -3720,6 +3808,8 @@ window.BBXBk=(function(){
   }
   const LENSKEY='phy-camlens', camLens=()=>{ try{ return localStorage.getItem(LENSKEY)==='main'?'main':'auto'; }catch(e){ return 'auto'; } };
   function lensSeg(){ const v=camLens(); document.querySelectorAll('#lensSeg [data-u]').forEach(b=>{ const o=b.dataset.u===v; b.classList.toggle('on',o); b.setAttribute('aria-pressed',o); }); const d=$('lensD'); if(d) d.textContent=v==='main'?'Objectif principal : celui que choisit le téléphone par défaut.':'Auto : utilise le second objectif (double capteur) quand le téléphone en a un, plus net de près.'; }
+  const THEMEKEY='phy-mtheme', themeOf=()=>{ try{ return localStorage.getItem(THEMEKEY)==='beta'?'beta':'normal'; }catch(e){ return 'normal'; } };
+  function themeSeg(){ const v=themeOf(); document.querySelectorAll('#themeSeg [data-u]').forEach(b=>{ const o=b.dataset.u===v; b.classList.toggle('on',o); b.setAttribute('aria-pressed',o); }); const d=$('themeD'); if(d) d.textContent=v==='beta'?'Bêta : verre dépoli, grands titres et coins arrondis inspirés d’iOS 27.':'Normal : le design actuel de l’appli.'; }
   function camSwitch(){
     const cams=sc.cams||[]; if(cams.length<2) return; const cur=(cam.stream&&cam.stream.getVideoTracks()[0].getSettings().deviceId)||'', i=Math.max(0,cams.findIndex(c=>c.deviceId===cur)), nx=cams[(i+1)%cams.length];
     try{ cam.stream&&cam.stream.getTracks().forEach(t=>t.stop()); }catch(e){} cam.stream=null; cam.deviceId=nx.deviceId; st('Objectif : '+(nx.label||'suivant')); startCam();
@@ -4838,6 +4928,7 @@ window.BBXBk=(function(){
   window.BBXMeal={
     setCiq:v=>{ try{ localStorage.setItem(CIQON,v==='off'?'off':'on'); }catch(e){} ciqSeg(); },
     setUsda:v=>{ try{ localStorage.setItem(USDAON,v==='off'?'off':'on'); }catch(e){} usdaSeg(); },
+    setTheme:v=>{ v=v==='beta'?'beta':'normal'; try{ localStorage.setItem(THEMEKEY,v); }catch(e){} document.documentElement.classList.toggle('mt-beta',v==='beta'); themeSeg(); },
     setLens:v=>{ try{ localStorage.setItem(LENSKEY,v==='main'?'main':'auto'); }catch(e){} window.__camAuto=false; lensSeg(); },
     setUsdaKey:v=>{ try{ v=String(v||'').trim(); if(v) localStorage.setItem(USDAKEY,v); else localStorage.removeItem(USDAKEY); }catch(e){} },
     fab:fabOpen, fabClose:fabClose, fabSel:fabSel, fabGo:fabGo,
