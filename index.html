@@ -2950,6 +2950,10 @@ html.mt-beta #mealForm #mfBasis{ order:12; margin:16px 0 12px!important; }
 html.mt-beta .mc-ov button.sr-it{ border-radius:22px!important; }
 /* écart volet nutriments → premier repas : 11 px */
 html.mt-beta #mealView .my-fixed{ padding-bottom:11px!important; }
+/* repas vide : pas de zone blanche, seulement l'en-tête */
+html.mt-beta #mealView .my-card .my-empty{ display:none!important; }
+html.mt-beta #mealView .my-card:has(.my-empty){ padding-bottom:0!important; }
+html.mt-beta #mealView .my-card:has(.my-empty) .my-mh{ border-radius:inherit!important; }
 </style>
 <style id="mfMicroCss">#mealForm #mfMicro:empty{display:none}#mealForm #mfMicro{margin:0 0 10px}#mealForm #mfMicro .mf-micro{margin-top:0}</style>
 <style id="betaNav">.my-sl,.ht-cfg,.mf-hscan{display:none}
