@@ -2981,7 +2981,8 @@ html.mt-beta #mealView .my-card:has(.my-empty) .my-mh{ border-radius:inherit!imp
 .id-want button[hidden]{ display:none; }
 </style>
 <style id="basis3">html body #mealForm #mfBasis button{ font-size:13px !important; letter-spacing:-.01em; padding-left:2px !important; padding-right:2px !important; white-space:nowrap; min-width:0; }
-#mealForm #mfBasis button[data-b="u"]{ flex:1.25; }</style>
+#mealForm #mfBasis button[data-b="u"]{ flex:1.25; }
+#mealForm #mfBasis button{ overflow:hidden; text-overflow:ellipsis; }</style>
 </head>
 <body>
 
@@ -3443,8 +3444,13 @@ window.BBXBk=(function(){
   const fm={mode:'add',m:0,i:0,unitW:100,label:'portion de 100 g',serving:0};
   // ---- base de quantité : à l'unité (portion) ou en grammes (par défaut 100 g) ----
   function hasUnit(){ const d=fm.portions&&fm.portions[0]; return !!(fm.serving>0&&d&&!/^portion de 100\b/i.test(d.label||'')); }
+  // portions standard personnalisées : base commune à BBX-11WM et BBX-Phylomene (clé partagée, synchronisée)
+  const PORTK='bbx-shared-portions';
+  const portAll=()=>{ try{ const o=JSON.parse(localStorage.getItem(PORTK)||'{}'); return (o&&typeof o==='object'&&!Array.isArray(o))?o:{}; }catch(e){ return {}; } };
+  const portGet=n=>{ const k=hlKey(n||''); if(!k) return null; const e=portAll()[k]; return (e&&e.g>0)?e:null; };
+  const portSet=(n,g,u)=>{ const k=hlKey(n||''); if(!k||!(g>0)) return; try{ const o=portAll(); o[k]={g:Math.round(g*10)/10,u:u||'g',t:Date.now()}; localStorage.setItem(PORTK,JSON.stringify(o)); }catch(e){} };
   function unitLabel(){ const d=fm.portions&&fm.portions[0], l=(d&&d.label)||'unité'; return l.length>14?'unité':l; }
-  function fmUnitBtn(){ const bb=$('mfBasis'); if(bb&&bb.children[0]) bb.children[0].textContent='À l’unité'+(fm.serving>0?' · '+r1(fm.serving)+' '+($('mfUnit').value||'g'):''); }
+  function fmUnitBtn(){ const bb=$('mfBasis'); { const cb=bb&&bb.querySelector('[data-b="c"]'), cp=portGet($('mfName').value); if(cb) cb.textContent=cp?('Perso · '+r1(cp.g)+' '+(cp.u||'g')):'Personnalisé'; } if(bb&&bb.children[0]) bb.children[0].textContent='À l’unité'+(fm.serving>0?' · '+r1(fm.serving)+' '+($('mfUnit').value||'g'):''); }
   function basisHi(){ const b=fm.basis, qv=num($('mfQty').value), onB=(b==='g'&&(fm.cust||!(Math.abs((qv||0)-100)<0.01)))?'c':b; [...$('mfBasis').children].forEach(x=>{ x.classList.toggle('on',x.dataset.b===onB); }); }
   function applyBasis(b){
     fmUnitBtn();
@@ -3457,7 +3463,7 @@ window.BBXBk=(function(){
     fmPrev();
   }
   function setBasis(b){
-    if(b==='c'){ fm.cust=true; $('mfQty').value=''; applyBasis('g'); try{ $('mfQty').focus(); }catch(e){} return; }
+    if(b==='c'){ fm.cust=true; const cp=portGet($('mfName').value); $('mfQty').value=cp?r1(cp.g):''; applyBasis('g'); if(!cp){ try{ $('mfQty').focus(); }catch(e){} } return; }
     fm.cust=false; if(b==='g'){ $('mfQty').value='100'; } if(b==='u'&&fm.basis==='g'){ $('mfQty').value=r1(fm.serving); } applyBasis(b);
   }
   function uset(n){ $('mfUn').value=n; $('mfQty').value=r1(n*fm.serving); fmPrev(); }
@@ -3847,6 +3853,7 @@ window.BBXBk=(function(){
     }
     { let g=num($('mfQty').value); fm.basis='g';
       if(hasUnit()){ if(!(g>0)) g=fm.serving; if(mode!=='edit'&&!(memQty(pref.name,pref.unit||((pref.liquid||liquidName(pref.name))?'ml':'g'))>0)) g=fm.serving; $('mfQty').value=r1(g); { const nn=g/fm.serving, whole=Math.abs(nn*4-Math.round(nn*4))<0.02; applyBasis(mode==='edit'&&!whole?'g':'u'); } } else applyBasis('g'); }
+    if(mode!=='edit'){ const cp=portGet($('mfName').value); if(cp){ fm.cust=true; $('mfQty').value=r1(cp.g); applyBasis('g'); } }
     $('mealForm').classList.add('show'); $('mealForm').scrollTop=0;
     { const bx=$('mfChips'), ch=bx.querySelector('.on'); if(ch) bx.scrollLeft=ch.offsetLeft-(bx.clientWidth-ch.offsetWidth)/2; }
   }
@@ -3863,6 +3870,7 @@ window.BBXBk=(function(){
     const unitW=edit?fm.unitW:(fm.serving>0?fm.serving:100);
     const label=edit?fm.label:(fm.serving>0?(fm.newLabel||'portion'):'portion de 100 '+unit);
     const it=[nm,label,unitW,q/unitW,k*q/100,p*q/100,unit,emoji,isNaN(fa)?null:fa*q/100,isNaN(ca)?null:ca*q/100];
+    if(fm.basis==='g'&&(fm.cust||Math.abs(q-100)>0.01)) portSet(nm,q,unit);
     upsertFav(it,fm.portions); bumpHabit(MEALS[mt][0],nm,q);
     QTY[hlKey(nm)]={g:Math.round(q*10)/10,u:unit}; saveQty();
     if(fm.code&&!edit){ CODES[fm.code]={name:nm,kcal:k,prot:p,fat:isNaN(fa)?null:fa,carb:isNaN(ca)?null:ca,serving:fm.serving||0,label:fm.newLabel||'',portions:fm.portions||[],liquid:$('mfUnit').value==='ml'}; saveCodes(); }
@@ -5144,6 +5152,7 @@ window.BBXBk=(function(){
         rows.forEach(function(r){ if(!INC.test(r.key)||EXC.test(r.key)) return; if(!maxT||r.updated_at>maxT) maxT=r.updated_at;
           var cur=LS.getItem(r.key), curH=cur==null?null:hash(cur);
           if(cur!=null&&curH!==m.h[r.key]){
+            if(r.key==='bbx-shared-portions'){ try{ var pa=JSON.parse(cur)||{}, pb=JSON.parse(r.value)||{}; Object.keys(pb).forEach(function(k){ if(!pa[k]||(pb[k].t||0)>(pa[k].t||0)) pa[k]=pb[k]; }); var pm=JSON.stringify(pa); if(pm!==cur){ LS.setItem(r.key,pm); changed++; } if(pm===r.value) m.h[r.key]=hash(pm); }catch(e){} return; }
             if(m.h[r.key]!==undefined) return;                  // modification locale non envoyée : elle gagne
             if(cur===r.value){ m.h[r.key]=curH; return; }
             var nv=cur;                                          // première connexion : on garde le plus complet, sans rien perdre
