@@ -3175,7 +3175,9 @@ window.BBXBk=(function(){
   // ---- base de quantité : à l'unité (portion) ou en grammes (par défaut 100 g) ----
   function hasUnit(){ const d=fm.portions&&fm.portions[0]; return !!(fm.serving>0&&d&&!/^portion de 100\b/i.test(d.label||'')); }
   function unitLabel(){ const d=fm.portions&&fm.portions[0], l=(d&&d.label)||'unité'; return l.length>14?'unité':l; }
+  function fmUnitBtn(){ const bb=$('mfBasis'); if(bb&&bb.children[0]) bb.children[0].textContent='À l’unité'+(fm.serving>0?' · '+r1(fm.serving)+' '+($('mfUnit').value||'g'):''); }
   function applyBasis(b){
+    fmUnitBtn();
     if(b==='u'&&!hasUnit()) b='g'; fm.basis=b;
     [...$('mfBasis').children].forEach(x=>{ x.classList.toggle('on',x.dataset.b===b); });
     $('mfBasis').children[0].style.display=hasUnit()?'':'none'; $('mfBasis').style.display=hasUnit()?'':'none';
@@ -3189,6 +3191,7 @@ window.BBXBk=(function(){
   function uqty(dir){ const n=num($('mfUn').value)||0, st=n>=2?1:0.5; const v=Math.max(0.5,Math.round((n+dir*st)*100)/100); $('mfUn').value=r2(v); $('mfQty').value=r1(v*fm.serving); fmPrev(); }
   document.addEventListener('input',e=>{ const t=e.target; if(!t||!t.dataset||!t.dataset.s||!t.closest||!t.closest('#mfPrev')) return; const v=num(t.value), q=num($('mfQty').value), eff=q>0?q:100; $(t.dataset.s).value=isNaN(v)?'':String(+(v*100/eff).toFixed(2)); fmPrev(); });
   function fmPrev(){
+    fmUnitBtn();
     if(fm.basis==='u'&&fm.serving>0){ const g=num($('mfQty').value); if(document.activeElement===$('mfUn')){ const n=num($('mfUn').value); if(n>=0) $('mfQty').value=r1(n*fm.serving); } else if(g>0) $('mfUn').value=r2(g/fm.serving); $('mfUg').textContent='= '+r1(num($('mfQty').value)||0)+' '+$('mfUnit').value+' · 1 '+unitLabel()+' ≈ '+r1(fm.serving)+' '+$('mfUnit').value; }
     const k=num($('mfKcal').value), p=num($('mfProt').value), q=num($('mfQty').value), u=$('mfUnit').value, fa=num($('mfFat').value), ca=num($('mfCarb').value);
     { const eff=q>0?q:100, pv=$('mfPrev'); let mac=pv.querySelector('.mf-mac');
