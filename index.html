@@ -4145,19 +4145,21 @@ window.BBXBk=(function(){
       .map(o=>({name:o.f.name,kcal:o.f.kcal,prot:o.f.prot,fat:o.f.fat,carb:o.f.carb,serving:o.f.serving,label:o.f.label,emoji:o.f.emoji,unit:o.f.unit,portions:mergePortions(o.f.serving>0&&o.f.label?{label:o.f.label,g:o.f.serving}:null,parseExtras(o.f.extras),o.f.name),db:true,_sc:o.sc}));
   }
   function localResults(q){   // les fautes de frappe ne comptent que si rien d'autre n'est trouvé
-    const all=favMatches(q).concat(dbMatches(q),xMatches(q)), direct=all.filter(x=>x._sc<2);
+    const hset={}; habTop(sr.target,25).forEach((x,k)=>{ hset[FAV[x.i].name]=k+1; });
+    const fm0=favMatches(q); fm0.forEach(x=>{ if(hset[x.name]) x.hab=true; }); fm0.sort((a,b)=>(a._sc-b._sc)||((hset[a.name]||99)-(hset[b.name]||99)));
+    const all=fm0.concat(dbMatches(q),xMatches(q)), direct=all.filter(x=>x._sc<2);
     return direct.length?direct:all;
   }
   function srRender(extra){
     const L=sr.list; L.forEach((x,i)=>{ x._i=i; });
     const row=x=>`<div class="sr-row"><button class="sr-it" onclick="BBXMeal.pick(${x._i},event)"><span class="sr-th">${esc(x.emoji||'🛒')}</span><span class="sr-nm"><b>${esc(x.name)}</b><span>${x.kcal!=null?r(x.kcal):'?'} kcal · ${x.prot!=null?r1(x.prot):'?'} g prot.${x.fat!=null&&x.carb!=null?' · '+r1(x.fat)+' g lip. · '+r1(x.carb)+' g gluc.':''} / 100 ${x.unit||'g'}${x.serving>0&&x.label&&!/^portion de /.test(x.label)?' · 1 '+esc(x.label)+' ≈ '+r(x.serving)+' '+(x.unit||'g'):''}</span></span><span class="sr-go">＋</span></button>${x.fav?`<button class="sr-del" onclick="BBXMeal.favDel(${x._fi})" aria-label="Retirer de mes produits">✕</button>`:''}</div>`;
     const sec=(t,arr)=>arr.length?`<div class="sr-sec">${t}</div>`+arr.map(row).join(''):'';
-    const h=sec('Mes produits (enregistrés sur ton téléphone)',L.filter(x=>x.fav))+sec('Aliments courants',L.filter(x=>x.db))+sec('Ciqual · ANSES (base française)',L.filter(x=>x.ciq))+sec('Open Food Facts',L.filter(x=>x.off))+sec('USDA FoodData Central',L.filter(x=>x.usda));
+    const h=sec('Tes habitudes · '+esc((MEALS[sr.target]||[''])[0]),L.filter(x=>x.fav&&x.hab))+sec('Mes produits (enregistrés sur ton téléphone)',L.filter(x=>x.fav&&!x.hab))+sec('Aliments courants',L.filter(x=>x.db))+sec('Ciqual · ANSES (base française)',L.filter(x=>x.ciq))+sec('Open Food Facts',L.filter(x=>x.off))+sec('USDA FoodData Central',L.filter(x=>x.usda));
     const qv=$('srQ').value.trim();
     $('srList').innerHTML=(h||'<div class="sr-note">Aucun résultat pour le moment.</div>')+(extra||'')+(qv.length>=2?'<button class="sr-manual" onclick="BBXMeal.addTyped()">＋ Ajouter « '+esc(qv)+' » à la main</button>':'');
   }
   function showFavs(){
-    sr.n++; sr.list=FAV.slice(0,40).map(asFav);
+    sr.n++; { const top=habTop(sr.target,8), used={}; top.forEach(x=>{ used[x.i]=1; }); sr.list=top.map(x=>Object.assign(asFav(FAV[x.i],x.i),{hab:true})).concat(FAV.map((f,i)=>({f:f,i:i})).filter(o=>!used[o.i]).slice(0,40).map(o=>asFav(o.f,o.i))); }
     srRender(FAV.length?'<div class="sr-note">Tape le nom d’un aliment : les résultats s’affichent tout de suite, sans connexion.</div>':'<div class="sr-note">Tape le nom d’un aliment : les résultats s’affichent tout de suite, sans connexion. Chaque produit que tu ajoutes est gardé ici.</div>');
   }
   let srTimer=0;
@@ -4850,7 +4852,20 @@ window.BBXBk=(function(){
   function bumpHabit(title,name,g){
     const h=HAB[title]=HAB[title]||{}, o=h[name]||{n:0,g:g,t:0,d:''}, d=today();
     if(o.d!==d){ o.n++; o.d=d; }            // un seul point par jour et par produit
-    if(g>0) o.g=Math.round(g*10)/10; o.t=Date.now(); h[name]=o; saveHab();
+    if(g>0) o.g=Math.round(g*10)/10; o.t=Date.now(); { const nw=new Date(), mn=nw.getHours()*60+nw.getMinutes(); o.hm=(o.hm==null)?mn:Math.round(o.hm*0.7+mn*0.3); } h[name]=o; saveHab();
+  }
+  // habitudes du repas, classées : fréquence, produit récent, heure proche de l'heure habituelle
+  function habScore(h){
+    const nw=new Date(), mn=nw.getHours()*60+nw.getMinutes(); let sc=Math.min(h.n||0,12)*10;
+    const age=(Date.now()-(h.t||0))/864e5; if(age<=14) sc+=10; else if(age>60) sc-=15;
+    if(h.hm!=null){ const df=Math.abs(mn-h.hm), dd=Math.min(df,1440-df); sc+=Math.max(0,24-dd/5); }
+    return sc;
+  }
+  function habTop(m,max){
+    if(m==null||!MEALS[m]) return [];
+    const title=MEALS[m][0], present=new Set(MEALS[m][2].map(it=>it[0])), H=HAB[title]||{};
+    return Object.keys(H).filter(n=>!present.has(n)).map(n=>({h:H[n],i:FAV.findIndex(f=>f.name===n)})).filter(x=>x.i>=0)
+      .map(x=>({i:x.i,sc:habScore(x.h)})).sort((a,b)=>b.sc-a.sc).slice(0,max||8);
   }
   const hb={m:0,list:[]};
   function habitsFor(m){
