@@ -3410,7 +3410,7 @@ html.mt-beta.mt-b2 body #mealView .sum-full .sx-c .sx-l .sm-in{ color:#2E1F2A !i
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 17/11 · 16 h 40</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 17/11 · 16 h 50</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache et l’historique</button><small>Tes données actuelles, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4417,7 +4417,7 @@ window.BBXBk=(function(){
   function closeSearch(){ $('mealSearch').classList.remove('show'); if(sr.fromForm){ sr.fromForm=false; $('mealForm').classList.add('show'); } }
   function srOpen(m){
     sr.fromForm=(m==='form'); if(sr.fromForm) $('mealForm').classList.remove('show');
-    sr.target=(m==='form')?(+$('mfMeal').value||0):((m==null)?0:m); sr.list=[]; sr.n++; sr.added={}; sr.tab='r'; srPh(); document.querySelectorAll('#srTabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t==='r'));
+    sr.target=(m==='form')?(+$('mfMeal').value||0):((m==null)?0:m); sr.list=[]; sr.n++; sr.added={}; sr.tabManual=false; sr.tab='r'; srPh(); document.querySelectorAll('#srTabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t==='r'));
     $('srMeal').textContent='Ajout dans : '+MEALS[sr.target][0];
     showFavs();
     $('srQ').value=''; $('mealSearch').classList.add('show'); setTimeout(()=>{ try{ $('srQ').focus(); }catch(e){} },150);
@@ -4563,11 +4563,15 @@ window.BBXBk=(function(){
   }
   // thème Bêta : onglets Récent (mes produits) / Suivi (tous les produits ajoutés, tous comptes) / Autres (bases en ligne et aliments courants)
   const srB2=()=>document.documentElement.classList.contains('mt-b2');
-  function srTabOk(x,t){ return t==='r'?!!x.fav:t==='s'?!!(x.fav||x.cat):(!x.fav&&!x.cat); }   // Suivi = tous les produits ajoutés (les miens + ceux des autres comptes)
+  function srTabOk(x,t){ const q=!!(($('srQ')||{}).value||'').trim(); return t==='r'?!!x.fav:t==='s'?!!(x.fav||x.cat):(q?true:(!x.fav&&!x.cat)); }   // Autres + recherche tapée = tous les résultats   // Suivi = tous les produits ajoutés (les miens + ceux des autres comptes)
   function srPh(){ const q=$('srQ'); if(q) q.placeholder=srB2()?'Nom, Code-barres':'Nom du produit ou code-barres'; }
-  function srTab(t){ sr.tab=t; document.querySelectorAll('#srTabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t)); srRender(sr.lastExtra); $('mealSearch').scrollTop=0; }
+  function srTab(t,auto){ if(!auto) sr.tabManual=!!(($('srQ')||{}).value||'').trim(); sr.tab=t; document.querySelectorAll('#srTabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t)); srRender(sr.lastExtra); $('mealSearch').scrollTop=0; }
   function srRender(extra){
     sr.lastExtra=extra;
+    if(srB2()){ const hasQ=!!(($('srQ')||{}).value||'').trim();   // dès qu'on tape, l'onglet « Autres » s'ouvre tout seul et montre tous les résultats
+      if(hasQ&&!sr.tabManual&&sr.tab!=='o'){ sr.tab='o'; document.querySelectorAll('#srTabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t==='o')); }
+      if(!hasQ&&sr.tab==='o'&&!sr.tabManual){ sr.tab='r'; document.querySelectorAll('#srTabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t==='r')); }
+      if(!hasQ) sr.tabManual=false; }
     sr.list.forEach(x=>{ const cp=x&&x.name&&portGet(x.name); if(cp&&Math.abs((x.serving||0)-cp.g)>0.05){ const lb=x.label&&!/^portion de 100\b/.test(x.label)?x.label:'portion'; x.serving=cp.g; x.label=lb; x.portions=[{label:lb,g:cp.g}].concat((x.portions||[]).filter(q=>q.label!==lb&&!/^portion de 100\b/.test(q.label||''))); } });   // unité corrigée (base commune) prioritaire
     const L0=sr.list; L0.forEach((x,i)=>{ x._i=i; }); const t=sr.tab||'r', L=srB2()?L0.filter(x=>srTabOk(x,t)):L0;
     if(srB2()&&!L.length&&L0.length){ const n={r:L0.filter(x=>srTabOk(x,'r')).length,s:L0.filter(x=>srTabOk(x,'s')).length,o:L0.filter(x=>srTabOk(x,'o')).length}, nm={r:'Récent',s:'Suivi',o:'Autres'}, oth=['r','s','o'].filter(k=>k!==t&&n[k]); if(oth.length) extra='<div class="sr-note">Rien ici. '+oth.map(k=>'<button class="sr-jump" onclick="BBXMeal.srTab(\''+k+'\')">'+n[k]+' dans '+nm[k]+'</button>').join(' ')+'</div>'+(extra||''); }
