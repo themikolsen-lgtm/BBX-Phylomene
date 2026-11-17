@@ -3375,7 +3375,7 @@ html.mt-beta.mt-b2 body #mealView .sum-full .sx-c .sx-l .sm-in{ color:#2E1F2A !i
   <div class="cf-sec" style="--c:#FFBE55"><div class="cf-h"><i>🗄️</i>Bases de données</div>
   <div class="cm-box cf-db">
     <div class="cf-row"><div class="cf-n"><b>Open Food Facts</b><span>Produits de marque et code-barres</span></div><em class="cf-on">Toujours actif</em></div>
-    <div class="cf-row"><div class="cf-n"><b>Ciqual · ANSES</b><span>Aliments génériques français</span></div>
+    <div class="cf-row"><div class="cf-n"><b>Ciqual · ANSES</b><span>Aliments génériques français · table 2025 (3 341 aliments)</span></div>
       <div class="cm-seg" id="ciqSeg" role="group" aria-label="Base Ciqual"><button data-u="on" onclick="BBXMeal.setCiq('on')">Oui</button><button data-u="off" onclick="BBXMeal.setCiq('off')">Non</button></div></div>
     <div class="cf-row"><div class="cf-n"><b>USDA FoodData Central</b><span>Base américaine, en anglais</span></div>
       <div class="cm-seg" id="usdaSeg" role="group" aria-label="Base USDA"><button data-u="on" onclick="BBXMeal.setUsda('on')">Oui</button><button data-u="off" onclick="BBXMeal.setUsda('off')">Non</button></div></div>
@@ -3401,7 +3401,7 @@ html.mt-beta.mt-b2 body #mealView .sum-full .sx-c .sx-l .sm-in{ color:#2E1F2A !i
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 17/11 · 12 h 35</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 17/11 · 12 h 40</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
 </div>
 <script>
 window.BBXBk=(function(){
@@ -4714,7 +4714,7 @@ window.BBXBk=(function(){
   const ciqOn=()=>{ try{ return localStorage.getItem(CIQON)!=='off'; }catch(e){ return true; } };
   function ciqSeg(){ const on=ciqOn(); document.querySelectorAll('#ciqSeg [data-u]').forEach(b=>{ const o=(b.dataset.u==='on')===on; b.classList.toggle('on',o); b.setAttribute('aria-pressed',o); }); }
   function xLoad(){ if(XDBC.rows) return Promise.resolve(XDBC.rows);
-    if(!XDBC.p) XDBC.p=fetch('db-ciqual.json').then(r=>r.ok?r.json():Promise.reject()).then(a=>{ XDBC.rows=a.map(r=>({r:r,words:wordsOf(r[0])})); return XDBC.rows; }).catch(()=>{ XDBC.p=null; return null; });
+    if(!XDBC.p) XDBC.p=fetch('db-ciqual.json?v=2025-11').then(r=>r.ok?r.json():Promise.reject()).then(a=>{ XDBC.rows=a.map(r=>({r:r,words:wordsOf(r[0])})); return XDBC.rows; }).catch(()=>{ XDBC.p=null; return null; });
     return XDBC.p; }
   function xMatches(q){ if(!XDBC.rows||!ciqOn()) return [];
     return XDBC.rows.map(o=>({o:o,sc:rank(q,o.words)})).filter(o=>o.sc>=0).sort((a,b)=>a.sc-b.sc||a.o.r[0].length-b.o.r[0].length).slice(0,20).map(m=>{ const r=m.o.r;
