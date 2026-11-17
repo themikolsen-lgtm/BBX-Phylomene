@@ -3410,7 +3410,7 @@ html.mt-beta.mt-b2 body #mealView .sum-full .sx-c .sx-l .sm-in{ color:#2E1F2A !i
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 17/11 · 17 h 00</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 17/11 · 21 h 10</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4523,7 +4523,7 @@ window.BBXBk=(function(){
   }catch(e){}
   document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible'){ const a=shLoad(); if(a) FAV=a; } });
   function upsertFav(it,portions){
-    const q=per100(it), f={name:it[0],kcal:q.k,prot:q.p,fat:q.f,carb:q.c,serving:it[2]>0?it[2]:0,label:it[1],emoji:it[7],unit:it[6],portions:portions||[]};
+    const q=per100(it), f={name:it[0],kcal:q.k,prot:q.p,fat:q.f,carb:q.c,serving:it[2]>0?it[2]:0,label:it[1],emoji:it[7],unit:it[6],portions:portions||[],t:Date.now()};
     FAV=FAV.filter(x=>normS(x.name)!==normS(f.name)); FAV.unshift(f); if(FAV.length>5000) FAV.length=5000; saveFav();
   }
   function migrateMac(){
@@ -4543,7 +4543,8 @@ window.BBXBk=(function(){
   function favDel(i){ if(i<0||i>=FAV.length) return; FAV.splice(i,1); saveFav(); liveSearch(); }
   const asFav=(f,i)=>({name:f.name,kcal:f.kcal,prot:f.prot,fat:f.fat,carb:f.carb,serving:f.serving,label:f.label,emoji:f.emoji,unit:f.unit,portions:f.portions,fav:true,_fi:i});
   // catalogue commun : produits créés par les autres comptes (BBX-11WM et Phylomene), reçus par la synchronisation
-  const CATK='bbx-cat';
+  const CATK='bbx-cat2', SUIVI0=Date.UTC(2026,10,17,19,50);
+  function isSuivi(name,f,cs){ const n=normS(name); if(cs.has(n)) return true; if(f&&(f.t||0)>=SUIVI0) return true; let t=0; try{ Object.keys(HAB||{}).forEach(m=>{ const h=HAB[m]&&HAB[m][name]; if(h&&(h.t||0)>t) t=h.t; }); }catch(e){} return t>=SUIVI0; }
   const catLoad=()=>{ try{ const a=JSON.parse(localStorage.getItem(CATK)||'[]'); return Array.isArray(a)?a:[]; }catch(e){ return []; } };
   const asCat=f=>({name:f.name,kcal:f.kcal,prot:f.prot,fat:f.fat,carb:f.carb,serving:f.serving,label:f.label,emoji:f.emoji,unit:f.unit,portions:f.portions,cat:true});
   function catMatches(q){ const have=new Set(FAV.map(f=>normS(f.name))); return catLoad().filter(f=>f&&f.name&&f.kcal!=null&&!have.has(normS(f.name))).map((f,i)=>({f:f,i:i,sc:q?rank(q,wordsOf(f.name)):0})).filter(o=>o.sc>=0).sort((a,b)=>a.sc-b.sc||b.i-a.i).slice(0,q?25:60).map(o=>Object.assign(asCat(o.f),{_sc:o.sc})); }
@@ -4563,11 +4564,12 @@ window.BBXBk=(function(){
   }
   // thème Bêta : onglets Récent (mes produits) / Suivi (tous les produits ajoutés, tous comptes) / Autres (bases en ligne et aliments courants)
   const srB2=()=>document.documentElement.classList.contains('mt-b2');
-  function srTabOk(x,t){ const q=!!(($('srQ')||{}).value||'').trim(); return t==='r'?!!x.fav:t==='s'?!!(x.fav||x.cat):(q?true:(!x.fav&&!x.cat)); }   // Autres + recherche tapée = tous les résultats   // Suivi = tous les produits ajoutés (les miens + ceux des autres comptes)
+  function srTabOk(x,t){ const q=!!(($('srQ')||{}).value||'').trim(); return t==='r'?!!x.fav:t==='s'?!!(x.cat||x.suivi):(q?true:(!x.fav&&!x.cat)); }   // Suivi = produits ajoutés depuis le 17/11 au soir, tous comptes   // Autres + recherche tapée = tous les résultats   // Suivi = tous les produits ajoutés (les miens + ceux des autres comptes)
   function srPh(){ const q=$('srQ'); if(q) q.placeholder=srB2()?'Nom, Code-barres':'Nom du produit ou code-barres'; }
   function srTab(t,auto){ if(!auto) sr.tabManual=!!(($('srQ')||{}).value||'').trim(); sr.tab=t; document.querySelectorAll('#srTabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t)); srRender(sr.lastExtra); $('mealSearch').scrollTop=0; }
   function srRender(extra){
     sr.lastExtra=extra;
+    { const cs=new Set(catLoad().map(f=>normS(f&&f.name))); sr.list.forEach(x=>{ if(x&&x.fav) x.suivi=isSuivi(x.name,FAV[x._fi],cs); }); }
     if(srB2()){ const hasQ=!!(($('srQ')||{}).value||'').trim();   // dès qu'on tape, l'onglet « Autres » s'ouvre tout seul et montre tous les résultats
       if(hasQ&&!sr.tabManual&&sr.tab!=='o'){ sr.tab='o'; document.querySelectorAll('#srTabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t==='o')); }
       if(!hasQ&&sr.tab==='o'&&!sr.tabManual){ sr.tab='r'; document.querySelectorAll('#srTabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t==='r')); }
@@ -5499,7 +5501,8 @@ window.BBXBk=(function(){
     }).catch(function(e){ jset(MK,m); lastErr=(e&&e.message)||'erreur'; render(); }).then(function(){ busy=false; });
   }
   // --- catalogue commun à tous les comptes (table products) : produits, unités corrigées, codes-barres ---
-  var CATM='bbx-cat-meta', CATK='bbx-cat';
+  var CATM='bbx-cat-meta2', CATK='bbx-cat2', SUIVI0=Date.UTC(2026,10,17,19,50);   // le Suivi repart du 17/11/2026 au soir
+  try{ LS.removeItem('bbx-cat'); LS.removeItem('bbx-cat-meta'); }catch(e){}
   function nrm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').trim(); }
   function catGetAll(tk,since){ var out=[];
     function page(after){ var q='/rest/v1/products?select=id,data,updated_at&order=updated_at.asc&limit=1000'+(after?'&updated_at=gt.'+encodeURIComponent(after):'');
@@ -5516,21 +5519,21 @@ window.BBXBk=(function(){
         if(id.indexOf('f:')===0){ var n=id.slice(2);
           var i=-1; cat.forEach(function(f,j){ if(f&&nrm(f.name)===n) i=j; });
           if(d.deleted){ if(i>=0){ cat.splice(i,1); chK=true; } if(!mine[n]) cm.h[id]='del'; return; }
-          if(mine[n]) return;                                  // déjà dans mes produits : ma version reste
-          if(i>=0) cat[i]=d; else cat.push(d); chK=true; cm.h[id]=h; }
+          if(i>=0) cat[i]=d; else cat.push(d); chK=true; if(!mine[n]) cm.h[id]=h; }
         else if(id.indexOf('p:')===0){ var k=id.slice(2); if(d.g>0&&(!por[k]||(d.t||0)>(por[k].t||0))){ por[k]=d; chP=true; cm.h[id]=h; } }
         else if(id.indexOf('c:')===0){ var c=id.slice(2); if(d.name&&(!cod[c]||(d.t||0)>(cod[c].t||0))){ cod[c]=d; chC=true; cm.h[id]=h; } }
       });
       if(chK) jset(CATK,cat.slice(-5000)); if(chP) jset('bbx-shared-portions',por); if(chC) jset('bbx-shared-codes',cod);
       var cur={};
-      favs.forEach(function(f){ if(f&&f.name&&f.kcal!=null) cur['f:'+nrm(f.name).slice(0,280)]=f; });
+      var hab={}; keys().filter(function(k){ return /-habits$/.test(k); }).forEach(function(k){ var H=jget(k,{})||{}; Object.keys(H).forEach(function(mt){ var M=H[mt]||{}; Object.keys(M).forEach(function(n){ var t=(M[n]&&M[n].t)||0, nn=nrm(n); if(t>(hab[nn]||0)) hab[nn]=t; }); }); });
+      favs.forEach(function(f){ if(f&&f.name&&f.kcal!=null&&(((f.t||0)>=SUIVI0)||((hab[nrm(f.name)]||0)>=SUIVI0))) cur['f:'+nrm(f.name).slice(0,280)]=f; });
       Object.keys(por).forEach(function(k){ if(por[k]&&por[k].g>0) cur['p:'+String(k).slice(0,280)]=por[k]; });
       Object.keys(cod).forEach(function(k){ if(cod[k]&&cod[k].name) cur['c:'+String(k).slice(0,60)]=cod[k]; });
       var up=[];
       Object.keys(cur).forEach(function(id){ var h=hash(JSON.stringify(cur[id])); if(cm.h[id]!==h) up.push({id:id,data:cur[id],_h:h}); });
       Object.keys(cm.h).forEach(function(id){ if(id.indexOf('f:')===0&&!cur[id]&&cm.h[id]&&cm.h[id]!=='del'&&cm.mine&&cm.mine[id]) up.push({id:id,data:{deleted:true},_h:'del'}); });   // produit retiré de mes produits
       var chunks=[]; for(var i=0;i<up.length;i+=200) chunks.push(up.slice(i,i+200));
-      return chunks.reduce(function(p,c){ return p.then(function(){ return api('/rest/v1/products?on_conflict=id',{method:'POST',token:tk,prefer:'resolution=merge-duplicates,return=minimal',body:c.map(function(r){ return {id:r.id,data:r.data}; })}).then(function(){ c.forEach(function(r){ cm.h[r.id]=r._h; if(!cm.mine) cm.mine={}; if(r._h==='del') delete cm.mine[r.id]; else if(r.id.indexOf('f:')===0) cm.mine[r.id]=1; }); }); }); },Promise.resolve());
+      return chunks.reduce(function(p,c){ return p.then(function(){ return api('/rest/v1/products?on_conflict=id',{method:'POST',token:tk,prefer:'resolution=merge-duplicates,return=minimal',body:c.map(function(r){ return {id:r.id,data:r.data}; })}).then(function(){ c.forEach(function(r){ if(r.id.indexOf('f:')===0&&r._h!=='del'){ var nn=r.id.slice(2), L=jget(CATK,[])||[]; L=L.filter(function(x){ return x&&nrm(x.name)!==nn; }); L.push(r.data); jset(CATK,L.slice(-5000)); } cm.h[r.id]=r._h; if(!cm.mine) cm.mine={}; if(r._h==='del') delete cm.mine[r.id]; else if(r.id.indexOf('f:')===0) cm.mine[r.id]=1; }); }); }); },Promise.resolve());
     }).then(function(){ jset(CATM,cm); return 0; });
   }
   var applyLater=false;
