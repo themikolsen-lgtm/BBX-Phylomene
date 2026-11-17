@@ -3197,6 +3197,27 @@ html.mt-beta.mt-b2 body #mealSearch .sr-bar #srQ:focus{ border-color:#7DD957 !im
   html.mt-beta.mt-b2 body #mealForm .mf-mac span b input{ font-size:14px !important; }
 }
 html.mt-beta.mt-b2 body #mealSearch .sr-go.added{ background:#34C759 !important; color:#fff !important; box-shadow:0 6px 14px -6px rgba(52,199,89,.8) !important; font-size:24px !important; }
+
+/* ---- Accueil Bêta : volet nutriments en anneaux ---- */
+html.mt-beta.mt-b2 body #mealView .sum-full{ display:grid !important; grid-template-columns:repeat(4,1fr) !important; gap:4px !important; padding:6px 4px 12px !important; }
+html.mt-beta.mt-b2 body #mealView .sum-full .sx-c{ background:none !important; border:0 !important; box-shadow:none !important; padding:0 !important; min-height:0 !important; height:auto !important; display:flex !important; flex-direction:column; align-items:center; gap:4px; overflow:visible !important; -webkit-mask:none !important; mask:none !important; }
+html.mt-beta.mt-b2 body #mealView .sum-full .sx-c::before,html.mt-beta.mt-b2 body #mealView .sum-full .sx-c::after{ display:none !important; }
+html.mt-beta.mt-b2 body #mealView .sum-full .sx-c.k{ order:1; --rc:#7AD957; } 
+html.mt-beta.mt-b2 body #mealView .sum-full .sx-c.c{ order:2; --rc:#FF5A5F; }
+html.mt-beta.mt-b2 body #mealView .sum-full .sx-c.p{ order:3; --rc:#FFBE55; }
+html.mt-beta.mt-b2 body #mealView .sum-full .sx-c.f{ order:4; --rc:#5BE0E6; }
+html.mt-beta.mt-b2 body #mealView .sum-full .mc-note,html.mt-beta.mt-b2 body #mealView .sum-full .my-plan{ order:5; grid-column:1/-1; }
+html.mt-beta.mt-b2 body #mealView .sum-full .sx-bar{ display:none !important; }
+html.mt-beta.mt-b2 body #mealView .sum-full .sx-h{ display:flex !important; flex-direction:column !important; align-items:center !important; gap:6px !important; width:auto !important; }
+html.mt-beta.mt-b2 body #mealView .sum-full .sx-h b{ order:0; display:grid !important; place-items:center; width:clamp(54px,15vw,68px); height:clamp(54px,15vw,68px); border-radius:50%; font-size:clamp(13px,3.6vw,16px) !important; font-weight:800 !important; font-style:normal !important; color:#2E1F2A !important; letter-spacing:-.02em !important; background:radial-gradient(closest-side,#fff 74%,transparent 76% 100%),conic-gradient(var(--rc) calc(var(--rp,0)*1%),#F1F2F4 0) !important; }
+html.mt-beta.mt-b2 body #mealView .sum-full .sx-c.over .sx-h b{ color:#C8102E !important; }
+html.mt-beta.mt-b2 body #mealView .sum-full .sx-h small{ display:none !important; }
+html.mt-beta.mt-b2 body #mealView .sum-full .sx-t{ order:1; font-size:clamp(12px,3.6vw,15px) !important; font-weight:800 !important; text-transform:none !important; letter-spacing:0 !important; color:#15171C !important; }
+html.mt-beta.mt-b2 body #mealView .sum-full .sx-c.k .sx-t{ font-size:0 !important; }
+html.mt-beta.mt-b2 body #mealView .sum-full .sx-c.k .sx-t::after{ content:"Calories"; font-size:clamp(12px,3.6vw,15px); color:#15171C !important; }
+html.mt-beta.mt-b2 body #mealView .sum-full .sx-c .sx-t{ color:#15171C !important; -webkit-text-fill-color:#15171C; }
+html.mt-beta.mt-b2 body #mealView .sum-full .sx-c .sx-l{ font-size:clamp(8.5px,2.6vw,11px) !important; font-weight:800 !important; font-style:italic; color:#2E1F2A !important; margin-top:-4px; }
+html.mt-beta.mt-b2 body #mealView .sum-full .sx-c .sx-l .sm-in{ color:#2E1F2A !important; font-style:italic; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3380,7 +3401,7 @@ html.mt-beta.mt-b2 body #mealSearch .sr-go.added{ background:#34C759 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 17/11 · 12 h 25</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 17/11 · 12 h 35</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
 </div>
 <script>
 window.BBXBk=(function(){
@@ -3596,7 +3617,7 @@ window.BBXBk=(function(){
         $('mykc'+m+'-'+i).textContent=r(ik); $('mymt'+m+'-'+i).textContent=r2(W(m,i,it)/it[2])+' '+it[1]+' · '+r(W(m,i,it))+' '+it[6]+' · '+r1(ip)+' g prot.'+(known?' · '+r1(ifa)+' g lip. · '+r1(ic)+' g gluc.':''); });
       $('mymk'+m).textContent=r(mk); $('mymp'+m).textContent=items.length+' aliments · '+r(mp)+' g prot.';
       const all=$('mlall'+m); all.checked=items.length>0&&nd===items.length; all.indeterminate=nd>0&&nd<items.length; });
-    const BW=(id,f)=>{ const e=$(id); if(e) e.style.width=(Math.max(0,Math.min(1,f||0))*100)+'%'; };
+    const BW=(id,f)=>{ const e=$(id); if(e){ const v=Math.max(0,Math.min(1,f||0))*100; e.style.width=v+'%'; const c=e.closest('.sx-c'); if(c) c.style.setProperty('--rp',v.toFixed(1)); } };
     $('myEat').textContent=r(K);
     const rem=S.kg-K; $('myRem').textContent=r(Math.abs(rem)); $('myRemLab').textContent=rem>=0?'Restants':'Dépassé';
     BW('barK',K/S.kg); $('barK').closest('.sx-c').classList.toggle('over',rem<0);
