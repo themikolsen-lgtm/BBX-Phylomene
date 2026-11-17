@@ -3410,8 +3410,8 @@ html.mt-beta.mt-b2 body #mealView .sum-full .sx-c .sx-l .sm-in{ color:#2E1F2A !i
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 17/11 · 16 h 50</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
-  <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache et l’historique</button><small>Tes données actuelles, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
+  <div class="cf-ver"><span id="appVer">Version du 17/11 · 16 h 55</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
 window.BBXBk=(function(){
@@ -5590,15 +5590,12 @@ window.BBXBk=(function(){
 })();
 </script>
 <script>
-/* bouton « Vider le cache et l'historique des sauvegardes » : efface les copies de secours et les fichiers en cache de cet appareil */
-function BBXClear(){
-  if(!confirm('Vider le cache et l’historique des sauvegardes de cet appareil ?\n\nTes données actuelles, ta connexion et ta sauvegarde en ligne (Supabase) sont conservées.')) return;
+/* bouton « Vider le cache » : recharge les fichiers de l'app, sans toucher aux données ni aux copies de secours */
+function BBXClear(){   // vide seulement le cache de l'app : les données et les copies de secours sont conservées
+  if(!confirm('Vider le cache de l’app sur cet appareil ?\n\nTes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.')) return;
   var tasks=[];
-  try{ Object.keys(localStorage).filter(function(k){ return /^bbx-bak-/.test(k); }).forEach(function(k){ localStorage.removeItem(k); }); }catch(e){}
   try{ if(window.caches) tasks.push(caches.keys().then(function(ks){ return Promise.all(ks.map(function(k){ return caches.delete(k); })); })); }catch(e){}
   try{ if(navigator.serviceWorker&&navigator.serviceWorker.getRegistrations) tasks.push(navigator.serviceWorker.getRegistrations().then(function(rs){ return Promise.all(rs.map(function(r){ return r.unregister(); })); })); }catch(e){}
-  tasks.push(new Promise(function(ok){ try{ var q=indexedDB.open('phy-safe'); q.onsuccess=function(){ var d=q.result; try{ if(d.objectStoreNames.contains('kv')){ var t=d.transaction('kv','readwrite'); t.objectStore('kv').clear(); t.oncomplete=function(){ d.close(); ok(); }; t.onerror=function(){ d.close(); ok(); }; } else { d.close(); ok(); } }catch(e){ ok(); } }; q.onerror=function(){ ok(); }; }catch(e){ ok(); } }));
-  try{ sessionStorage.clear(); }catch(e){}
   var done=false, go=function(){ if(done) return; done=true; try{ location.replace(location.pathname+'?v='+Date.now()); }catch(e){ location.reload(); } };
   Promise.all(tasks).then(go,go); setTimeout(go,4000);
 }
