@@ -3421,7 +3421,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 17/11 · 21 h 45</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 17/11 · 21 h 50</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4803,7 +4803,7 @@ window.BBXBk=(function(){
     showToast('✓ « '+x.name+' » ajouté à '+title+(AUTO?' et compté':''),()=>{
       const mm=MEALS.findIndex(z=>z[0]===title); if(mm<0) return; const ix=MEALS[mm][2].indexOf(it); if(ix<0) return;
       dropState(mm,ix); MEALS[mm][2].splice(ix,1); refresh();
-    });
+    },1800);   // message d'ajout bref
     return true;
   }
   function pick(i,ev){
@@ -4812,7 +4812,7 @@ window.BBXBk=(function(){
       const gb=ev.target.closest('.sr-go'), key=(x.code||'')+'|'+x.name;   // on reste dans la recherche pour ajouter d'autres produits
       sr.added=sr.added||{};
       if(gb.classList.contains('added')){   // second appui sur ✓ : le produit ajouté est retiré du repas
-        const a=sr.added[key]; if(a&&a.it){ const mm=MEALS.findIndex(z=>z[0]===a.title), ix=mm<0?-1:MEALS[mm][2].indexOf(a.it); if(ix>=0){ dropState(mm,ix); MEALS[mm][2].splice(ix,1); refresh(); } showToast('« '+x.name+' » retiré du repas'); }
+        const a=sr.added[key]; if(a&&a.it){ const mm=MEALS.findIndex(z=>z[0]===a.title), ix=mm<0?-1:MEALS[mm][2].indexOf(a.it); if(ix>=0){ dropState(mm,ix); MEALS[mm][2].splice(ix,1); refresh(); } showToast('« '+x.name+' » retiré du repas',null,1500); }
         delete sr.added[key]; gb.textContent='＋'; gb.classList.remove('added'); return;
       }
       if(directAdd(sr.target,Object.assign({},x,{h:x.h||hlGet(x.name)}),0,null,(it,title)=>{ gb.textContent='✓'; gb.classList.add('added'); sr.added[key]={it:it,title:title}; if(!srB2()) setTimeout(()=>{ gb.textContent='＋'; gb.classList.remove('added'); },1600); })) return;
@@ -4926,9 +4926,9 @@ window.BBXBk=(function(){
   })();
   // ---------- supprimer un produit en le balayant vers la droite (avec « Annuler ») ----------
   let lastSwipe=0, toastTimer=0, undoFn=null;
-  function showToast(txt,fn){
+  function showToast(txt,fn,dur){
     clearTimeout(toastTimer); undoFn=fn; $('toastUndo').style.display=fn?'':'none'; $('toastTxt').textContent=txt; $('mealToast').classList.add('show');
-    toastTimer=setTimeout(()=>{ $('mealToast').classList.remove('show'); undoFn=null; },6000);
+    toastTimer=setTimeout(()=>{ $('mealToast').classList.remove('show'); undoFn=null; },dur||6000);
   }
   function swipeDelete(m,i){
     const it=MEALS[m]&&MEALS[m][2][i]; if(!it) return;
