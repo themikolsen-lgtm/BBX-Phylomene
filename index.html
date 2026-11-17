@@ -3407,7 +3407,7 @@ html.mt-beta.mt-b2 body #mealView .sum-full .sx-c .sx-l .sm-in{ color:#2E1F2A !i
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 17/11 · 16 h 20</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 17/11 · 16 h 30</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
 </div>
 <script>
 window.BBXBk=(function(){
@@ -4557,9 +4557,9 @@ window.BBXBk=(function(){
     const all=fm0.concat(catMatches(q),dbMatches(q),xMatches(q)), direct=all.filter(x=>x._sc<2);
     return direct.length?direct:all;
   }
-  // thème Bêta : onglets Récent (mes produits) / Suivi (habitudes du repas) / Autres (bases en ligne et aliments courants)
+  // thème Bêta : onglets Récent (mes produits) / Suivi (tous les produits ajoutés, tous comptes) / Autres (bases en ligne et aliments courants)
   const srB2=()=>document.documentElement.classList.contains('mt-b2');
-  function srTabOk(x,t){ return t==='r'?!!x.fav:t==='s'?!!((x.fav&&x.hab)||x.cat):(!x.fav&&!x.cat); }
+  function srTabOk(x,t){ return t==='r'?!!x.fav:t==='s'?!!(x.fav||x.cat):(!x.fav&&!x.cat); }   // Suivi = tous les produits ajoutés (les miens + ceux des autres comptes)
   function srPh(){ const q=$('srQ'); if(q) q.placeholder=srB2()?'Nom, Code-barres':'Nom du produit ou code-barres'; }
   function srTab(t){ sr.tab=t; document.querySelectorAll('#srTabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t)); srRender(sr.lastExtra); $('mealSearch').scrollTop=0; }
   function srRender(extra){
