@@ -3421,7 +3421,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 17/11 · 21 h 25</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 17/11 · 21 h 45</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4798,7 +4798,7 @@ window.BBXBk=(function(){
     upsertFav(it,x.portions); bumpHabit(MEALS[m][0],nm,g);
     if(x.h&&(x.h.ns||x.h.nova)){ HL[hlKey(nm)]=Object.assign({t:Date.now()},x.h); saveHL(); }
     MEALS[m][2].push(it); S.d[MEALS[m][0]+'|'+nm]=true; sr.fromForm=false;
-    if(closeFn) closeFn(); refresh(); if(after) after();
+    if(closeFn) closeFn(); refresh(); if(after) after(it,MEALS[m][0]);
     const title=MEALS[m][0];
     showToast('✓ « '+x.name+' » ajouté à '+title+(AUTO?' et compté':''),()=>{
       const mm=MEALS.findIndex(z=>z[0]===title); if(mm<0) return; const ix=MEALS[mm][2].indexOf(it); if(ix<0) return;
@@ -4809,8 +4809,13 @@ window.BBXBk=(function(){
   function pick(i,ev){
     const x=sr.list[i]; if(!x) return;
     if(ev&&ev.target&&ev.target.closest&&ev.target.closest('.sr-go')&&x.kcal!=null&&x.prot!=null){
-      const gb=ev.target.closest('.sr-go');   // on reste dans la recherche pour ajouter d'autres produits
-      if(directAdd(sr.target,Object.assign({},x,{h:x.h||hlGet(x.name)}),0,null,()=>{ gb.textContent='✓'; gb.classList.add('added'); sr.added=sr.added||{}; sr.added[(x.code||'')+'|'+x.name]=1; if(!srB2()) setTimeout(()=>{ gb.textContent='＋'; gb.classList.remove('added'); },1600); })) return;
+      const gb=ev.target.closest('.sr-go'), key=(x.code||'')+'|'+x.name;   // on reste dans la recherche pour ajouter d'autres produits
+      sr.added=sr.added||{};
+      if(gb.classList.contains('added')){   // second appui sur ✓ : le produit ajouté est retiré du repas
+        const a=sr.added[key]; if(a&&a.it){ const mm=MEALS.findIndex(z=>z[0]===a.title), ix=mm<0?-1:MEALS[mm][2].indexOf(a.it); if(ix>=0){ dropState(mm,ix); MEALS[mm][2].splice(ix,1); refresh(); } showToast('« '+x.name+' » retiré du repas'); }
+        delete sr.added[key]; gb.textContent='＋'; gb.classList.remove('added'); return;
+      }
+      if(directAdd(sr.target,Object.assign({},x,{h:x.h||hlGet(x.name)}),0,null,(it,title)=>{ gb.textContent='✓'; gb.classList.add('added'); sr.added[key]={it:it,title:title}; if(!srB2()) setTimeout(()=>{ gb.textContent='＋'; gb.classList.remove('added'); },1600); })) return;
     }
     sr.fromForm=false;
     const src=x.fav?'Dans tes produits.':(x.db?'Valeurs moyennes pour 100 '+(x.unit||'g')+'.':(x.ciq?'Table Ciqual (ANSES) : valeurs moyennes pour 100 g.':x.usda?'Base USDA FoodData Central (valeurs pour 100 g).':'Produit Open Food Facts.'));
