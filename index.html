@@ -3407,7 +3407,7 @@ html.mt-beta.mt-b2 body #mealView .sum-full .sx-c .sx-l .sm-in{ color:#2E1F2A !i
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 17/11 · 14 h 30</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 17/11 · 15 h 00</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
 </div>
 <script>
 window.BBXBk=(function(){
@@ -5459,13 +5459,16 @@ window.BBXBk=(function(){
           var cur=LS.getItem(r.key), curH=cur==null?null:hash(cur);
           if(cur!=null&&curH!==m.h[r.key]){
             if(r.key==='bbx-shared-portions'||r.key==='bbx-shared-codes'){ try{ var pa=JSON.parse(cur)||{}, pb=JSON.parse(r.value)||{}; Object.keys(pb).forEach(function(k){ if(!pa[k]||(pb[k].t||0)>(pa[k].t||0)) pa[k]=pb[k]; }); var pm=JSON.stringify(pa); if(pm!==cur){ LS.setItem(r.key,pm); changed++; } if(pm===r.value) m.h[r.key]=hash(pm); }catch(e){} return; }
-            if(m.h[r.key]!==undefined) return;                  // modification locale non envoyée : elle gagne
+            if(m.h[r.key]!==undefined){                          // modification des deux côtés : la plus récente gagne
+              var rt=Date.parse(r.updated_at)||0, lt=(m.lt&&m.lt[r.key])||m.last||0;
+              if(rt<=lt) return;                                 // la modification de cet appareil est plus récente : elle sera envoyée
+              try{ LS.setItem('bbx-bak-'+r.key,cur); LS.setItem(r.key,r.value); changed++; }catch(e){}
+              m.h[r.key]=hash(r.value); if(m.lt) delete m.lt[r.key]; return; }
             if(cur===r.value){ m.h[r.key]=curH; return; }
-            var nv=cur;                                          // première connexion : on garde le plus complet, sans rien perdre
-            if(r.key==='bbx-shared-favs'){ try{ var a=JSON.parse(cur), b=JSON.parse(r.value), seen={}; nv=JSON.stringify(a.concat(b).filter(function(f){ var n=String(f&&f.name||'').toLowerCase(); if(!n||seen[n]) return false; seen[n]=1; return true; })); }catch(e){ nv=cur.length>=r.value.length?cur:r.value; } }
-            else nv=cur.length>r.value.length?cur:r.value;
+            var nv=r.value;                                      // première connexion de cet appareil : le compte fait foi (suppressions comprises)
+            if(r.key==='bbx-shared-favs'){ try{ var a=JSON.parse(r.value), b=JSON.parse(cur), seen={}; nv=JSON.stringify(a.concat(b).filter(function(f){ var n=String(f&&f.name||'').toLowerCase(); if(!n||seen[n]) return false; seen[n]=1; return true; })); }catch(e){ nv=r.value; } }
             if(nv!==cur){ try{ LS.setItem('bbx-bak-'+r.key,cur); LS.setItem(r.key,nv); changed++; }catch(e){} }
-            if(nv===r.value) m.h[r.key]=hash(nv);
+            m.h[r.key]=(nv===r.value)?hash(nv):hash(r.value);
             return; }
           if(cur!==r.value){ try{ LS.setItem(r.key,r.value); changed++; }catch(e){} }
           m.h[r.key]=hash(r.value); });
@@ -5474,13 +5477,15 @@ window.BBXBk=(function(){
       var up=[]; keys().forEach(function(k){ var v=LS.getItem(k); if(v==null||v.length>1500000) return; if(hash(v)!==m.h[k]) up.push({key:k,value:v}); });
       if(!up.length) return null;
       var chunks=[], cur=[], sz=0; up.forEach(function(r){ if(sz+r.value.length>3000000&&cur.length){ chunks.push(cur); cur=[]; sz=0; } cur.push(r); sz+=r.value.length; }); if(cur.length) chunks.push(cur);
-      return chunks.reduce(function(p,c){ return p.then(function(){ return api('/rest/v1/kv?on_conflict=user_id,key',{method:'POST',token:tk,prefer:'resolution=merge-duplicates,return=minimal',body:c}).then(function(){ c.forEach(function(r){ m.h[r.key]=hash(r.value); pushed++; }); }); }); },Promise.resolve());
+      return chunks.reduce(function(p,c){ return p.then(function(){ return api('/rest/v1/kv?on_conflict=user_id,key',{method:'POST',token:tk,prefer:'resolution=merge-duplicates,return=minimal',body:c}).then(function(){ c.forEach(function(r){ m.h[r.key]=hash(r.value); if(m.lt) delete m.lt[r.key]; pushed++; }); }); }); },Promise.resolve());
     }).then(function(){ m.last=Date.now(); jset(MK,m); lastErr=''; msg=changed?('✓ '+changed+' élément(s) reçu(s)'):(pushed?'✓ Données envoyées':'✓ À jour'); render();
-      if(changed&&opts.reload!==false){ var t=+sessionStorage.getItem('bbx-sync-rl')||0; if(Date.now()-t>20000){ try{ sessionStorage.setItem('bbx-sync-rl',String(Date.now())); }catch(e){} location.reload(); } }
+      if(changed){ applyLater=true; if(document.visibilityState==='visible') applyNow(); }   // données reçues : l'app est rechargée pour les afficher (sinon elle les écraserait)
     }).catch(function(e){ jset(MK,m); lastErr=(e&&e.message)||'erreur'; render(); }).then(function(){ busy=false; });
   }
-  function later(){ clearTimeout(timer); timer=setTimeout(function(){ cycle({reload:false}); },4000); }
-  function check(){ if(!sess()) return; var m=meta(), dirty=false; keys().forEach(function(k){ var v=LS.getItem(k); if(v!=null&&hash(v)!==m.h[k]) dirty=true; }); if(dirty) later(); }
+  var applyLater=false;
+  function applyNow(){ if(!applyLater) return; var t=+sessionStorage.getItem('bbx-sync-rl')||0; if(Date.now()-t<5000) return; applyLater=false; try{ sessionStorage.setItem('bbx-sync-rl',String(Date.now())); }catch(e){} location.reload(); }
+  function later(){ clearTimeout(timer); timer=setTimeout(function(){ cycle({reload:false}); },1500); }
+  function check(){ if(!sess()||busy) return; var m=meta(), dirty=false, ch=false; if(!m.lt) m.lt={}; keys().forEach(function(k){ var v=LS.getItem(k); if(v!=null&&hash(v)!==m.h[k]){ dirty=true; if(!m.lt[k]){ m.lt[k]=Date.now(); ch=true; } } }); if(ch) jset(MK,m); if(dirty) later(); }
   var API={
     render:render,
     signUp:function(){ var e=(document.getElementById('syncEmail').value||'').trim(), p=document.getElementById('syncPwd').value||''; if(!e||p.length<6) return setMsg('Saisis ton e-mail et un mot de passe de 6 caractères minimum.',1); setMsg('Création du compte…');
@@ -5495,9 +5500,9 @@ window.BBXBk=(function(){
     now:function(){ setMsg('Synchronisation…'); cycle({reload:true}); }
   };
   window.BBXSync=API;
-  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') cycle({reload:true}); else cycle({reload:false}); });
+  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible'){ applyNow(); cycle({reload:true}); } else cycle({reload:false}); });
   window.addEventListener('online',function(){ cycle({reload:false}); });
-  setInterval(check,15000);
+  setInterval(check,5000);
   setTimeout(function(){ render(); cycle({reload:true}); if(recTok&&window.BBXMeal&&BBXMeal.openCfg) BBXMeal.openCfg(); },1500);
 })();
 </script>
