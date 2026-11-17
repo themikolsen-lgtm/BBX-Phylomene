@@ -3230,6 +3230,17 @@ html.mt-beta.mt-b2 body #mealView .sum-full .sx-c .sx-l .sm-in{ color:#2E1F2A !i
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
+<style id="ue2Css">
+#mealForm .mf-ue2{ display:flex; align-items:center; justify-content:center; gap:8px; margin:0 0 12px; }
+#mealForm .mf-ue2[hidden]{ display:none !important; }
+#mealForm .mf-ue2 span{ font-size:15px; font-weight:800; color:#15171C; }
+#mealForm .mf-ue2 i{ font-style:normal; font-size:15px; font-weight:800; color:#4B5563; }
+html body #mealForm .mf-ue2 button{ width:44px; height:44px; border-radius:50% !important; border:1.5px solid #C9CED6 !important; background:#fff !important; color:#15171C !important; font-size:24px; font-weight:900; line-height:1; cursor:pointer; padding:0 !important; box-shadow:none !important; }
+html body #mealForm .mf-ue2 input{ width:84px !important; height:44px !important; border-radius:12px !important; border:1.5px solid #8EC5FF !important; background:#fff !important; text-align:center; font-size:20px !important; font-weight:800 !important; color:#15171C !important; padding:0 4px !important; box-shadow:none !important; outline:0; }
+html body #mealForm .mf-ue2 input:focus{ border-color:#34A853 !important; box-shadow:0 0 0 3px rgba(125,217,87,.3) !important; }
+html.mt-beta body #mealForm .mf-ue2{ order:12; }
+html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important; padding:4px var(--cardx,16px) 6px !important; }
+</style>
 </head>
 <body>
 
@@ -3410,7 +3421,7 @@ html.mt-beta.mt-b2 body #mealView .sum-full .sx-c .sx-l .sm-in{ color:#2E1F2A !i
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 17/11 · 21 h 15</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 17/11 · 21 h 25</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -3473,7 +3484,8 @@ window.BBXBk=(function(){
   
   </section>
   <section class="fv-card fv-qty">
-  <div class="mf-seg" id="mfBasis" style="margin:6px 0 8px"><div class="bz on" data-b="u" role="button" tabindex="0" onclick="BBXMeal.basis('u',event)"><span>À l’unité ·</span><input id="mfBU" type="text" inputmode="decimal" autocomplete="off" placeholder="?" aria-label="Poids d’une unité" onchange="BBXMeal.unitSave()" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"><i>g</i></div><div class="bz" data-b="g" role="button" tabindex="0" onclick="BBXMeal.basis('g',event)"><span>Pour</span><input id="mfBG" type="text" inputmode="decimal" autocomplete="off" aria-label="Quantité en grammes" oninput="BBXMeal.gramIn()" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"><i>g</i></div></div>
+  <div class="mf-seg" id="mfBasis" style="margin:6px 0 8px"><div class="bz on" data-b="u" role="button" tabindex="0" onclick="BBXMeal.basis('u',event)"><span id="mfBUt">À l’unité</span></div><div class="bz" data-b="g" role="button" tabindex="0" onclick="BBXMeal.basis('g',event)"><span id="mfBGt">Pour 100 g</span></div></div>
+  <div class="mf-ue2" id="mfUE2"><span>1 unité =</span><button type="button" onclick="BBXMeal.unitStep(-5)" aria-label="Moins 5">−</button><input id="mfBU" type="text" inputmode="decimal" autocomplete="off" placeholder="?" aria-label="Poids d’une unité" onchange="BBXMeal.unitSave()" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"><i id="mfBUu">g</i><button type="button" onclick="BBXMeal.unitStep(5)" aria-label="Plus 5">+</button></div>
   <div id="mfMicro"></div>
   <div class="mf-qty" id="mfUq" style="display:none"><button type="button" onclick="BBXMeal.uqty(-1)" aria-label="Moins">−</button><div class="mf-in big"><input id="mfUn" type="text" inputmode="decimal" placeholder="1" aria-label="Nombre d’unités"><i id="mfUl">unité</i></div><button type="button" onclick="BBXMeal.uqty(1)" aria-label="Plus">+</button></div>
   <div class="mf-ug" id="mfUg" style="display:none"></div>
@@ -3701,7 +3713,10 @@ window.BBXBk=(function(){
   const portGet=n=>{ const k=hlKey(n||''); if(!k) return null; const e=portAll()[k]; return (e&&e.g>0)?e:null; };
   const portSet=(n,g,u)=>{ const k=hlKey(n||''); if(!k||!(g>0)) return; try{ const o=portAll(); o[k]={g:Math.round(g*10)/10,u:u||'g',t:Date.now()}; localStorage.setItem(PORTK,JSON.stringify(o)); }catch(e){} };
   function unitLabel(){ const d=fm.portions&&fm.portions[0], l=(d&&d.label)||'unité'; return l.length>14?'unité':l; }
-  function fmUnitBtn(){ const u=$('mfUnit').value||'g', a=$('mfBU'), g=$('mfBG'); if(a&&document.activeElement!==a) a.value=(fm.serving>0&&hasUnit())?r1(fm.serving):''; document.querySelectorAll('#mfBasis i').forEach(x=>{ x.textContent=u; }); if(g&&document.activeElement!==g) g.value=fm.basis==='g'?($('mfQty').value||''):'100'; }
+  function fmUnitBtn(){ const u=$('mfUnit').value||'g', a=$('mfBU'), has=fm.serving>0&&hasUnit();
+    if(a&&document.activeElement!==a) a.value=has?r1(fm.serving):'';
+    const t=$('mfBUt'); if(t) t.textContent=has?('À l’unité · '+r1(fm.serving)+' '+u):'À l’unité'; const g=$('mfBGt'); if(g) g.textContent='Pour 100 '+u; const uu=$('mfBUu'); if(uu) uu.textContent=u;
+    const row=$('mfUE2'); if(row) row.hidden=!(fm.basis==='u'||!has); }
   function basisHi(){ const b=fm.basis; [...$('mfBasis').children].forEach(x=>{ x.classList.toggle('on',x.dataset.b===b); }); }
   function applyBasis(b){
     fmUnitBtn();
@@ -3720,16 +3735,15 @@ window.BBXBk=(function(){
     const P0=fm.portions||[], lb=(hasUnit()&&P0[0]&&P0[0].label)||'portion', n=(fm.basis==='u'&&num($('mfUn').value)>0)?num($('mfUn').value):1;
     fm.portions=[{label:lb,g:gg}].concat(P0.filter(x=>x.label!==lb&&!/^portion de 100\b/i.test(x.label||''))); fm.fixed=true; syncPortions();
     if(fm.mode==='edit'){ fm.unitW=gg; fm.label=lb; }
-    fm.unitEdited=true; $('mfQty').value=r1(n*gg); applyBasis('u');
+    fm.unitEdited=true; $('mfQty').value=r1(n*gg); applyBasis('u'); fmUnitBtn();
     const nm=$('mfName').value.trim(); if(nm) portSet(nm,gg,$('mfUnit').value||'g');   // enregistré tout de suite dans la base commune
   }
   function gramIn(){ const v=$('mfBG').value; if(fm.basis!=='g') applyBasis('g'); $('mfQty').value=v; fmPrev(); }
   function setBasis(b,ev){
-    const inp=ev&&ev.target&&ev.target.tagName==='INPUT';
-    if(b==='u'){ if(!hasUnit()){ try{ $('mfBU').focus(); }catch(e){} return; } if(fm.basis==='u') return; $('mfQty').value=r1(fm.serving); applyBasis('u'); return; }
-    if(fm.basis==='g'){ if(!inp){ try{ $('mfBG').focus(); $('mfBG').select(); }catch(e){} } return; }
-    $('mfQty').value='100'; applyBasis('g'); if(inp){ try{ $('mfBG').select(); }catch(e){} }
+    if(b==='u'){ if(!hasUnit()){ fmUnitBtn(); try{ $('mfBU').focus(); }catch(e){} return; } if(fm.basis==='u') return; $('mfQty').value=r1(fm.serving); applyBasis('u'); fmUnitBtn(); return; }
+    if(fm.basis==='g') return; $('mfQty').value='100'; applyBasis('g'); fmUnitBtn();
   }
+  function unitStep(dv){ const v=num($('mfBU').value)||fm.serving||0; $('mfBU').value=r1(Math.max(1,Math.round((v+dv)/5)*5||1)); unitSave(); }
   function uset(n){ $('mfUn').value=n; $('mfQty').value=r1(n*fm.serving); fmPrev(); }
   function uqty(dir){ const n=num($('mfUn').value)||0, st=n>=2?1:0.5; const v=Math.max(0.5,Math.round((n+dir*st)*100)/100); $('mfUn').value=r2(v); $('mfQty').value=r1(v*fm.serving); fmPrev(); }
   document.addEventListener('input',e=>{ const t=e.target; if(!t||!t.dataset||!t.dataset.s||!t.closest||!t.closest('#mfPrev')) return; const v=num(t.value), q=num($('mfQty').value), eff=q>0?q:100; $(t.dataset.s).value=isNaN(v)?'':String(+(v*100/eff).toFixed(2)); fmPrev(); });
@@ -5397,7 +5411,7 @@ window.BBXBk=(function(){
     setMode:v=>{ MODE=(v==='auto'||v==='fab')?v:'chk'; AUTO=MODE!=='chk'; FABM=MODE==='fab'; try{ localStorage.setItem('phy-cmode',MODE); }catch(e){} applyMode(); calc(); renderCfg(); },
     openCfg:()=>{ renderCfg(); $('mealCfg').classList.add('show'); }, closeCfg:()=>$('mealCfg').classList.remove('show'),
     ideaWant:ideaWant, ideaTaste:ideaTaste, add:m=>openForm('add',m), edit:(m,i)=>openForm('edit',m,i), del:delItem, move:moveItem, resetDef:resetDef,
-    saveForm:saveForm, basis:setBasis, unitSave:unitSave, gramIn:gramIn, uqty:uqty, uset:uset, uset:uset, fixKcal:fixKcal, closeForm:()=>$('mealForm').classList.remove('show'),
+    saveForm:saveForm, basis:setBasis, unitSave:unitSave, unitStep:unitStep, gramIn:gramIn, uqty:uqty, uset:uset, uset:uset, fixKcal:fixKcal, closeForm:()=>$('mealForm').classList.remove('show'),
     ideas:openIdeas, closeIdeas:()=>$('mealIdeas').classList.remove('show'), ideaPick:ideaPick,
     ocr:()=>$('mealPick').classList.add('show'), closePick:()=>$('mealPick').classList.remove('show'), pickCam:()=>{ $('mealPick').classList.remove('show'); $('mfOcrFile').click(); }, pickGal:()=>{ $('mealPick').classList.remove('show'); $('mfOcrGal').click(); },
     scanTable:()=>{ const t=sc.target; stopCam(); closeScan(); openForm('add',t,null,{info:'Prends en photo le tableau nutritionnel du produit, ou choisis une image dans ta galerie.'}); $('mealPick').classList.add('show'); }, scan:scanOpen, closeScan:closeScan, manual:manual, scanMode:setScanMode, scanDesc:renderScanMode, photoMode:photoMode,
