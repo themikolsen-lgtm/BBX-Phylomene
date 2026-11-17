@@ -3407,7 +3407,7 @@ html.mt-beta.mt-b2 body #mealView .sum-full .sx-c .sx-l .sm-in{ color:#2E1F2A !i
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 17/11 · 15 h 00</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 17/11 · 15 h 45</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
 </div>
 <script>
 window.BBXBk=(function(){
@@ -5451,7 +5451,10 @@ window.BBXBk=(function(){
     st.textContent=s?('Connecté : '+(s.email||'')+(m.last?' · dernière synchro '+fmt(m.last):'')):'Non connecté : tes données restent seulement sur ce téléphone.';
     me.textContent=lastErr?('⚠ '+lastErr):msg; }
   function setMsg(t,err){ msg=err?'':t; lastErr=err?t:''; render(); }
-  function cycle(opts){ opts=opts||{}; if(busy||!sess()||!navigator.onLine) return Promise.resolve(); busy=true; var m=meta(), changed=0, pushed=0;
+  function cycle(opts){ opts=opts||{}; if(busy||!sess()||!navigator.onLine) return Promise.resolve();
+    { var se=sess(), ow=owner(), em=idOf(se&&se.email);
+      if(em&&!ow){ try{ LS.setItem(OWN,em); }catch(e){} }                                   // appareil déjà relié avant cette version
+      else if(em&&ow&&ow!==em){ busy=true; return token().then(function(tk){ return adopt(em,tk); }).then(function(res){ busy=false; if(res==='replaced'){ try{ sessionStorage.setItem('bbx-sync-rl',String(Date.now())); }catch(e){} location.reload(); } else return cycle(opts); }).catch(function(e){ busy=false; lastErr=(e&&e.message)||'erreur'; render(); }); } } busy=true; var m=meta(), changed=0, pushed=0;
     return token().then(function(tk){
       var q='/rest/v1/kv?select=key,value,updated_at&order=updated_at.asc&limit=1000'+(m.pulled?'&updated_at=gt.'+encodeURIComponent(m.pulled):'');
       return api(q,{token:tk}).then(function(rows){ rows=rows||[]; var maxT=m.pulled;
@@ -5483,15 +5486,46 @@ window.BBXBk=(function(){
     }).catch(function(e){ jset(MK,m); lastErr=(e&&e.message)||'erreur'; render(); }).then(function(){ busy=false; });
   }
   var applyLater=false;
+  // --- un compte = une sauvegarde : à la connexion, l'appareil prend la sauvegarde du compte ---
+  var OWN='bbx-sync-owner';
+  var RAWSET=Storage.prototype.setItem;
+  function lockApp(){ try{ Storage.prototype.setItem=function(k,v){ if(this===LS&&INC.test(k)&&!EXC.test(k)) return; return RAWSET.call(this,k,v); }; }catch(e){} }   // jusqu'au rechargement, l'app ne peut plus réécrire l'ancienne sauvegarde
+  function owner(){ try{ return LS.getItem(OWN)||''; }catch(e){ return ''; } }
+  function idOf(e){ return String(e||'').trim().toLowerCase(); }
+  function adopt(email,tk){
+    email=idOf(email);
+    return api('/rest/v1/kv?select=key,value,updated_at&order=updated_at.asc&limit=5000',{token:tk}).then(function(rows){
+      rows=(rows||[]).filter(function(r){ return INC.test(r.key)&&!EXC.test(r.key); });
+      var cur=owner(), local=keys();
+      if(!rows.length&&(!cur||cur===email)){ try{ LS.setItem(OWN,email); }catch(e){} return 'push'; }   // compte vide, appareil jamais relié à un autre compte : il reçoit les données de cet appareil
+      if(cur===email&&rows.length){ /* même compte : on repart quand même de la sauvegarde du compte */ }
+      try{ var bk={}; local.forEach(function(k){ bk[k]=LS.getItem(k); }); LS.setItem('bbx-bak-compte-'+(cur||'local'),JSON.stringify(bk)); }catch(e){}   // copie de secours des données locales
+      lockApp();
+      try{ sessionStorage.setItem('phy-restored','1'); sessionStorage.setItem('bbx-restored','1'); }catch(e){}   // pas de restauration automatique de l'ancienne copie locale
+      local.forEach(function(k){ try{ LS.removeItem(k); }catch(e){} });
+      var m={h:{},pulled:null,lt:{}};
+      rows.forEach(function(r){ try{ RAWSET.call(LS,r.key,r.value); }catch(e){} m.h[r.key]=hash(r.value); if(!m.pulled||r.updated_at>m.pulled) m.pulled=r.updated_at; });
+      m.last=Date.now(); try{ RAWSET.call(LS,MK,JSON.stringify(m)); RAWSET.call(LS,OWN,email); }catch(e){}
+      return 'replaced';
+    });
+  }
+  function afterLogin(j,okMsg){
+    var s=saveSession(j); if(!s) return;
+    setMsg('Chargement de la sauvegarde du compte…');
+    adopt(s.email,s.at).then(function(res){
+      if(res==='replaced'){ setMsg('✓ Connecté : sauvegarde du compte chargée.'); try{ sessionStorage.setItem('bbx-sync-rl',String(Date.now())); }catch(e){} setTimeout(function(){ location.reload(); },300); }
+      else { setMsg(okMsg); cycle(); }
+    }).catch(function(x){ setMsg('Connecté, mais la sauvegarde n’a pas pu être chargée : '+((x&&x.message)||'erreur'),1); });
+  }
   function applyNow(){ if(!applyLater) return; var t=+sessionStorage.getItem('bbx-sync-rl')||0; if(Date.now()-t<5000) return; applyLater=false; try{ sessionStorage.setItem('bbx-sync-rl',String(Date.now())); }catch(e){} location.reload(); }
   function later(){ clearTimeout(timer); timer=setTimeout(function(){ cycle({reload:false}); },1500); }
   function check(){ if(!sess()||busy) return; var m=meta(), dirty=false, ch=false; if(!m.lt) m.lt={}; keys().forEach(function(k){ var v=LS.getItem(k); if(v!=null&&hash(v)!==m.h[k]){ dirty=true; if(!m.lt[k]){ m.lt[k]=Date.now(); ch=true; } } }); if(ch) jset(MK,m); if(dirty) later(); }
   var API={
     render:render,
     signUp:function(){ var e=(document.getElementById('syncEmail').value||'').trim(), p=document.getElementById('syncPwd').value||''; if(!e||p.length<6) return setMsg('Saisis ton e-mail et un mot de passe de 6 caractères minimum.',1); setMsg('Création du compte…');
-      api('/auth/v1/signup?redirect_to='+encodeURIComponent(location.origin+location.pathname),{method:'POST',body:{email:e,password:p}}).then(function(j){ if(j&&j.access_token){ saveSession(j); setMsg('✓ Compte créé et connecté.'); cycle(); } else setMsg('Compte créé. Ouvre le lien reçu par e-mail pour le confirmer, puis reviens ici et appuie sur « Se connecter ».'); }).catch(function(x){ setMsg(x.message,1); }); },
+      api('/auth/v1/signup?redirect_to='+encodeURIComponent(location.origin+location.pathname),{method:'POST',body:{email:e,password:p}}).then(function(j){ if(j&&j.access_token){ afterLogin(j,'✓ Compte créé et connecté.'); } else setMsg('Compte créé. Ouvre le lien reçu par e-mail pour le confirmer, puis reviens ici et appuie sur « Se connecter ».'); }).catch(function(x){ setMsg(x.message,1); }); },
     signIn:function(){ var e=(document.getElementById('syncEmail').value||'').trim(), p=document.getElementById('syncPwd').value||''; if(!e||!p) return setMsg('Saisis ton e-mail et ton mot de passe.',1); setMsg('Connexion…');
-      api('/auth/v1/token?grant_type=password',{method:'POST',body:{email:e,password:p}}).then(function(j){ saveSession(j); document.getElementById('syncPwd').value=''; setMsg('✓ Connecté.'); cycle(); }).catch(function(x){ setMsg(/Email not confirmed/i.test(x.message)?'E-mail pas encore confirmé : ouvre le lien reçu par e-mail.':(/Invalid login/i.test(x.message)?'E-mail ou mot de passe incorrect.':x.message),1); }); },
+      api('/auth/v1/token?grant_type=password',{method:'POST',body:{email:e,password:p}}).then(function(j){ document.getElementById('syncPwd').value=''; afterLogin(j,'✓ Connecté : les données de cet appareil sont envoyées sur le compte.'); }).catch(function(x){ setMsg(/Email not confirmed/i.test(x.message)?'E-mail pas encore confirmé : ouvre le lien reçu par e-mail.':(/Invalid login/i.test(x.message)?'E-mail ou mot de passe incorrect.':x.message),1); }); },
     forgot:function(){ var e=(document.getElementById('syncEmail').value||'').trim(); if(!e) return setMsg('Saisis ton e-mail ci-dessus, puis appuie sur « Mot de passe oublié ».',1); setMsg('Envoi du lien…');
       api('/auth/v1/recover?redirect_to='+encodeURIComponent(location.origin+location.pathname),{method:'POST',body:{email:e}}).then(function(){ setMsg('✓ Si ce compte existe, un lien de réinitialisation vient d’être envoyé par e-mail. Ouvre-le sur cet appareil.'); }).catch(function(x){ setMsg(x.message,1); }); },
     newPwd:function(){ var p=document.getElementById('syncNew').value||''; if(p.length<6) return setMsg('Mot de passe : 6 caractères minimum.',1); if(!recTok) return;
