@@ -3046,10 +3046,10 @@ html body #mealView .sum-full .sx-c .sx-l .sm-in{ width:auto !important; min-wid
 
 /* ---- Fiche produit Bêta : maquette « carte blanche » ---- */
 html.mt-beta.mt-b2 body #mealForm{ --cardx:16px; }
-html.mt-beta.mt-b2 body #mealForm .mc-head .mf-hscan{ display:none !important; }
 /* pastilles repas : petites, centrées, au-dessus de la carte */
 html.mt-beta.mt-b2 body #mealForm .mf-chips{ margin:4px -16px 12px !important; }
-html.mt-beta.mt-b2 body #mealForm .mf-chip{ height:32px !important; padding:0 12px !important; font-size:13px !important; }
+html.mt-beta.mt-b2 body #mealForm .mf-chips{ justify-content:safe center !important; gap:6px !important; }
+html.mt-beta.mt-b2 body #mealForm .mf-chip{ height:30px !important; padding:0 10px !important; font-size:12px !important; gap:4px !important; }
 /* la carte blanche : tous les blocs de la fiche (ordre 5 à 16) sur fond blanc continu */
 html.mt-beta.mt-b2 body #mealForm .mf-name,
 html.mt-beta.mt-b2 body #mealForm #mfCode,
@@ -3123,7 +3123,19 @@ html.mt-beta.mt-b2 body #mealForm .mf-btns #mfOk{ flex:0 1 240px !important; hei
 html.mt-beta.mt-b2 body #mealForm .mf-btns #mfOk #mfOkK{ display:none; }
 html.mt-beta.mt-b2 body #mealForm #mfHealth .mh-f span{ white-space:nowrap; }
 html.mt-beta.mt-b2 body #mealForm #mfHealth{ grid-template-columns:auto auto; justify-content:center; }
+
+/* santé : sous-titre = qualité Nutri-Score, sous le verdict */
+html.mt-beta.mt-b2 body #mealForm #mfHealth .mh-v small:not(.mh-sub){ display:none !important; }
+html.mt-beta.mt-b2 body #mealForm #mfHealth .mh-v .mh-sub{ display:block !important; font-size:11.5px !important; font-weight:700; color:#4B5563 !important; margin-top:2px; }
+html.mt-beta.mt-b2 body #mealForm #mfHealth .mh-v b{ font-size:16px !important; color:#2E1F2A !important; }
+html.mt-beta.mt-b2 body #mealForm #mfHealth .mh-v .mh-i{ width:34px !important; height:34px !important; }
+/* « À l'unité · 140 g » / « Pour 100 g » : texte simple, toujours modifiable en le touchant */
+html.mt-beta.mt-b2 body #mealForm #mfBasis .bz{ gap:2px !important; font-size:14px !important; }
+html.mt-beta.mt-b2 body #mealForm #mfBasis .bz input{ border:0 !important; background:transparent !important; box-shadow:none !important; width:3.1ch !important; padding:0 !important; height:30px !important; font-size:14px !important; text-align:right; color:inherit !important; -webkit-text-fill-color:currentColor; }
+html.mt-beta.mt-b2 body #mealForm #mfBasis .bz input:focus{ background:#fff !important; border-radius:8px !important; box-shadow:0 0 0 2px #34A853 !important; width:4.2ch !important; text-align:center; }
+html.mt-beta.mt-b2 body #mealForm #mfBasis .bz:not(.on){ color:#2E1F2A !important; }
 </style>
+<style id="mhSub">.mh-sub{ display:none; }</style>
 </head>
 <body>
 
@@ -3304,7 +3316,7 @@ html.mt-beta.mt-b2 body #mealForm #mfHealth{ grid-template-columns:auto auto; ju
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 17/11 · 11 h 30</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 17/11 · 11 h 40</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
 </div>
 <script>
 window.BBXBk=(function(){
@@ -3971,7 +3983,7 @@ window.BBXBk=(function(){
     const v=healthVerdict(h);
     const VT={good:['Plutôt bon pour la santé','Un bon choix à consommer régulièrement.'],mid:['À consommer avec modération','Correct, sans en faire la base de l’alimentation.'],bad:['Plutôt mauvais pour la santé','À limiter : à garder pour les occasions.']};
     let html='';
-    if(v) html+='<div class="mh-v '+v+'"><span class="mh-i">'+(v==='good'?'<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>':v==='mid'?'<svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg>':'<svg viewBox="0 0 24 24"><path d="M12 6v7M12 17.5v.5"/></svg>')+'</span><div><b>'+VT[v][0]+'</b><small>'+VT[v][1]+'</small></div></div>';
+    if(v) html+='<div class="mh-v '+v+'"><span class="mh-i">'+(v==='good'?'<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>':v==='mid'?'<svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg>':'<svg viewBox="0 0 24 24"><path d="M12 6v7M12 17.5v.5"/></svg>')+'</span><div><b>'+VT[v][0]+'</b><small>'+VT[v][1]+'</small>'+(h.ns?'<small class="mh-sub">'+NSL[h.ns]+'</small>':'')+'</div></div>';
     else html+='<div class="mh-v none"><span class="mh-i"><svg viewBox="0 0 24 24"><path d="M9.5 9a2.6 2.6 0 1 1 3.6 2.4c-.8.4-1.1 1-1.1 1.8M12 17.5v.5"/></svg></span><div><b>Évaluation indisponible</b><small>Nutri-Score non renseigné pour ce produit.</small></div></div>';
     html+='<div class="mh-row"><div class="mh-t">Nutri-Score</div><div class="mh-ns">'+['a','b','c','d','e'].map(l=>'<span class="'+(h.ns===l?'on':'')+'" style="--c:'+NSC[l]+'">'+l.toUpperCase()+'</span>').join('')+'</div>'+(h.ns?'<div class="mh-d">'+NSL[h.ns]+'</div>':'<div class="mh-d">non calculé</div>')+'</div>';
     html+='<div class="mh-row"><div class="mh-t">NOVA</div><div class="mh-nv">'+[1,2,3,4].map(k=>'<span class="'+(h.nova===k?'on':'')+'" style="--c:'+NVC[k]+'">'+k+'</span>').join('')+'</div>'+(h.nova?'<div class="mh-d">'+NVL[h.nova]+'</div>':'<div class="mh-d">non classé</div>')+'</div>';
