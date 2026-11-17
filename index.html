@@ -3196,6 +3196,7 @@ html.mt-beta.mt-b2 body #mealSearch .sr-bar #srQ:focus{ border-color:#7DD957 !im
   html.mt-beta.mt-b2 body #mealForm .mf-mac span b{ width:60px; height:60px; }
   html.mt-beta.mt-b2 body #mealForm .mf-mac span b input{ font-size:14px !important; }
 }
+html.mt-beta.mt-b2 body #mealSearch .sr-go.added{ background:#34C759 !important; color:#fff !important; box-shadow:0 6px 14px -6px rgba(52,199,89,.8) !important; font-size:24px !important; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3379,7 +3380,7 @@ html.mt-beta.mt-b2 body #mealSearch .sr-bar #srQ:focus{ border-color:#7DD957 !im
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 17/11 · 12 h 20</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 17/11 · 12 h 25</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
 </div>
 <script>
 window.BBXBk=(function(){
@@ -4385,7 +4386,7 @@ window.BBXBk=(function(){
   function closeSearch(){ $('mealSearch').classList.remove('show'); if(sr.fromForm){ sr.fromForm=false; $('mealForm').classList.add('show'); } }
   function srOpen(m){
     sr.fromForm=(m==='form'); if(sr.fromForm) $('mealForm').classList.remove('show');
-    sr.target=(m==='form')?(+$('mfMeal').value||0):((m==null)?0:m); sr.list=[]; sr.n++; sr.tab='r'; srPh(); document.querySelectorAll('#srTabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t==='r'));
+    sr.target=(m==='form')?(+$('mfMeal').value||0):((m==null)?0:m); sr.list=[]; sr.n++; sr.added={}; sr.tab='r'; srPh(); document.querySelectorAll('#srTabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t==='r'));
     $('srMeal').textContent='Ajout dans : '+MEALS[sr.target][0];
     showFavs();
     $('srQ').value=''; $('mealSearch').classList.add('show'); setTimeout(()=>{ try{ $('srQ').focus(); }catch(e){} },150);
@@ -4533,7 +4534,7 @@ window.BBXBk=(function(){
     sr.lastExtra=extra;
     const L0=sr.list; L0.forEach((x,i)=>{ x._i=i; }); const t=sr.tab||'r', L=srB2()?L0.filter(x=>srTabOk(x,t)):L0;
     if(srB2()&&!L.length&&L0.length){ const n={r:L0.filter(x=>srTabOk(x,'r')).length,s:L0.filter(x=>srTabOk(x,'s')).length,o:L0.filter(x=>srTabOk(x,'o')).length}, nm={r:'Récent',s:'Suivi',o:'Autres'}, oth=['r','s','o'].filter(k=>k!==t&&n[k]); if(oth.length) extra='<div class="sr-note">Rien ici. '+oth.map(k=>'<button class="sr-jump" onclick="BBXMeal.srTab(\''+k+'\')">'+n[k]+' dans '+nm[k]+'</button>').join(' ')+'</div>'+(extra||''); }
-    const row=x=>`<div class="sr-row"><button class="sr-it" onclick="BBXMeal.pick(${x._i},event)"><span class="sr-th">${esc(x.emoji||'🛒')}</span><span class="sr-nm"><b>${esc(x.name)}</b><span>${x.kcal!=null?r(x.kcal):'?'} kcal · ${x.prot!=null?r1(x.prot):'?'} g prot.${x.fat!=null&&x.carb!=null?' · '+r1(x.fat)+' g lip. · '+r1(x.carb)+' g gluc.':''} / 100 ${x.unit||'g'}${x.serving>0&&x.label&&!/^portion de /.test(x.label)?' · 1 '+esc(x.label)+' ≈ '+r(x.serving)+' '+(x.unit||'g'):''}</span></span><span class="sr-go">＋</span></button>${x.fav?`<button class="sr-del" onclick="BBXMeal.favDel(${x._fi})" aria-label="Retirer de mes produits">✕</button>`:''}</div>`;
+    const row=x=>`<div class="sr-row"><button class="sr-it" onclick="BBXMeal.pick(${x._i},event)"><span class="sr-th">${esc(x.emoji||'🛒')}</span><span class="sr-nm"><b>${esc(x.name)}</b><span>${x.kcal!=null?r(x.kcal):'?'} kcal · ${x.prot!=null?r1(x.prot):'?'} g prot.${x.fat!=null&&x.carb!=null?' · '+r1(x.fat)+' g lip. · '+r1(x.carb)+' g gluc.':''} / 100 ${x.unit||'g'}${x.serving>0&&x.label&&!/^portion de /.test(x.label)?' · 1 '+esc(x.label)+' ≈ '+r(x.serving)+' '+(x.unit||'g'):''}</span></span>${(srB2()&&sr.added&&sr.added[(x.code||'')+'|'+x.name])?'<span class="sr-go added">✓</span>':'<span class="sr-go">＋</span>'}</button>${x.fav?`<button class="sr-del" onclick="BBXMeal.favDel(${x._fi})" aria-label="Retirer de mes produits">✕</button>`:''}</div>`;
     const sec=(t,arr)=>arr.length?`<div class="sr-sec">${t}</div>`+arr.map(row).join(''):'';
     const h=sec('Tes habitudes · '+esc((MEALS[sr.target]||[''])[0]),L.filter(x=>x.fav&&x.hab))+sec('Mes produits (enregistrés sur ton téléphone)',L.filter(x=>x.fav&&!x.hab))+sec('Aliments courants',L.filter(x=>x.db))+sec('Ciqual · ANSES (base française)',L.filter(x=>x.ciq))+sec('Open Food Facts',L.filter(x=>x.off))+sec('USDA FoodData Central',L.filter(x=>x.usda));
     const qv=$('srQ').value.trim();
@@ -4756,7 +4757,7 @@ window.BBXBk=(function(){
     const x=sr.list[i]; if(!x) return;
     if(ev&&ev.target&&ev.target.closest&&ev.target.closest('.sr-go')&&x.kcal!=null&&x.prot!=null){
       const gb=ev.target.closest('.sr-go');   // on reste dans la recherche pour ajouter d'autres produits
-      if(directAdd(sr.target,Object.assign({},x,{h:x.h||hlGet(x.name)}),0,null,()=>{ gb.textContent='✓'; gb.classList.add('added'); setTimeout(()=>{ gb.textContent='＋'; gb.classList.remove('added'); },1600); })) return;
+      if(directAdd(sr.target,Object.assign({},x,{h:x.h||hlGet(x.name)}),0,null,()=>{ gb.textContent='✓'; gb.classList.add('added'); sr.added=sr.added||{}; sr.added[(x.code||'')+'|'+x.name]=1; if(!srB2()) setTimeout(()=>{ gb.textContent='＋'; gb.classList.remove('added'); },1600); })) return;
     }
     sr.fromForm=false;
     const src=x.fav?'Dans tes produits.':(x.db?'Valeurs moyennes pour 100 '+(x.unit||'g')+'.':(x.ciq?'Table Ciqual (ANSES) : valeurs moyennes pour 100 g.':x.usda?'Base USDA FoodData Central (valeurs pour 100 g).':'Produit Open Food Facts.'));
