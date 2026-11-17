@@ -2954,6 +2954,16 @@ html.mt-beta #mealView .my-fixed{ padding-bottom:11px!important; }
 html.mt-beta #mealView .my-card .my-empty{ display:none!important; }
 html.mt-beta #mealView .my-card:has(.my-empty){ padding-bottom:0!important; }
 html.mt-beta #mealView .my-card:has(.my-empty) .my-mh{ border-radius:inherit!important; }
+
+/* ===== Bouton « Retour » identique dans toutes les fenêtres Meal : même place, même hauteur ===== */
+html.mt-beta body :is(.mc-ov,#mcOvAll){ padding-top:calc(14px + env(safe-area-inset-top,0px)) !important; }
+html.mt-beta body :is(#mealForm,#mcOvAll)#mealForm{ padding-top:calc(14px + env(safe-area-inset-top,0px)) !important; }
+html.mt-beta body :is(.mc-ov,#mcOvAll) .mc-head{ margin:6px 0 16px !important; min-height:44px !important; display:flex !important; align-items:center !important; gap:8px !important; }
+html.mt-beta body :is(.mc-ov,#mcOvAll) .mc-head b{ margin-right:auto; }
+html.mt-beta body :is(.mc-ov,#mcOvAll) .mc-head .mc-x{ flex:none !important; width:auto !important; min-width:0 !important; height:44px !important; padding:0 16px !important; margin:0 !important; border-radius:999px !important; font-size:0 !important; line-height:0 !important; background:#fff !important; border:0 !important; box-shadow:0 2px 8px rgba(20,24,40,.08) !important; display:inline-flex !important; align-items:center; justify-content:center; position:static !important; transform:none !important; }
+html.mt-beta body :is(.mc-ov,#mcOvAll) .mc-head .mc-x::after{ content:"Retour"; font-size:16px !important; font-weight:800; line-height:1; color:#2E1F2A; }
+html.mt-beta body :is(.mc-ov,#mcOvAll) .mc-head .mc-x svg{ display:none !important; }
+html.mt-beta body :is(.mc-ov,#mcOvAll) .mc-head .mf-hscan,html.mt-beta body :is(.mc-ov,#mcOvAll) .mc-head .sr-hb,html.mt-beta body :is(.mc-ov,#mcOvAll) .mc-head .ht-cfg{ height:44px !important; margin:0 !important; }
 </style>
 <style id="mfMicroCss">#mealForm #mfMicro:empty{display:none}#mealForm #mfMicro{margin:0 0 10px}#mealForm #mfMicro .mf-micro{margin-top:0}</style>
 <style id="betaNav">.my-sl,.ht-cfg,.mf-hscan{display:none}
@@ -3138,10 +3148,8 @@ html.mt-beta.mt-b2 body #mealForm #mfBasis .bz:not(.on){ color:#2E1F2A !importan
 /* ---- Recherche Bêta : maquette ---- */
 html.mt-beta.mt-b2 body #mealSearch .mc-head{ gap:10px; }
 html.mt-beta.mt-b2 body #mealSearch .mc-head b{ margin-right:auto; }
-html.mt-beta.mt-b2 body #mealSearch .sr-hb{ display:grid; place-items:center; width:52px; height:42px; border-radius:999px; border:0; background:#fff; color:#111; cursor:pointer; padding:0; flex:none; }
+html.mt-beta.mt-b2 body #mealSearch .sr-hb{ display:grid; place-items:center; width:52px; height:44px; border-radius:999px; border:0; background:#fff; color:#111; cursor:pointer; padding:0; flex:none; }
 html.mt-beta.mt-b2 body #mealSearch .sr-hb svg{ width:26px; height:26px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
-html.mt-beta.mt-b2 body #mealSearch .mc-head .mc-x{ width:auto !important; height:42px !important; padding:0 16px !important; border-radius:999px !important; font-size:0 !important; background:#fff !important; border:0 !important; box-shadow:none !important; }
-html.mt-beta.mt-b2 body #mealSearch .mc-head .mc-x::after{ content:"Retour"; font-size:17px; font-weight:800; line-height:1; color:#2E1F2A; }
 html.mt-beta.mt-b2 body #mealSearch .sr-bar{ margin:4px 0 16px !important; }
 html.mt-beta.mt-b2 body #mealSearch .sr-bar button,html.mt-beta.mt-b2 body #mealSearch .sr-acts{ display:none !important; }
 html.mt-beta.mt-b2 body #mealSearch #srQ{ height:56px !important; border-radius:999px !important; border:2px solid #CBD2DA !important; background:#fff !important; box-shadow:none !important; padding:0 24px !important; font-size:16px !important; color:#15171C !important; }
@@ -3169,10 +3177,8 @@ html.mt-beta.mt-b2 body #mealSearch .sr-bar #srQ:focus{ border-color:#7DD957 !im
 @media (max-width:390px){
   html.mt-beta.mt-b2 body #mealSearch .mc-head,html.mt-beta.mt-b2 body #mealForm .mc-head{ gap:6px !important; }
   html.mt-beta.mt-b2 body #mealSearch .mc-head b,html.mt-beta.mt-b2 body #mealForm .mc-head b{ font-size:clamp(13px,4.3vw,17px) !important; }
-  html.mt-beta.mt-b2 body #mealSearch .sr-hb,html.mt-beta.mt-b2 body #mealForm .mc-head .mf-hscan{ width:44px !important; height:40px !important; }
+  html.mt-beta.mt-b2 body #mealSearch .sr-hb,html.mt-beta.mt-b2 body #mealForm .mc-head .mf-hscan{ width:44px !important; }
   html.mt-beta.mt-b2 body #mealSearch .sr-hb svg,html.mt-beta.mt-b2 body #mealForm .mc-head .mf-hscan svg{ width:22px !important; height:22px !important; }
-  html.mt-beta.mt-b2 body #mealSearch .mc-head .mc-x,html.mt-beta.mt-b2 body #mealForm .mc-head .mc-x{ height:40px !important; padding:0 12px !important; }
-  html.mt-beta.mt-b2 body #mealSearch .mc-head .mc-x::after,html.mt-beta.mt-b2 body #mealForm .mc-head .mc-x::after{ font-size:15px !important; }
   html.mt-beta.mt-b2 body #mealSearch .sr-tabs{ margin:0 4px 12px !important; }
   html.mt-beta.mt-b2 body #mealSearch .sr-tabs button{ font-size:14px !important; }
   html.mt-beta.mt-b2 body #mealSearch .sr-th{ width:46px !important; height:46px !important; font-size:24px !important; }
@@ -3401,7 +3407,7 @@ html.mt-beta.mt-b2 body #mealView .sum-full .sx-c .sx-l .sm-in{ color:#2E1F2A !i
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 17/11 · 12 h 40</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 17/11 · 12 h 45</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
 </div>
 <script>
 window.BBXBk=(function(){
