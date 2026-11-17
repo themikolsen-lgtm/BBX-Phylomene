@@ -3041,8 +3041,88 @@ html body #mealView .sum-full .sx-c .sx-l .sm-in{ width:auto !important; min-wid
 #mealForm .mf-health .mh-row:has(.mh-nv){ display:none !important; }
 #mealForm .mf-health .mh-row{ grid-column:1/-1; }</style>
 <style id="themeB2">
-/* ===== Thème Bêta — copie du design normal (Meal) =====
-   Point de départ vierge : tout ce qui est écrit ici, sous html.mt-b2, ne s'applique qu'au thème Bêta. */
+/* ===== Thème Bêta — copie du design normal (Meal), puis personnalisation =====
+   Tout ce qui est écrit ici, sous html.mt-b2, ne s'applique qu'au thème Bêta. */
+
+/* ---- Fiche produit Bêta : maquette « carte blanche » ---- */
+html.mt-beta.mt-b2 body #mealForm{ --cardx:16px; }
+html.mt-beta.mt-b2 body #mealForm .mc-head .mf-hscan{ display:none !important; }
+/* pastilles repas : petites, centrées, au-dessus de la carte */
+html.mt-beta.mt-b2 body #mealForm .mf-chips{ margin:4px -16px 12px !important; }
+html.mt-beta.mt-b2 body #mealForm .mf-chip{ height:32px !important; padding:0 12px !important; font-size:13px !important; }
+/* la carte blanche : tous les blocs de la fiche (ordre 5 à 16) sur fond blanc continu */
+html.mt-beta.mt-b2 body #mealForm .mf-name,
+html.mt-beta.mt-b2 body #mealForm #mfCode,
+html.mt-beta.mt-b2 body #mealForm #mfHealth,
+html.mt-beta.mt-b2 body #mealForm .fv-h,
+html.mt-beta.mt-b2 body #mealForm #mfPrev,
+html.mt-beta.mt-b2 body #mealForm #mfBasis,
+html.mt-beta.mt-b2 body #mealForm #mfUq,
+html.mt-beta.mt-b2 body #mealForm #mfGq,
+html.mt-beta.mt-b2 body #mealForm #mfUg,
+html.mt-beta.mt-b2 body #mealForm #mfMult,
+html.mt-beta.mt-b2 body #mealForm #mfUnits,
+html.mt-beta.mt-b2 body #mealForm #mfSeg,
+html.mt-beta.mt-b2 body #mealForm .mf-btns{ background:#fff !important; margin:0 !important; border:0 !important; box-shadow:none !important; border-radius:0 !important; padding-left:var(--cardx) !important; padding-right:var(--cardx) !important; position:relative; }
+html.mt-beta.mt-b2 body #mealForm .mf-name{ border-radius:32px 32px 0 0 !important; padding-top:20px !important; padding-bottom:4px !important; }
+html.mt-beta.mt-b2 body #mealForm .mf-btns{ border-radius:0 0 32px 32px !important; padding-top:22px !important; padding-bottom:26px !important; margin-bottom:24px !important; }
+html.mt-beta.mt-b2 body #mealForm #mfMicro{ display:none !important; }
+/* nom et code-barres */
+html.mt-beta.mt-b2 body #mealForm .mf-name input#mfName{ background:transparent !important; border:0 !important; height:40px !important; font-size:22px !important; font-weight:800 !important; padding:0 !important; }
+html.mt-beta.mt-b2 body #mealForm #mfCode{ justify-content:center !important; gap:14px !important; padding-top:2px !important; padding-bottom:14px !important; font-size:12px; }
+html.mt-beta.mt-b2 body #mealForm #mfCode *{ font-size:12px !important; }
+html.mt-beta.mt-b2 body #mealForm #mfCode:empty{ display:none !important; }
+/* santé : panneau vert pâle dans la carte */
+html.mt-beta.mt-b2 body #mealForm #mfHealth{ display:grid !important; grid-template-columns:auto 1fr; align-items:end; column-gap:12px; row-gap:8px; padding-top:16px !important; padding-bottom:16px !important; padding-left:calc(var(--cardx) + 18px) !important; padding-right:calc(var(--cardx) + 18px) !important; }
+html.mt-beta.mt-b2 body #mealForm #mfHealth[hidden]{ display:none !important; }
+html.mt-beta.mt-b2 body #mealForm #mfHealth::before{ content:""; position:absolute; inset:0 var(--cardx); background:#EEF6EA; border-radius:22px; z-index:0; }
+html.mt-beta.mt-b2 body #mealForm #mfHealth>*{ position:relative; z-index:1; }
+html.mt-beta.mt-b2 body #mealForm #mfHealth .mh-v{ grid-column:1/-1; background:transparent !important; padding:0 !important; justify-content:center; gap:10px; }
+html.mt-beta.mt-b2 body #mealForm #mfHealth .mh-v>div{ flex:none !important; padding:0 !important; text-align:left !important; }
+html.mt-beta.mt-b2 body #mealForm #mfHealth .mh-v b{ font-size:17px !important; }
+html.mt-beta.mt-b2 body #mealForm #mfHealth .mh-v small{ font-size:11.5px !important; }
+html.mt-beta.mt-b2 body #mealForm #mfHealth .mh-row{ grid-column:1; margin:0 !important; }
+html.mt-beta.mt-b2 body #mealForm #mfHealth .mh-row .mh-d,html.mt-beta.mt-b2 body #mealForm #mfHealth .mh-src{ display:none !important; }
+html.mt-beta.mt-b2 body #mealForm #mfHealth .mh-ns span{ width:26px !important; height:28px !important; font-size:13px !important; }
+html.mt-beta.mt-b2 body #mealForm #mfHealth .mh-f{ grid-column:2; margin:0 !important; display:flex; flex-wrap:wrap; gap:6px; justify-content:flex-start; }
+html.mt-beta.mt-b2 body #mealForm #mfHealth .mh-f span{ font-size:12px !important; padding:4px 10px !important; }
+/* valeurs : pilule Calories + 3 anneaux */
+html.mt-beta.mt-b2 body #mealForm .fv-h{ padding-top:18px !important; padding-bottom:12px !important; font-size:17px !important; }
+html.mt-beta.mt-b2 body #mealForm #mfPrev{ padding-bottom:18px !important; }
+html.mt-beta.mt-b2 body #mealForm #mfPrev .mf-warn{ margin-top:12px; }
+html.mt-beta.mt-b2 body #mealForm .mf-mac{ display:grid !important; grid-template-columns:repeat(3,1fr) !important; gap:16px 8px !important; }
+html.mt-beta.mt-b2 body #mealForm .mf-mac span{ background:none !important; border:0 !important; box-shadow:none !important; padding:0 !important; display:flex !important; flex-direction:column-reverse !important; align-items:center !important; gap:8px !important; min-height:0 !important; }
+html.mt-beta.mt-b2 body #mealForm .mf-mac span i{ font-style:normal; font-size:16px !important; font-weight:800 !important; color:#15171C !important; }
+html.mt-beta.mt-b2 body #mealForm .mf-mac span b{ width:78px; height:78px; border-radius:50%; display:flex !important; align-items:center; justify-content:center; gap:1px; background:radial-gradient(closest-side,#fff 76%,transparent 78% 100%),conic-gradient(var(--rc) calc(var(--p,0)*1%),#F1F2F4 0); }
+html.mt-beta.mt-b2 body #mealForm .mf-mac span b input{ width:3.2ch !important; min-width:0; background:transparent !important; border:0 !important; box-shadow:none !important; padding:0 !important; text-align:right; font-size:16px !important; font-weight:800 !important; color:#15171C !important; }
+html.mt-beta.mt-b2 body #mealForm .mf-mac span b u{ text-decoration:none; font-size:14px !important; font-weight:800; color:#15171C !important; }
+html.mt-beta.mt-b2 body #mealForm .mf-mac span:nth-child(1){ grid-column:1/-1; order:0; flex-direction:row !important; justify-content:space-between !important; background:#E9F3E4 !important; border-radius:999px !important; padding:0 24px !important; height:56px; margin:0 14px; }
+html.mt-beta.mt-b2 body #mealForm .mf-mac span:nth-child(1) i{ color:#2E7D1E !important; font-size:17px !important; }
+html.mt-beta.mt-b2 body #mealForm .mf-mac span:nth-child(1) b{ width:auto; height:auto; border-radius:0; background:none; }
+html.mt-beta.mt-b2 body #mealForm .mf-mac span:nth-child(1) b input,html.mt-beta.mt-b2 body #mealForm .mf-mac span:nth-child(1) b u{ color:#2E7D1E !important; font-size:18px !important; width:4ch !important; }
+html.mt-beta.mt-b2 body #mealForm .mf-mac span:nth-child(4){ order:1; --rc:#FF5A5F; }
+html.mt-beta.mt-b2 body #mealForm .mf-mac span:nth-child(2){ order:2; --rc:#FFBE55; }
+html.mt-beta.mt-b2 body #mealForm .mf-mac span:nth-child(3){ order:3; --rc:#5BE0E6; }
+/* unité / 100 g */
+html.mt-beta.mt-b2 body #mealForm #mfBasis{ padding-top:6px !important; padding-bottom:6px !important; background:#fff !important; }
+html.mt-beta.mt-b2 body #mealForm #mfBasis::before{ content:""; position:absolute; inset:0 var(--cardx); background:#E6F1FC; border-radius:999px; z-index:0; }
+html.mt-beta.mt-b2 body #mealForm #mfBasis .bz{ position:relative; z-index:1; margin:0 4px; }
+html.mt-beta.mt-b2 body #mealForm #mfBasis .bz:first-child{ margin-left:calc(4px); }
+html.mt-beta.mt-b2 body #mealForm #mfBasis .bz.on{ background:#8EC5FF !important; }
+/* quantité : − et + en pilules séparées, nombre au milieu */
+html.mt-beta.mt-b2 body #mealForm #mfUq,html.mt-beta.mt-b2 body #mealForm #mfGq{ padding-top:20px !important; padding-bottom:6px !important; gap:12px !important; }
+html.mt-beta.mt-b2 body #mealForm .mf-qty>button{ flex:0 0 96px !important; height:56px !important; border-radius:999px !important; background:#fff !important; box-shadow:0 2px 8px rgba(20,24,40,.10) !important; font-size:32px !important; color:#111 !important; }
+html.mt-beta.mt-b2 body #mealForm .mf-qty .mf-in.big{ flex:1 !important; background:transparent !important; border:0 !important; box-shadow:none !important; }
+html.mt-beta.mt-b2 body #mealForm .mf-qty .mf-in.big input{ font-size:28px !important; text-align:center; }
+html.mt-beta.mt-b2 body #mealForm #mfMult{ padding-top:16px !important; justify-content:center; gap:10px; }
+html.mt-beta.mt-b2 body #mealForm #mfMult button{ min-width:0 !important; flex:0 0 66px !important; height:36px !important; border-radius:999px !important; background:#CBD2DA !important; border:0 !important; color:#fff !important; font-size:16px !important; font-weight:900 !important; box-shadow:none !important; }
+html.mt-beta.mt-b2 body #mealForm #mfSeg{ padding-top:12px !important; }
+/* bouton Enregistrer centré */
+html.mt-beta.mt-b2 body #mealForm .mf-btns{ justify-content:center !important; }
+html.mt-beta.mt-b2 body #mealForm .mf-btns #mfOk{ flex:0 1 240px !important; height:64px !important; font-size:21px !important; }
+html.mt-beta.mt-b2 body #mealForm .mf-btns #mfOk #mfOkK{ display:none; }
+html.mt-beta.mt-b2 body #mealForm #mfHealth .mh-f span{ white-space:nowrap; }
+html.mt-beta.mt-b2 body #mealForm #mfHealth{ grid-template-columns:auto auto; justify-content:center; }
 </style>
 </head>
 <body>
@@ -3224,7 +3304,7 @@ html body #mealView .sum-full .sx-c .sx-l .sm-in{ width:auto !important; min-wid
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 17/11 · 10 h 30</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 17/11 · 11 h 30</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
 </div>
 <script>
 window.BBXBk=(function(){
@@ -3554,6 +3634,8 @@ window.BBXBk=(function(){
         pv.innerHTML='<small class="mp-for"></small><div class="mf-micro mf-mac">'+D.map(x=>'<span style="--c:'+x[4]+'"><i>'+x[0]+'</i><b><input type="text" inputmode="decimal" placeholder="0" data-s="'+x[1]+'" data-d="'+x[2]+'"><u>'+x[3]+'</u></b></span>').join('')+'</div>'; mac=pv.querySelector('.mf-mac'); }
       pv.querySelector('.mp-for').textContent='pour '+r1(eff)+' '+u;
       mac.querySelectorAll('input').forEach(inp=>{ if(document.activeElement===inp) return; const v=num($(inp.dataset.s).value); inp.value=(isNaN(v)||v<0)?'':String(+(v*eff/100).toFixed(+inp.dataset.d)); });
+      { const sp=mac.children, P4=Math.max(0,num($('mfProt').value)||0)*4, F9=Math.max(0,num($('mfFat').value)||0)*9, C4=Math.max(0,num($('mfCarb').value)||0)*4, T=P4+F9+C4;   // anneaux du thème Bêta : part de chaque macro dans les calories
+        if(sp.length>=4){ sp[1].style.setProperty('--p',T?Math.round(P4/T*100):0); sp[2].style.setProperty('--p',T?Math.round(F9/T*100):0); sp[3].style.setProperty('--p',T?Math.round(C4/T*100):0); } }
       pv.querySelectorAll('.mf-micro:not(.mf-mac),.mf-warn').forEach(x=>x.remove()); { const mm=$('mfMicro'); if(mm) mm.innerHTML=''; } { const kk=num($('mfKcal').value), okk=$('mfOkK'); if(okk) okk.textContent=(q>0&&kk>=0)?' · '+r(kk*q/100)+' kcal':''; } }
     { const MC={'Sucres':'#C026D3','Gras saturés':'#92400E','Fibres':'#4D7C0F','Sel':'#475569','Calcium':'#0369A1','Fer':'#9F1239','Potassium':'#6D28D9','Magnésium':'#0D9488','Vit. C':'#EA580C'}; const h=fm.hv, q2=q>0?q/100:0, L=[];
       if(h&&q2){ const a=(l,v,d,u,m)=>{ if(v!=null&&isFinite(v)) L.push([l,v*(m||1)*q2,d,u]); };
