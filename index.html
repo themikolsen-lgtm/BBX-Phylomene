@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<script>try{if(localStorage.getItem('phy-mtheme')==='beta')document.documentElement.classList.add('mt-beta');}catch(e){}</script>
+<script>try{if(localStorage.getItem('phy-mtheme')!=='normal')document.documentElement.classList.add('mt-beta');}catch(e){document.documentElement.classList.add('mt-beta');}</script>
 
 <script id="bbxSafe">
 /* Sauvegarde automatique : copie des données (bb9*) dans IndexedDB à chaque changement + restauration si le navigateur efface le stockage */
@@ -3217,7 +3217,7 @@ html body #mealView .sum-full .sx-c .sx-l .sm-in{ width:auto !important; min-wid
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 16/11 · 21 h 40</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 17/11 · 9 h 00</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
 </div>
 <script>
 window.BBXBk=(function(){
@@ -4018,7 +4018,7 @@ window.BBXBk=(function(){
   }
   const LENSKEY='phy-camlens', camLens=()=>{ try{ return localStorage.getItem(LENSKEY)==='main'?'main':'auto'; }catch(e){ return 'auto'; } };
   function lensSeg(){ const v=camLens(); document.querySelectorAll('#lensSeg [data-u]').forEach(b=>{ const o=b.dataset.u===v; b.classList.toggle('on',o); b.setAttribute('aria-pressed',o); }); const d=$('lensD'); if(d) d.textContent=v==='main'?'Objectif principal : celui que choisit le téléphone par défaut.':'Auto : utilise le second objectif (double capteur) quand le téléphone en a un, plus net de près.'; }
-  const THEMEKEY='phy-mtheme', themeOf=()=>{ try{ return localStorage.getItem(THEMEKEY)==='beta'?'beta':'normal'; }catch(e){ return 'normal'; } };
+  const THEMEKEY='phy-mtheme', themeOf=()=>{ try{ return localStorage.getItem(THEMEKEY)==='normal'?'normal':'beta'; }catch(e){ return 'beta'; } };   // Bêta par défaut
   function themeSeg(){ const v=themeOf(); document.querySelectorAll('#themeSeg [data-u]').forEach(b=>{ const o=b.dataset.u===v; b.classList.toggle('on',o); b.setAttribute('aria-pressed',o); }); const d=$('themeD'); if(d) d.textContent=v==='beta'?'Bêta : copie du thème Normal, prête à être personnalisée.':'Normal : le design actuel de l’appli.'; }
   function camSwitch(){
     const cams=sc.cams||[]; if(cams.length<2) return; const cur=(cam.stream&&cam.stream.getVideoTracks()[0].getSettings().deviceId)||'', i=Math.max(0,cams.findIndex(c=>c.deviceId===cur)), nx=cams[(i+1)%cams.length];
