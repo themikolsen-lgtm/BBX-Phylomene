@@ -3432,7 +3432,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 18/11 · 19 h 35</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 18/11 · 19 h 45</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4001,7 +4001,7 @@ window.BBXBk=(function(){
       if(ai&&!ai.skip&&ai.ok!==false&&[ai.kcal,ai.prot,ai.fat,ai.carb].some(v=>v!=null)){
         const r={kcal:ai.kcal,prot:ai.prot,fat:ai.fat,carb:ai.carb,unsure:[],warn:[]};
         if(r.kcal==null&&r.prot!=null&&r.fat!=null&&r.carb!=null) r.kcal=Math.round(4*r.prot+9*r.fat+4*r.carb);
-        if(ai.name&&!$('mfName').value.trim()) $('mfName').value=String(ai.name).slice(0,60);
+        let guessed=false; if(ai.name&&!$('mfName').value.trim()){ $('mfName').value=String(ai.name).slice(0,60); guessed=ai.name_sure===false; }
         aiBar(100,'Analyse terminée'); aiT0=0; await new Promise(ok=>setTimeout(ok,350));
         ocrFill(r,'Tableau lu par l’IA');
         if(ai.unit==='ml'){ try{ setUnit('ml'); fmPrev(); }catch(e){} }
@@ -4014,6 +4014,8 @@ window.BBXBk=(function(){
           ai._unit=lb+' = '+String(gg).replace('.',',')+' '+(ai.unit==='ml'?'ml':'g');
         }catch(e){} }
         aiDetails(ai); aiCount();
+        if(guessed){ const n=$('mfName'); n.classList.add('mf-unsure'); n.addEventListener('input',()=>n.classList.remove('mf-unsure'),{once:true});
+          $('mfInfo').insertAdjacentHTML('beforeend','<div class="ai-tm">✎ Nom deviné par l’IA (pas écrit sur la photo) : vérifie-le.</div>'); }
         if(!$('mfName').value.trim()) $('mfName').focus();
         return;
       }
