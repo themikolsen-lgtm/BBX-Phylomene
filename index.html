@@ -3053,7 +3053,7 @@ html body #mealView .sum-full .sx-c .sx-l .sm-in{ width:auto !important; min-wid
 <style id="noNova">.hl-n{ display:none !important; }
 #mealForm .mf-health .mh-row:has(.mh-nv){ display:none !important; }
 #mealForm .mf-health .mh-row{ grid-column:1/-1; }</style>
-<style id="ocrCtaCss">#mealForm .mf-ocrcta{display:flex;align-items:center;justify-content:center;gap:9px;width:calc(100% - 28px);margin:2px 14px 12px;height:52px;border-radius:999px;border:1.5px dashed #16a34a;background:rgba(22,163,74,.08);color:#166534;font:inherit;font-size:15px;font-weight:800;cursor:pointer}#mealForm .mf-ctaw{order:8}#mealForm .mf-ctaw[hidden]{display:none!important}html.mt-b2 body #mealForm .mf-ctaw{background:#fff;padding:0 var(--cardx,0px) 4px}#mealForm .mf-ocrcta svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}#mealForm .mf-ocrcta:active{transform:scale(.98)}</style>
+<style id="ocrCtaCss">.sr-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 7px 1px 0;vertical-align:middle;box-shadow:0 0 0 2px #fff}#mealForm .mf-ocrcta{display:flex;align-items:center;justify-content:center;gap:9px;width:calc(100% - 28px);margin:2px 14px 12px;height:52px;border-radius:999px;border:1.5px dashed #16a34a;background:rgba(22,163,74,.08);color:#166534;font:inherit;font-size:15px;font-weight:800;cursor:pointer}#mealForm .mf-ctaw{order:8}#mealForm .mf-ctaw[hidden]{display:none!important}html.mt-b2 body #mealForm .mf-ctaw{background:#fff;padding:0 var(--cardx,0px) 4px}#mealForm .mf-ocrcta svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}#mealForm .mf-ocrcta:active{transform:scale(.98)}</style>
 <style id="themeB2">
 /* ===== Thème Bêta — copie du design normal (Meal), puis personnalisation =====
    Tout ce qui est écrit ici, sous html.mt-b2, ne s'applique qu'au thème Bêta. */
@@ -3463,7 +3463,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 18/11 · 21 h 10</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 18/11 · 21 h 25</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4728,7 +4728,7 @@ window.BBXBk=(function(){
   }catch(e){}
   document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible'){ const a=shLoad(); if(a) FAV=a; } });
   function upsertFav(it,portions){
-    const q=per100(it), f={name:it[0],kcal:q.k,prot:q.p,fat:q.f,carb:q.c,serving:it[2]>0?it[2]:0,label:it[1],emoji:it[7],unit:it[6],portions:portions||[],t:Date.now()};
+    const q=per100(it), f={name:it[0],kcal:q.k,prot:q.p,fat:q.f,carb:q.c,serving:it[2]>0?it[2]:0,label:it[1],emoji:it[7],unit:it[6],portions:portions||[],t:Date.now(),app:SK.slice(0,3)};
     FAV=FAV.filter(x=>normS(x.name)!==normS(f.name)); FAV.unshift(f); if(FAV.length>5000) FAV.length=5000; saveFav();
   }
   function migrateMac(){
@@ -4746,12 +4746,12 @@ window.BBXBk=(function(){
     if(ch){ saveDef(); saveFav(); }
   }
   function favDel(i){ if(i<0||i>=FAV.length) return; FAV.splice(i,1); saveFav(); liveSearch(); }
-  const asFav=(f,i)=>({name:f.name,kcal:f.kcal,prot:f.prot,fat:f.fat,carb:f.carb,serving:f.serving,label:f.label,emoji:f.emoji,unit:f.unit,portions:f.portions,fav:true,_fi:i});
+  const asFav=(f,i)=>({name:f.name,kcal:f.kcal,prot:f.prot,fat:f.fat,carb:f.carb,serving:f.serving,label:f.label,emoji:f.emoji,unit:f.unit,portions:f.portions,fav:true,_fi:i,t:f.t||0,app:f.app||''});
   // catalogue commun : produits créés par les autres comptes (BBX-11WM et Phylomene), reçus par la synchronisation
   const CATK='bbx-cat2', SUIVI0=Date.UTC(2026,10,17,19,50);
   function isSuivi(name,f,cs){ const n=normS(name); if(cs.has(n)) return true; if(f&&(f.t||0)>=SUIVI0) return true; let t=0; try{ Object.keys(HAB||{}).forEach(m=>{ const h=HAB[m]&&HAB[m][name]; if(h&&(h.t||0)>t) t=h.t; }); }catch(e){} return t>=SUIVI0; }
   const catLoad=()=>{ try{ const a=JSON.parse(localStorage.getItem(CATK)||'[]'); return Array.isArray(a)?a:[]; }catch(e){ return []; } };
-  const asCat=f=>({name:f.name,kcal:f.kcal,prot:f.prot,fat:f.fat,carb:f.carb,serving:f.serving,label:f.label,emoji:f.emoji,unit:f.unit,portions:f.portions,cat:true});
+  const asCat=f=>({name:f.name,kcal:f.kcal,prot:f.prot,fat:f.fat,carb:f.carb,serving:f.serving,label:f.label,emoji:f.emoji,unit:f.unit,portions:f.portions,cat:true,t:f.t||0,app:f.app||''});
   function catMatches(q){ const have=new Set(FAV.map(f=>normS(f.name))); return catLoad().filter(f=>f&&f.name&&f.kcal!=null&&!have.has(normS(f.name))).map((f,i)=>({f:f,i:i,sc:q?rank(q,wordsOf(f.name)):0})).filter(o=>o.sc>=0).sort((a,b)=>a.sc-b.sc||b.i-a.i).slice(0,q?25:60).map(o=>Object.assign(asCat(o.f),{_sc:o.sc})); }
   function favMatches(q){
     return FAV.map((f,i)=>({f:f,i:i,sc:rank(q,wordsOf(f.name))})).filter(o=>o.sc>=0).sort((a,b)=>a.sc-b.sc||a.i-b.i).slice(0,30).map(o=>Object.assign(asFav(o.f,o.i),{_sc:o.sc}));
@@ -4777,15 +4777,18 @@ window.BBXBk=(function(){
     { const cs=new Set(catLoad().map(f=>normS(f&&f.name))); sr.list.forEach(x=>{ if(x&&x.fav) x.suivi=isSuivi(x.name,FAV[x._fi],cs); }); }
     sr.list.forEach(x=>{ const cp=x&&x.name&&portGet(x.name); if(cp&&Math.abs((x.serving||0)-cp.g)>0.05){ const lb=x.label&&!/^portion de 100\b/.test(x.label)?x.label:'portion'; x.serving=cp.g; x.label=lb; x.portions=[{label:lb,g:cp.g}].concat((x.portions||[]).filter(q=>q.label!==lb&&!/^portion de 100\b/.test(q.label||''))); } });   // unité corrigée (base commune) prioritaire
     const L0=sr.list; L0.forEach((x,i)=>{ x._i=i; }); const t=sr.tab||'r', L=srB2()?L0.filter(x=>srTabOk(x,t)):L0;
+    const sMode=srB2()&&t==='s'&&!((($('srQ')||{}).value||'').trim());
+    if(sMode){ const tOf=x=>{ let v=x.t||0; try{ Object.keys(HAB||{}).forEach(m=>{ const h=HAB[m]&&HAB[m][x.name]; if(h&&(h.t||0)>v) v=h.t; }); }catch(e){} return v; }; L.sort((a,b)=>tOf(b)-tOf(a)); }   // Suivi : le dernier produit ajouté ou scanné en haut
+    const dot=x=>{ if(!sMode) return ''; const ap=x.app||(x.fav?SK.slice(0,3):''); return ap==='bb9'?'<i class="sr-dot" style="background:#3B82F6" title="Ajouté sur BBX-11WM"></i>':ap==='phy'?'<i class="sr-dot" style="background:#EC4899" title="Ajouté sur Phylomene"></i>':''; };
     if(srB2()&&!L.length&&L0.length){ const n={r:L0.filter(x=>srTabOk(x,'r')).length,s:L0.filter(x=>srTabOk(x,'s')).length}, nm={r:'Récent',s:'Suivi'}, oth=['r','s'].filter(k=>k!==t&&n[k]); if(oth.length) extra='<div class="sr-note">Rien ici. '+oth.map(k=>'<button class="sr-jump" onclick="BBXMeal.srTab(\''+k+'\')">'+n[k]+' dans '+nm[k]+'</button>').join(' ')+'</div>'+(extra||''); }
-    const row=x=>`<div class="sr-row"><button class="sr-it" onclick="BBXMeal.pick(${x._i},event)"><span class="sr-th">${esc(x.emoji||'🛒')}</span><span class="sr-nm"><b>${esc(x.name)}</b><span>${x.kcal!=null?r(x.kcal):'?'} kcal · ${x.prot!=null?r1(x.prot):'?'} g prot.${x.fat!=null&&x.carb!=null?' · '+r1(x.fat)+' g lip. · '+r1(x.carb)+' g gluc.':''} / 100 ${x.unit||'g'}${x.serving>0&&x.label&&!/^portion de /.test(x.label)?' · 1 '+esc(x.label)+' ≈ '+r(x.serving)+' '+(x.unit||'g'):''}</span></span>${(srB2()&&sr.added&&sr.added[(x.code||'')+'|'+x.name])?'<span class="sr-go added">✓</span>':'<span class="sr-go">＋</span>'}</button>${x.fav?`<button class="sr-del" onclick="BBXMeal.favDel(${x._fi})" aria-label="Retirer de mes produits">✕</button>`:''}</div>`;
+    const row=x=>`<div class="sr-row"><button class="sr-it" onclick="BBXMeal.pick(${x._i},event)"><span class="sr-th">${esc(x.emoji||'🛒')}</span><span class="sr-nm"><b>${dot(x)}${esc(x.name)}</b><span>${x.kcal!=null?r(x.kcal):'?'} kcal · ${x.prot!=null?r1(x.prot):'?'} g prot.${x.fat!=null&&x.carb!=null?' · '+r1(x.fat)+' g lip. · '+r1(x.carb)+' g gluc.':''} / 100 ${x.unit||'g'}${x.serving>0&&x.label&&!/^portion de /.test(x.label)?' · 1 '+esc(x.label)+' ≈ '+r(x.serving)+' '+(x.unit||'g'):''}</span></span>${(srB2()&&sr.added&&sr.added[(x.code||'')+'|'+x.name])?'<span class="sr-go added">✓</span>':'<span class="sr-go">＋</span>'}</button>${x.fav?`<button class="sr-del" onclick="BBXMeal.favDel(${x._fi})" aria-label="Retirer de mes produits">✕</button>`:''}</div>`;
     const sec=(t,arr)=>arr.length?`<div class="sr-sec">${t}</div>`+arr.map(row).join(''):'';
     const h=sec('Tes habitudes · '+esc((MEALS[sr.target]||[''])[0]),L.filter(x=>x.fav&&x.hab))+sec('Mes produits (enregistrés sur ton téléphone)',L.filter(x=>x.fav&&!x.hab))+sec('Catalogue commun (produits ajoutés sur les autres comptes)',L.filter(x=>x.cat))+sec('Aliments courants',L.filter(x=>x.db))+sec('Ciqual · ANSES (base française)',L.filter(x=>x.ciq))+sec('Open Food Facts',L.filter(x=>x.off))+sec('USDA FoodData Central',L.filter(x=>x.usda));
     const qv=$('srQ').value.trim();
-    $('srList').innerHTML=(h||'<div class="sr-note">Aucun résultat pour le moment.</div>')+(extra||'')+(qv.length>=2?'<button class="sr-manual" onclick="BBXMeal.addTyped()">＋ Ajouter « '+esc(qv)+' » à la main</button>':'');
+    $('srList').innerHTML=((sMode&&L.length?L.map(row).join(''):h)||'<div class="sr-note">Aucun résultat pour le moment.</div>')+(extra||'')+(qv.length>=2?'<button class="sr-manual" onclick="BBXMeal.addTyped()">＋ Ajouter « '+esc(qv)+' » à la main</button>':'');
   }
   function showFavs(){
-    sr.n++; { const top=habTop(sr.target,8), used={}; top.forEach(x=>{ used[x.i]=1; }); sr.list=top.map(x=>Object.assign(asFav(FAV[x.i],x.i),{hab:true})).concat(FAV.map((f,i)=>({f:f,i:i})).filter(o=>!used[o.i]).slice(0,40).map(o=>asFav(o.f,o.i))).concat(catMatches('')); }
+    sr.n++; { const top=habTop(sr.target,8), used={}; top.forEach(x=>{ used[x.i]=1; }); sr.list=top.map(x=>Object.assign(asFav(FAV[x.i],x.i),{hab:true})).concat(FAV.map((f,i)=>({f:f,i:i})).filter(o=>!used[o.i]).slice(0,400).map(o=>asFav(o.f,o.i))).concat(catMatches('')); }
     if(srB2()&&!sr.tabSet){ sr.tab='r'; }
     srRender(FAV.length?'<div class="sr-note">Tape le nom d’un aliment : les résultats s’affichent tout de suite, sans connexion.</div>':'<div class="sr-note">Tape le nom d’un aliment : les résultats s’affichent tout de suite, sans connexion. Chaque produit que tu ajoutes est gardé ici.</div>');
   }
