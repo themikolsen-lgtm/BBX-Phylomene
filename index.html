@@ -3241,6 +3241,7 @@ html body #mealForm .mf-ue2 input:focus{ border-color:#34A853 !important; box-sh
 html.mt-beta body #mealForm .mf-ue2{ order:12; }
 html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important; padding:4px var(--cardx,16px) 6px !important; }
 </style>
+<style id="hbtn38">@media (max-width:430px){ html body #mealView .my-mh .my-hbtn{ width:38px !important; height:38px !important; min-width:38px !important; flex-basis:38px !important; } }</style>
 </head>
 <body>
 
@@ -3421,7 +3422,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 17/11 · 22 h 05</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 18/11 · 11 h 00</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -5361,9 +5362,11 @@ window.BBXBk=(function(){
   // ---------- revoir les jours précédents (flèches à côté d'« Aujourd'hui ») ----------
   let viewOff=0;
   const dayKeyOff=o=>{ const n=new Date(); return dkey(new Date(n.getFullYear(),n.getMonth(),n.getDate()+o)); };
+  try{ const v=JSON.parse(sessionStorage.getItem('meal-viewoff')||'null'); if(v&&v.o<0&&v.d===dayKeyOff(0)&&Date.now()-v.t<3600000){ viewOff=v.o; setTimeout(()=>{ try{ renderPast(); }catch(e){} },0); } }catch(e){}
   function oldestOff(){ const ks=Object.keys(HIST).sort(); if(!ks.length) return 0; return Math.round((fd(ks[0])-fd(today()))/86400000); }
   function dayLabel(o){ return o===0?'Aujourd’hui':(o===-1?'Hier':dlabel(dayKeyOff(o))); }
   function renderPast(){
+    try{ sessionStorage.setItem('meal-viewoff',JSON.stringify({o:viewOff,d:dayKeyOff(0),t:Date.now()})); }catch(e){}   // le jour affiché survit à un rechargement
     $('mealView').classList.toggle('past',viewOff<0);
     $('mlDay').textContent=dayLabel(viewOff);
     $('mlNext').disabled=viewOff>=0;
@@ -5466,7 +5469,7 @@ window.BBXBk=(function(){
 (function(){
   var URL_='https://izajghznnufkgjsafuxp.supabase.co', KEY='sb_publishable_COkI6c5lH72Lm2S6unK08g_jfTUWH2A';
   var SK='bbx-sb-session', MK='bbx-sync-meta', LS=window.localStorage;
-  var INC=/^(bb9-|phy-|bbx-shared-)/, EXC=/(usdakey|shfav-1|restore-defs|-(view|auto|navmode|scanmode|wmode|wlayout|autonext|cmode|usdaon|ciqon))$/;
+  var INC=/^(bb9-|phy-|bbx-shared-)/, EXC=/(usdakey|shfav-1|restore-defs|-(view|auto|navmode|scanmode|wmode|wlayout|autonext|cmode|usdaon|ciqon|lastsave|lens))$/;
   var busy=false, timer=null, msg='', lastErr='', recTok=null;
   (function(){ try{ var h=location.hash||''; if(/type=recovery/.test(h)){ var q={}; h.replace(/^#/,'').split('&').forEach(function(x){ var a=x.split('='); q[a[0]]=decodeURIComponent(a[1]||''); }); if(q.access_token){ recTok=q.access_token; history.replaceState(null,'',location.pathname+location.search); } }
       else if(/type=(signup|magiclink|invite|email_change)/.test(h)&&/access_token=/.test(h)){ var q2={}; h.replace(/^#/,'').split('&').forEach(function(x){ var a=x.split('='); q2[a[0]]=decodeURIComponent(a[1]||''); }); var em=''; try{ em=JSON.parse(atob(q2.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).email||''; }catch(e){} jset('bbx-sb-session',{at:q2.access_token,rt:q2.refresh_token,exp:Date.now()+(+q2.expires_in||3600)*1000,email:em}); history.replaceState(null,'',location.pathname+location.search); } }catch(e){} })();
@@ -5592,7 +5595,9 @@ window.BBXBk=(function(){
       else { setMsg(okMsg); cycle(); }
     }).catch(function(x){ setMsg('Connecté, mais la sauvegarde n’a pas pu être chargée : '+((x&&x.message)||'erreur'),1); });
   }
-  function applyNow(){ if(!applyLater) return; var t=+sessionStorage.getItem('bbx-sync-rl')||0; if(Date.now()-t<5000) return; applyLater=false; try{ sessionStorage.setItem('bbx-sync-rl',String(Date.now())); }catch(e){} location.reload(); }
+  function applyNow(){ if(!applyLater) return;
+    { const ae=document.activeElement; if(document.querySelector('.mc-ov.show,.prog-overlay.show,#mealScan.show')||(ae&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName))){ setTimeout(applyNow,2000); return; } }   /* pas de rechargement pendant une saisie ou une fenêtre ouverte */
+    var t=+sessionStorage.getItem('bbx-sync-rl')||0; if(Date.now()-t<5000) return; applyLater=false; try{ sessionStorage.setItem('bbx-sync-rl',String(Date.now())); }catch(e){} location.reload(); }
   function later(){ clearTimeout(timer); timer=setTimeout(function(){ cycle({reload:false}); },1500); }
   function check(){ if(!sess()||busy) return; var m=meta(), dirty=false, ch=false; if(!m.lt) m.lt={}; keys().forEach(function(k){ var v=LS.getItem(k); if(v!=null&&hash(v)!==m.h[k]){ dirty=true; if(!m.lt[k]){ m.lt[k]=Date.now(); ch=true; } } }); if(ch) jset(MK,m); if(dirty) later(); }
   var API={
@@ -5625,6 +5630,28 @@ function BBXClear(){   // vide seulement le cache de l'app : les données et les
   var done=false, go=function(){ if(done) return; done=true; try{ location.replace(location.pathname+'?v='+Date.now()); }catch(e){ location.reload(); } };
   Promise.all(tasks).then(go,go); setTimeout(go,4000);
 }
+</script>
+<script id="bbxBackNav">
+/* touche « retour » (Android, navigateur, glissement iPhone) : ferme la fenêtre ouverte au lieu de quitter l'app */
+(function(){
+  var stack=[], skip=0;
+  function isOpen(el){ return el.classList.contains('show'); }
+  function close(id){ var el=document.getElementById(id); if(!el||!isOpen(el)) return; if(id==='mealScan'&&window.BBXMeal&&BBXMeal.closeScan){ BBXMeal.closeScan(); return; } var x=el.querySelector('.mc-head .mc-x, [data-close]'); if(x) x.click(); else el.classList.remove('show'); }
+  function watch(el){
+    if(!el.id||el.__bbxBack) return; el.__bbxBack=1;
+    new MutationObserver(function(){
+      var i=stack.indexOf(el.id);
+      if(isOpen(el)&&i<0){ stack.push(el.id); try{ history.pushState({bbxov:el.id},''); }catch(e){} }
+      else if(!isOpen(el)&&i>=0){ stack.splice(i,1); if(history.state&&history.state.bbxov===el.id){ skip++; try{ history.back(); }catch(e){ skip--; } } }
+    }).observe(el,{attributes:true,attributeFilter:['class']});
+  }
+  function scan(){ document.querySelectorAll('.mc-ov[id], #mealScan').forEach(watch); }
+  scan(); setTimeout(scan,1500);
+  window.addEventListener('popstate',function(){
+    if(skip>0){ skip--; return; }
+    var id=stack.pop(); if(id) close(id);
+  });
+})();
 </script>
 </body>
 </html>
