@@ -3432,7 +3432,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 18/11 · 18 h 50</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 18/11 · 19 h 10</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -3957,9 +3957,10 @@ window.BBXBk=(function(){
     el.innerHTML='<div class="ai-pg"><span>'+t+'</span><span>'+Math.round(p)+' %</span></div><div class="ai-bar"><i style="width:'+Math.max(2,Math.min(100,p))+'%"></i></div>';
   }
   function aiDetails(ai){   // résumé de tout ce que l'IA a lu
-    const f=v=>String(Math.abs(v)<1?Math.round(v*100)/100:r1(v)).replace('.',','), u=ai.unit==='ml'?'ml':'g', L=[['Énergie',ai.kcal,' kcal'],['Protéines',ai.prot,' g'],['Lipides',ai.fat,' g'],['dont saturés',ai.sat,' g'],['Glucides',ai.carb,' g'],['dont sucres',ai.sugar,' g'],['Fibres',ai.fib,' g'],['Sel',ai.salt,' g'],['Portion',ai.serving,' '+u]];
+    const f=v=>String(Math.abs(v)<1?Math.round(v*100)/100:r1(v)).replace('.',','), u=ai.unit==='ml'?'ml':'g', L=[['Énergie',ai.kcal,' kcal'],['Protéines',ai.prot,' g'],['Lipides',ai.fat,' g'],['dont saturés',ai.sat,' g'],['Glucides',ai.carb,' g'],['dont sucres',ai.sugar,' g'],['Fibres',ai.fib,' g'],['Sel',ai.salt,' g'],['Portion',ai.serving,' '+u],['Poids net',ai.net,' '+u],['Unités',ai.pieces,'']];
     const h=L.filter(x=>x[1]!=null&&isFinite(x[1])).map(x=>'<span>'+x[0]+' '+f(x[1])+x[2]+'</span>').join('');
-    if(h) $('mfInfo').insertAdjacentHTML('beforeend','<div class="ai-det">'+h+'</div>');
+    const uh=ai._unit?'<span style="background:rgba(22,163,74,.16)">1 '+ai._unit.replace(/[<>&]/g,'')+'</span>':'';
+    if(h||uh) $('mfInfo').insertAdjacentHTML('beforeend','<div class="ai-det">'+uh+h+'</div>');
   }
   async function aiRead(file,prog){   // lecture du tableau par l'IA (Gemini via Supabase) ; null si indisponible
     if(!window.BBXSync||!BBXSync.ai||navigator.onLine===false) return {skip:'hors ligne'};
@@ -3987,8 +3988,17 @@ window.BBXBk=(function(){
         if(r.kcal==null&&r.prot!=null&&r.fat!=null&&r.carb!=null) r.kcal=Math.round(4*r.prot+9*r.fat+4*r.carb);
         if(ai.name&&!$('mfName').value.trim()) $('mfName').value=String(ai.name).slice(0,60);
         aiBar(100,'Analyse terminée'); await new Promise(ok=>setTimeout(ok,450));
-        ocrFill(r,'Tableau lu par l’IA'); aiDetails(ai);
+        ocrFill(r,'Tableau lu par l’IA');
         if(ai.unit==='ml'){ try{ setUnit('ml'); fmPrev(); }catch(e){} }
+        const ug=+ai.unit_g;   // poids d'une unité trouvé par l'IA -> « 1 unité = … g » (valeurs toujours pour 100 g)
+        if(ug>0&&ug<=5000){ try{
+          const lb=String(ai.unit_label||'portion').toLowerCase().replace(/[^a-zà-ÿ' -]/g,'').trim().slice(0,14)||'portion', gg=Math.round(ug*10)/10;
+          fm.portions=[{label:lb,g:gg}]; fm.fixed=true; syncPortions(); fm.unitEdited=true;
+          $('mfQty').value=r1(gg); applyBasis('u'); fmUnitBtn();
+          const nm=$('mfName').value.trim(); if(nm) portSet(nm,gg,$('mfUnit').value||'g');
+          ai._unit=lb+' = '+String(gg).replace('.',',')+' '+(ai.unit==='ml'?'ml':'g');
+        }catch(e){} }
+        aiDetails(ai);
         if(!$('mfName').value.trim()) $('mfName').focus();
         return;
       }
