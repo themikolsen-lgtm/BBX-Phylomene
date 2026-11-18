@@ -3432,7 +3432,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 18/11 · 19 h 45</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 18/11 · 20 h 00</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -3955,11 +3955,36 @@ window.BBXBk=(function(){
     const el=$('mfInfo'); if(!el) return; el.className='mf-info ok';
     if(!document.getElementById('aiBarCss')){ const st=document.createElement('style'); st.id='aiBarCss'; st.textContent='.ai-pg{display:flex;justify-content:space-between;gap:8px;font-weight:600}.ai-bar{height:9px;border-radius:9px;background:rgba(0,0,0,.09);margin-top:7px;overflow:hidden}.ai-bar i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#34d399,#16a34a);transition:width .25s ease}.ai-det{margin-top:8px;display:flex;flex-wrap:wrap;gap:5px}.ai-det span{background:rgba(0,0,0,.06);border-radius:8px;padding:3px 7px;font-size:12px;font-weight:600;white-space:nowrap}html.ai-wait.ai-wait.ai-wait.ai-wait body #mealForm input#mfName,html.ai-wait.ai-wait.ai-wait.ai-wait body #mealForm #mfPrev .mf-mac>span b input{color:transparent!important;background:linear-gradient(100deg,rgba(0,0,0,.06) 30%,rgba(255,255,255,.75) 50%,rgba(0,0,0,.06) 70%)!important;background-size:250% 100%!important;animation:aiShim 1.25s linear infinite;border-radius:10px}html.ai-wait.ai-wait.ai-wait.ai-wait body #mealForm input#mfName::placeholder,html.ai-wait.ai-wait.ai-wait.ai-wait body #mealForm #mfPrev input::placeholder{color:transparent!important}html.ai-wait #mfPrev .mf-mac>span{animation:aiPulse 1.25s ease-in-out infinite}html.ai-wait #mfPrev .mf-mac>span:nth-child(2){animation-delay:.15s}html.ai-wait #mfPrev .mf-mac>span:nth-child(3){animation-delay:.3s}html.ai-wait #mfPrev .mf-mac>span:nth-child(4){animation-delay:.45s}@keyframes aiShim{0%{background-position:100% 0}100%{background-position:-150% 0}}@keyframes aiPulse{0%,100%{opacity:1}50%{opacity:.45}}.ai-tm{margin-top:5px;font-size:12px;font-weight:600;opacity:.8}'; document.head.appendChild(st); }
     let tm=''; if(aiT0){ const el2=(Date.now()-aiT0)/1000, est=aiEst()/1000; tm='<div class="ai-tm">⏱ '+el2.toFixed(1).replace('.',',')+' s'+(p>=100?'':el2<est?' · environ '+Math.max(1,Math.round(est))+' s':' · encore un instant…')+'</div>'; }
+    try{ aiOrbSet(p,aiT0?('⏱ '+((Date.now()-aiT0)/1000).toFixed(1).replace('.',',')+' s'+(p>=100?'':((Date.now()-aiT0)<aiEst()?' · environ '+Math.max(1,Math.round(aiEst()/1000))+' s':' · encore un instant…'))):null); }catch(e){}
     el.innerHTML='<div class="ai-pg"><span>'+t+'</span><span>'+Math.round(p)+' %</span></div><div class="ai-bar"><i style="width:'+Math.max(2,Math.min(100,p))+'%"></i></div>'+tm;
   }
   let aiT0=0;
+
+  // animation « Ingrédients en orbite » pendant la lecture par l'IA
+  const AI_FOODS=[['🌾','Céréales'],['🥛','Lait'],['🍫','Chocolat'],['🧈','Beurre'],['🍬','Sucre'],['🥚','Œuf'],['🧂','Sel'],['🌰','Noisette'],['🍓','Fraise'],['🫒','Huile'],['🍯','Miel'],['🥜','Arachide'],['🍅','Tomate'],['🧀','Fromage']];
+  let aiOrbT=[];
+  function aiOrb(on){
+    const old=document.getElementById('aiOrb');
+    aiOrbT.forEach(clearTimeout); aiOrbT=[];
+    if(!on){ if(old) old.remove(); return; }
+    if(!document.getElementById('aiOrbCss')){ const st=document.createElement('style'); st.id='aiOrbCss'; st.textContent=".ai-orb{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;background:rgba(242,243,245,.82);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:aiFade .25s ease}.ai-orb .cd{width:min(340px,calc(100vw - 32px));background:#fff;border-radius:28px;padding:16px 16px 18px;box-shadow:0 12px 36px rgba(0,0,0,.12);box-sizing:border-box;color:#1d1d1f;font-family:inherit}.ai-orb .st{position:relative;width:270px;height:270px;margin:0 auto}.ai-orb .pl{position:absolute;inset:80px;border-radius:50%;background:radial-gradient(circle at 50% 45%,#fff 0 52%,#eef0f3 53% 60%,#fff 61% 100%);box-shadow:0 10px 24px rgba(0,0,0,.10),inset 0 0 0 2px #e5e7eb;display:flex;align-items:center;justify-content:center}.ai-orb .pl b{font-size:30px;animation:aiPl 1.6s ease-in-out infinite}.ai-orb .rg{position:absolute;inset:22px;border-radius:50%;border:2px dashed rgba(22,163,74,.2)}.ai-orb .ob{position:absolute;inset:0;animation:aiSpin 14s linear infinite}.ai-orb .it{position:absolute;left:50%;top:50%;width:0;height:0}.ai-orb .c{position:absolute;transform:translate(-50%,-50%)}.ai-orb .r{display:flex;flex-direction:column;align-items:center;animation:aiSpin 14s linear infinite reverse}.ai-orb .e{font-size:28px;line-height:1;opacity:0;transform:scale(.2);transition:opacity .35s,transform .45s cubic-bezier(.3,1.6,.5,1);filter:drop-shadow(0 3px 4px rgba(0,0,0,.15))}.ai-orb .l{margin-top:3px;font-size:10.5px;font-weight:700;background:#fff;border:1px solid #e5e7eb;border-radius:9px;padding:1px 6px;white-space:nowrap;opacity:0;transform:translateY(4px);transition:all .3s .2s}.ai-orb .l.ok{background:#dcfce7;border-color:#86efac;color:#166534}.ai-orb .it.on .e{opacity:1;transform:scale(1)}.ai-orb .it.on .l{opacity:1;transform:none}.ai-orb .tx{text-align:center;font-weight:700;font-size:15px;margin-top:4px}.ai-orb .dt::after{content:'';animation:aiDots 1.2s steps(4) infinite}.ai-orb .br{height:9px;border-radius:9px;background:#e5e7eb;margin:12px 4px 6px;overflow:hidden}.ai-orb .br i{display:block;height:100%;width:2%;border-radius:9px;background:linear-gradient(90deg,#34d399,#16a34a);transition:width .25s}.ai-orb .mt{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#6b7280;padding:0 4px}.ai-orb.out{opacity:0;transition:opacity .3s}@keyframes aiSpin{to{transform:rotate(360deg)}}@keyframes aiPl{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}@keyframes aiFade{from{opacity:0}to{opacity:1}}@keyframes aiDots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}"; document.head.appendChild(st); }
+    if(old) old.remove();
+    const pool=AI_FOODS.slice().sort(()=>Math.random()-.5).slice(0,8), R=104;
+    const o=document.createElement('div'); o.id='aiOrb'; o.className='ai-orb';
+    o.innerHTML='<div class="cd"><div class="st"><div class="rg"></div><div class="ob">'+pool.map((f,i)=>{ const a=i/pool.length*2*Math.PI-Math.PI/2; return '<div class="it" style="transform:translate('+(Math.cos(a)*R).toFixed(1)+'px,'+(Math.sin(a)*R).toFixed(1)+'px)"><div class="c"><div class="r"><span class="e">'+f[0]+'</span><span class="l">'+f[1]+'</span></div></div></div>'; }).join('')+'</div><div class="pl"><b>🍽️</b></div></div><div class="tx"><span class="m">Identification des ingrédients</span><span class="dt"></span></div><div class="br"><i></i></div><div class="mt"><span class="tm">⏱ 0,0 s</span><span class="pc">0 %</span></div></div>';
+    document.body.appendChild(o);
+    const its=[...o.querySelectorAll('.it')];
+    its.forEach((it,i)=>{ aiOrbT.push(setTimeout(()=>it.classList.add('on'),200+i*450)); aiOrbT.push(setTimeout(()=>{ const l=it.querySelector('.l'); l.classList.add('ok'); l.textContent='✓ '+pool[i][1]; },700+i*450)); });
+  }
+  function aiOrbSet(p,tm){ const o=document.getElementById('aiOrb'); if(!o) return; o.querySelector('.br i').style.width=Math.max(2,Math.min(100,p))+'%'; o.querySelector('.pc').textContent=Math.round(p)+' %'; if(tm!=null) o.querySelector('.tm').textContent=tm; }
+  function aiOrbDone(){   // tout s'identifie d'un coup, ✅, puis l'animation disparaît
+    return new Promise(ok=>{ const o=document.getElementById('aiOrb'); if(!o) return ok(); aiOrbT.forEach(clearTimeout); aiOrbT=[];
+      [...o.querySelectorAll('.it')].forEach((it,i)=>setTimeout(()=>{ it.classList.add('on'); const l=it.querySelector('.l'); if(!l.classList.contains('ok')){ l.classList.add('ok'); l.textContent='✓ '+l.textContent; } },i*60));
+      setTimeout(()=>{ o.querySelector('.pl b').textContent='✅'; o.querySelector('.m').textContent='Analyse terminée ✓'; o.querySelector('.dt').style.display='none'; },300);
+      setTimeout(()=>{ o.classList.add('out'); setTimeout(()=>{ o.remove(); ok(); },300); },1000); });
+  }
   const aiEst=()=>{ try{ const v=+localStorage.getItem('bbx-ai-ms'); return v>500&&v<60000?v:4000; }catch(e){ return 4000; } };
-  function aiWait(on){ document.documentElement.classList.toggle('ai-wait',!!on); }
+  function aiWait(on){ aiOrb(!!on); }
   function aiCount(){   // les valeurs montent de 0 jusqu'au résultat, les ronds se remplissent
     const sp=[...document.querySelectorAll('#mfPrev .mf-mac>span')], T=[];
     sp.forEach((s,i)=>{ const inp=s.querySelector('input'); if(!inp) return; const fv=inp.value, n=parseFloat(String(fv).replace(',','.')), fp=s.style.getPropertyValue('--p'), pn=parseFloat(fp); if(!(n>0)) return; T.push({s,inp,fv,n,fp,pn,d:+(inp.dataset.d||0),delay:i*120}); inp.value='0'; if(fp) s.style.setProperty('--p','0'); });
@@ -3996,13 +4021,15 @@ window.BBXBk=(function(){
     try{
       aiT0=Date.now(); aiWait(1); aiBar(3,'Préparation de la photo…');
       const ai=await aiRead(file,aiBar).catch(e=>({skip:(e&&e.message)||'erreur'}));
-      const aiMs=Date.now()-aiT0; aiWait(0);
+      const aiMs=Date.now()-aiT0;
+      const aiOkRes=ai&&!ai.skip&&ai.ok!==false&&[ai.kcal,ai.prot,ai.fat,ai.carb].some(v=>v!=null);
+      if(!aiOkRes) aiWait(0);
       if(ai&&!ai.skip){ try{ localStorage.setItem('bbx-ai-ms',String(Math.round(aiEst()*0.6+aiMs*0.4))); }catch(e){} }
       if(ai&&!ai.skip&&ai.ok!==false&&[ai.kcal,ai.prot,ai.fat,ai.carb].some(v=>v!=null)){
         const r={kcal:ai.kcal,prot:ai.prot,fat:ai.fat,carb:ai.carb,unsure:[],warn:[]};
         if(r.kcal==null&&r.prot!=null&&r.fat!=null&&r.carb!=null) r.kcal=Math.round(4*r.prot+9*r.fat+4*r.carb);
         let guessed=false; if(ai.name&&!$('mfName').value.trim()){ $('mfName').value=String(ai.name).slice(0,60); guessed=ai.name_sure===false; }
-        aiBar(100,'Analyse terminée'); aiT0=0; await new Promise(ok=>setTimeout(ok,350));
+        aiBar(100,'Analyse terminée'); aiT0=0; await aiOrbDone();
         ocrFill(r,'Tableau lu par l’IA');
         if(ai.unit==='ml'){ try{ setUnit('ml'); fmPrev(); }catch(e){} }
         const ug=+ai.unit_g;   // poids d'une unité trouvé par l'IA -> « 1 unité = … g » (valeurs toujours pour 100 g)
