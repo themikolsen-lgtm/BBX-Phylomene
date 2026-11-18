@@ -3242,6 +3242,15 @@ html.mt-beta body #mealForm .mf-ue2{ order:12; }
 html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important; padding:4px var(--cardx,16px) 6px !important; }
 </style>
 <style id="hbtn38">@media (max-width:430px){ html body #mealView .my-mh .my-hbtn{ width:38px !important; height:38px !important; min-width:38px !important; flex-basis:38px !important; } }</style>
+<style id="pasteCss">
+.m-paste{ margin-top:12px; display:flex; flex-direction:column; gap:8px; }
+.m-paste[hidden]{ display:none !important; }
+.m-paste textarea{ width:100%; box-sizing:border-box; border:1.5px solid #C9CED6; border-radius:14px; padding:10px 12px; font:600 14px/1.35 system-ui,sans-serif; color:#15171C; background:#fff; resize:vertical; }
+.m-paste textarea:focus{ outline:0; border-color:#34A853; box-shadow:0 0 0 3px rgba(125,217,87,.25); }
+.m-paste-go{ height:46px; border:0; border-radius:999px; background:#7DD957; color:#143008; font-size:16px; font-weight:900; cursor:pointer; }
+.m-paste small{ font-size:12px; font-weight:600; color:#4B5563; line-height:1.35; }
+.m-pick-row{ flex-wrap:wrap; }
+</style>
 </head>
 <body>
 
@@ -3291,7 +3300,8 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
   <div class="id-taste" id="idTaste" role="group" aria-label="Filtre sucré ou salé"><button type="button" data-t="" class="on" onclick="BBXMeal.ideaTaste('')">Tout</button><button type="button" data-t="s" onclick="BBXMeal.ideaTaste('s')">🍓 Sucré</button><button type="button" data-t="a" onclick="BBXMeal.ideaTaste('a')">🧂 Salé</button></div>
   <div id="idList"></div>
 </div>
-<div id="mealPick" class="m-pick" onclick="if(event.target===this)BBXMeal.closePick()"><div class="m-pick-card"><b>Tableau nutritionnel</b><div class="m-pick-row"><button class="mc-big ib ibt red" onclick="BBXMeal.pickCam()" aria-label="Prendre une photo" title="Prendre une photo"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5h3l1.5-2.5h7L17 8.5h3V19H4z"/><circle cx="12" cy="13.3" r="3.4"/></svg></span><em>Prendre une photo</em></button><button class="mc-big ib ibt" onclick="BBXMeal.pickGal()" aria-label="Choisir dans la galerie" title="Choisir dans la galerie"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17.5l5.2-5 3.8 3.5 2.6-2.4 4.4 4"/></svg></span><em>Galerie</em></button></div></div></div>
+<div id="mealPick" class="m-pick" onclick="if(event.target===this)BBXMeal.closePick()"><div class="m-pick-card"><b>Tableau nutritionnel</b><div class="m-pick-row"><button class="mc-big ib ibt red" onclick="BBXMeal.pickCam()" aria-label="Prendre une photo" title="Prendre une photo"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5h3l1.5-2.5h7L17 8.5h3V19H4z"/><circle cx="12" cy="13.3" r="3.4"/></svg></span><em>Prendre une photo</em></button><button class="mc-big ib ibt" onclick="BBXMeal.pickGal()" aria-label="Choisir dans la galerie" title="Choisir dans la galerie"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17.5l5.2-5 3.8 3.5 2.6-2.4 4.4 4"/></svg></span><em>Galerie</em></button><button class="mc-big ib ibt" onclick="BBXMeal.pickPaste()" aria-label="Coller le texte du tableau" title="Coller le texte du tableau"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4.5" width="12" height="16" rx="2"/><path d="M9 4.5V3.5h6v1M9 10h6M9 13.5h6M9 17h4"/></svg></span><em>Coller le texte</em></button></div>
+<div class="m-paste" id="mfPaste" hidden><textarea id="mfPasteTxt" rows="6" placeholder="Colle ici le texte du tableau nutritionnel"></textarea><button type="button" class="m-paste-go" onclick="BBXMeal.pasteRead()">Lire le texte</button><small>Sur iPhone : ouvre la photo du tableau, appuie longuement sur le texte (Texte en direct), « Tout sélectionner » puis « Copier ». Sur Android : Google Lens, « Texte », puis « Copier ». Reviens ici et colle.</small></div></div></div>
 <input type="file" id="mfOcrGal" accept="image/*" hidden>
 <button id="mealFab" onclick="BBXMeal.fab()" aria-label="Ajouter un produit" title="Ajouter un produit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
 <div id="mealFabSheet" class="mfs" onclick="if(event.target===this)BBXMeal.fabClose()" aria-label="Ajouter un produit">
@@ -3422,7 +3432,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 18/11 · 11 h 05</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 18/11 · 11 h 20</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -3957,7 +3967,7 @@ window.BBXBk=(function(){
       w=await ocrWorker();
       const parses=[]; let sol=null, B=null;
       const plan=[['A',6],['B',6],['A',4],['B',11]];
-      const run=async(cv,psm)=>{ await w.setParameters({tessedit_pageseg_mode:String(psm),preserve_interword_spaces:'1',user_defined_dpi:'300'}); const r=await w.recognize(cv); parses.push(parseNutri2(r.data.text,r.data.words)); sol=ocrSolve(parses); };
+      const run=async(cv,psm)=>{ await w.setParameters({tessedit_pageseg_mode:String(psm),preserve_interword_spaces:'1',user_defined_dpi:'300'}); const r=await w.recognize(await ocrBlob(cv)); parses.push(parseNutri2(r.data.text,r.data.words)); sol=ocrSolve(parses); };
       for(let i=0;i<plan.length;i++){
         pass=' (passe '+(i+1)+')'; const [v,psm]=plan[i];
         if(v==='B'&&!B) B=ocrThresh(A);
@@ -3968,7 +3978,7 @@ window.BBXBk=(function(){
         for(const deg of [90,270]){ pass=' (photo pivotée)'; await run(ocrRot(A,deg),6); if(sol.kcal!=null||sol.prot!=null) break; }
       }
       const r=sol, got=[r.kcal,r.prot,r.fat,r.carb].filter(v=>v!=null).length;
-      if(!got){ err('Je n’ai pas réussi à lire le tableau. Reprends la photo bien à plat, de près et bien éclairée, ou saisis les valeurs à la main.'); return; }
+      if(!got){ err('Je n’ai pas réussi à lire le tableau sur la photo. Essaie « Coller le texte » (Texte en direct de l’iPhone ou Google Lens) : c’est le plus rapide et le plus fiable.'); return; }
       const ids={kcal:'mfKcal',prot:'mfProt',fat:'mfFat',carb:'mfCarb'};
       for(const k in ids){ if(r[k]!=null) $(ids[k]).value=r1(r[k]); }
       r.unsure.forEach(k=>{ if(r[k]!=null) $(ids[k]).classList.add('mf-unsure'); });
@@ -3979,8 +3989,62 @@ window.BBXBk=(function(){
       if(r.unsure.length) msg+=' Les cases en orange sont à contrôler.'; if(r.warn.length) msg+=' Attention : '+r.warn.join(', ')+'.';
       if(miss.length||r.warn.length||r.unsure.length) err(msg); else info(msg);
       if(!$('mfName').value.trim()) $('mfName').focus();
-    }catch(e){ err('Lecture impossible ('+((e&&e.message)||'erreur')+'). Vérifie ta connexion internet ou saisis les valeurs à la main.'); }
+    }catch(e){ ocrWP=null; err('Lecture de la photo impossible ('+((e&&e.message)||'erreur')+'). Essaie « Coller le texte » : c’est le plus rapide et le plus fiable.'); }
     finally{ ocrLog=null; $('mfOcrBtn').classList.remove('busy'); }
+  }
+  function ocrFill(r,lead){
+    const info=t=>{ $('mfInfo').textContent=t; $('mfInfo').className='mf-info ok'; }, err=t=>{ $('mfInfo').textContent=t; $('mfInfo').className='mf-info err'; };
+    const got=[r.kcal,r.prot,r.fat,r.carb].filter(v=>v!=null).length;
+    if(!got){ err('Je n’ai trouvé aucune valeur dans ce texte. Vérifie qu’il contient bien le tableau (énergie, matières grasses, glucides, protéines).'); return false; }
+    const ids={kcal:'mfKcal',prot:'mfProt',fat:'mfFat',carb:'mfCarb'};
+    for(const k in ids){ if(r[k]!=null) $(ids[k]).value=r1(r[k]); }
+    (r.unsure||[]).forEach(k=>{ if(r[k]!=null) $(ids[k]).classList.add('mf-unsure'); });
+    setUnit('g'); autoQty(); fmPrev();
+    const miss=[['kcal',r.kcal],['protéines',r.prot],['lipides',r.fat],['glucides',r.carb]].filter(x=>x[1]==null).map(x=>x[0]);
+    let msg=lead+' (valeurs pour 100 g). Vérifie-les'+(miss.length?' et complète : '+miss.join(', '):'')+', puis valide.';
+    if((r.warn||[]).length) msg+=' Attention : '+r.warn.join(', ')+'.';
+    if(miss.length||(r.warn||[]).length||(r.unsure||[]).length) err(msg); else info(msg);
+    return true;
+  }
+  // analyse d'un texte de tableau copié (Texte en direct / Google Lens) : lignes « libellé valeur » ou colonnes séparées
+  function parseLabelText(raw){
+    const T=String(raw||'').replace(/\r/g,'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/(\d),(\d)/g,'$1.$2').replace(/<\s*(\d)/g,'$1');
+    const lines=T.split('\n').map(l=>l.replace(/\s+/g,' ').trim()).filter(Boolean);
+    const kind=l=>/energ|calor/.test(l)?'kcal':/acides? gras satur|satures|saturated/.test(l)?'sat':/sucres|sugars?/.test(l)&&!/glucides|carbo/.test(l.split(/sucres|sugars?/)[0])?'sug':/matieres? grasses|lipides|graisses|\bfat\b|grasas/.test(l)?'fat':/glucides|carbohydr|hydrates/.test(l)?'carb':/proteines?|proteins?/.test(l)?'prot':/fibres?|fibers?/.test(l)?'fib':/\bsel\b|\bsalt\b|sodium/.test(l)?'salt':null;
+    const portionFirst=(()=>{ const h=lines.slice(0,4).join(' '); const a=h.search(/portion|par \d|serving|verre|tranche/), b=h.search(/100\s*(g|ml)/); return a>=0&&b>=0&&a<b; })();
+    const nums=s=>{ const out=[]; s.replace(/(\d+(?:\.\d+)?)\s*(kcal|kj|mg|g|ml)?/g,(m,v,u)=>{ out.push({v:+v,u:u||''}); return m; }); return out; };
+    const res={}, put=(k,v)=>{ if(v!=null&&isFinite(v)&&res[k]==null) res[k]=v; };
+    // 1) une ligne = un libellé + ses valeurs
+    lines.forEach(l=>{
+      const k=kind(l); if(!k) return; let rest=l;
+      if(k==='carb'||k==='fat'){ rest=l.split(/dont|of which/)[0]; }
+      const n=nums(rest.replace(/^[^\d]*/,'')); if(!n.length) return;
+      if(k==='kcal'){ const kc=n.filter(x=>x.u==='kcal'); if(kc.length) put('kcal',(portionFirst&&kc[1]?kc[1]:kc[0]).v); else { const kj=n.filter(x=>x.u==='kj'); if(kj.length) put('kcal',Math.round((portionFirst&&kj[1]?kj[1]:kj[0]).v/4.184)); } return; }
+      const g=n.filter(x=>x.u!=='kj'&&x.u!=='kcal'); if(g.length) put(k,(portionFirst&&g[1]?g[1]:g[0]).v);
+    });
+    // 2) colonnes séparées : d'abord tous les libellés, puis toutes les valeurs dans le même ordre
+    const labs=lines.filter(l=>kind(l)&&!/\d/.test(l)).map(kind);
+    if(labs.length>=3){
+      const vals=[]; lines.filter(l=>/\d/.test(l)&&!kind(l)&&!/^(pour|par|for|per)\b|100\s*(g|ml)\s*$/.test(l)).forEach(l=>nums(l).forEach(x=>vals.push(x)));
+      const kc=vals.filter(x=>x.u==='kcal'), kj=vals.filter(x=>x.u==='kj'), gs=vals.filter(x=>x.u!=='kcal'&&x.u!=='kj');
+      if(labs.includes('kcal')){ if(kc.length) put('kcal',kc[0].v); else if(kj.length) put('kcal',Math.round(kj[0].v/4.184)); }
+      labs.filter(k=>k!=='kcal').forEach((k,i)=>{ if(gs[i]) put(k,gs[i].v); });
+    }
+    const r={kcal:res.kcal!=null?res.kcal:null,prot:res.prot!=null?res.prot:null,fat:res.fat!=null?res.fat:null,carb:res.carb!=null?res.carb:null,unsure:[],warn:[]};
+    if(r.kcal&&r.prot!=null&&r.fat!=null&&r.carb!=null){ const e=4*r.prot+9*r.fat+4*r.carb; if(Math.abs(e-r.kcal)/Math.max(r.kcal,30)>0.3) r.warn.push('les calories ne correspondent pas aux macros, vérifie les valeurs'); }
+    return r;
+  }
+  function pasteRead(){
+    const t=($('mfPasteTxt').value||'').trim(); if(!t){ try{ $('mfPasteTxt').focus(); }catch(e){} return; }
+    let sol=parseLabelText(t);
+    if([sol.kcal,sol.prot,sol.fat,sol.carb].some(v=>v==null)){ try{ const o=ocrSolve([parseNutri2(t,null)]); ['kcal','prot','fat','carb'].forEach(k=>{ if(sol[k]==null&&o[k]!=null){ sol[k]=o[k]; sol.unsure.push(k); } }); }catch(e){} }
+    $('mealPick').classList.remove('show'); $('mfPaste').hidden=true;
+    if(ocrFill(sol,'Texte lu')){ $('mfPasteTxt').value=''; if(!$('mfName').value.trim()) try{ $('mfName').focus(); }catch(e){} }
+  }
+  async function pickPaste(){
+    $('mfPaste').hidden=false;
+    try{ if(navigator.clipboard&&navigator.clipboard.readText){ const t=await navigator.clipboard.readText(); if(t&&/\d/.test(t)&&/(kcal|kj|prot|lipid|glucid|graisse|energ|sucre|fat|carb)/i.test(t)){ $('mfPasteTxt').value=t; pasteRead(); return; } } }catch(e){}
+    try{ $('mfPasteTxt').focus(); }catch(e){}
   }
   ['mfOcrFile','mfOcrGal'].forEach(id=>$(id).addEventListener('change',e=>{ const f=e.target.files&&e.target.files[0]; e.target.value=''; if(f) ocrRun(f); }));
   // ---------- Idées : aliments légers adaptés aux kcal / protéines / lipides / glucides restants ----------
@@ -5429,7 +5493,7 @@ window.BBXBk=(function(){
     ideaWant:ideaWant, ideaTaste:ideaTaste, add:m=>openForm('add',m), edit:(m,i)=>openForm('edit',m,i), del:delItem, move:moveItem, resetDef:resetDef,
     saveForm:saveForm, basis:setBasis, unitSave:unitSave, unitStep:unitStep, gramIn:gramIn, uqty:uqty, uset:uset, uset:uset, fixKcal:fixKcal, closeForm:()=>$('mealForm').classList.remove('show'),
     ideas:openIdeas, closeIdeas:()=>$('mealIdeas').classList.remove('show'), ideaPick:ideaPick,
-    ocr:()=>$('mealPick').classList.add('show'), closePick:()=>$('mealPick').classList.remove('show'), pickCam:()=>{ $('mealPick').classList.remove('show'); $('mfOcrFile').click(); }, pickGal:()=>{ $('mealPick').classList.remove('show'); $('mfOcrGal').click(); },
+    ocr:()=>$('mealPick').classList.add('show'), closePick:()=>$('mealPick').classList.remove('show'), pickCam:()=>{ $('mealPick').classList.remove('show'); $('mfOcrFile').click(); }, pickPaste:pickPaste, pasteRead:pasteRead, pickGal:()=>{ $('mealPick').classList.remove('show'); $('mfOcrGal').click(); },
     scanTable:()=>{ const t=sc.target; stopCam(); closeScan(); openForm('add',t,null,{info:'Prends en photo le tableau nutritionnel du produit, ou choisis une image dans ta galerie.'}); $('mealPick').classList.add('show'); }, scan:scanOpen, closeScan:closeScan, manual:manual, scanMode:setScanMode, scanDesc:renderScanMode, photoMode:photoMode,
     addWeigh:()=>openWeigh('add'), goalWeigh:openPlan, closePlan:()=>$('mealPlan').classList.remove('show'), savePlan:savePlan, plRender:renderPlan, plProg:plProg,
     plLevel:v=>{ pl.level=v; renderPlan(); }, plSex:v=>{ pl.sex=v; renderPlan(); }, plUnit:u=>{ const w=durWeeks(); pl.unit=u; $('plDur').value=String(Math.max(1,Math.round(u==='days'?w*7:u==='months'?w*12/52:w))); renderPlan(); },
