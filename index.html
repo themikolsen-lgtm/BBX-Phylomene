@@ -3432,7 +3432,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 18/11 · 12 h 10</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 18/11 · 18 h 50</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -3951,14 +3951,26 @@ window.BBXBk=(function(){
   }
   function ocrWarm(){ try{ ocrWorker().catch(()=>{}); }catch(e){} }
   document.addEventListener('click',e=>{ const t=e.target; if(t&&t.closest&&t.closest('#mfOcrBtn,#mealPick,#mfOcrFile,#mfOcrGal,.sr-hb')) ocrWarm(); },true);
-  async function aiRead(file){   // lecture du tableau par l'IA (Gemini via Supabase) ; null si indisponible
+  function aiBar(p,t){   // barre de progression de l'analyse IA
+    const el=$('mfInfo'); if(!el) return; el.className='mf-info ok';
+    if(!document.getElementById('aiBarCss')){ const st=document.createElement('style'); st.id='aiBarCss'; st.textContent='.ai-pg{display:flex;justify-content:space-between;gap:8px;font-weight:600}.ai-bar{height:9px;border-radius:9px;background:rgba(0,0,0,.09);margin-top:7px;overflow:hidden}.ai-bar i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#34d399,#16a34a);transition:width .25s ease}.ai-det{margin-top:8px;display:flex;flex-wrap:wrap;gap:5px}.ai-det span{background:rgba(0,0,0,.06);border-radius:8px;padding:3px 7px;font-size:12px;font-weight:600;white-space:nowrap}'; document.head.appendChild(st); }
+    el.innerHTML='<div class="ai-pg"><span>'+t+'</span><span>'+Math.round(p)+' %</span></div><div class="ai-bar"><i style="width:'+Math.max(2,Math.min(100,p))+'%"></i></div>';
+  }
+  function aiDetails(ai){   // résumé de tout ce que l'IA a lu
+    const f=v=>String(Math.abs(v)<1?Math.round(v*100)/100:r1(v)).replace('.',','), u=ai.unit==='ml'?'ml':'g', L=[['Énergie',ai.kcal,' kcal'],['Protéines',ai.prot,' g'],['Lipides',ai.fat,' g'],['dont saturés',ai.sat,' g'],['Glucides',ai.carb,' g'],['dont sucres',ai.sugar,' g'],['Fibres',ai.fib,' g'],['Sel',ai.salt,' g'],['Portion',ai.serving,' '+u]];
+    const h=L.filter(x=>x[1]!=null&&isFinite(x[1])).map(x=>'<span>'+x[0]+' '+f(x[1])+x[2]+'</span>').join('');
+    if(h) $('mfInfo').insertAdjacentHTML('beforeend','<div class="ai-det">'+h+'</div>');
+  }
+  async function aiRead(file,prog){   // lecture du tableau par l'IA (Gemini via Supabase) ; null si indisponible
     if(!window.BBXSync||!BBXSync.ai||navigator.onLine===false) return {skip:'hors ligne'};
     const im=await ocrImg(file), W=im.naturalWidth||im.width, H=im.naturalHeight||im.height, s=Math.min(1,1600/Math.max(W,H));
     const c=document.createElement('canvas'); c.width=Math.round(W*s); c.height=Math.round(H*s); const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(im,0,0,c.width,c.height);
     const data=c.toDataURL('image/jpeg',0.85);
+    let p=15, iv=null; if(prog){ prog(p,'Envoi de la photo…'); iv=setInterval(()=>{ p+=(95-p)*0.045; prog(p,p<30?'Envoi de la photo…':p<80?'Analyse par l’IA…':'Presque fini…'); },150); }
     try{
       return await Promise.race([BBXSync.ai({image:data,mime:'image/jpeg'}), new Promise((_,ko)=>setTimeout(()=>ko(new Error('délai dépassé')),45000))]);
     }catch(e){ const m=(e&&e.message)||''; return {skip: /non connect/.test(m)?'non connecté':(e&&e.status===429)?'quota':m||'erreur'}; }
+    finally{ if(iv) clearInterval(iv); }
   }
   async function ocrRun(file){
     const info=t=>{ $('mfInfo').textContent=t; $('mfInfo').className='mf-info ok'; };
@@ -3968,13 +3980,14 @@ window.BBXBk=(function(){
     $('mealForm').scrollTop=0; $('mfOcrBtn').classList.remove('pulse'); $('mfOcrBtn').classList.add('busy'); info('Préparation de la photo…');
     let w=null, why='';
     try{
-      info('Lecture du tableau par l’IA…');
-      const ai=await aiRead(file).catch(e=>({skip:(e&&e.message)||'erreur'}));
+      aiBar(3,'Préparation de la photo…');
+      const ai=await aiRead(file,aiBar).catch(e=>({skip:(e&&e.message)||'erreur'}));
       if(ai&&!ai.skip&&ai.ok!==false&&[ai.kcal,ai.prot,ai.fat,ai.carb].some(v=>v!=null)){
         const r={kcal:ai.kcal,prot:ai.prot,fat:ai.fat,carb:ai.carb,unsure:[],warn:[]};
         if(r.kcal==null&&r.prot!=null&&r.fat!=null&&r.carb!=null) r.kcal=Math.round(4*r.prot+9*r.fat+4*r.carb);
         if(ai.name&&!$('mfName').value.trim()) $('mfName').value=String(ai.name).slice(0,60);
-        ocrFill(r,'Tableau lu par l’IA');
+        aiBar(100,'Analyse terminée'); await new Promise(ok=>setTimeout(ok,450));
+        ocrFill(r,'Tableau lu par l’IA'); aiDetails(ai);
         if(ai.unit==='ml'){ try{ setUnit('ml'); fmPrev(); }catch(e){} }
         if(!$('mfName').value.trim()) $('mfName').focus();
         return;
