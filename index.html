@@ -3422,7 +3422,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 18/11 · 11 h 00</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 18/11 · 11 h 05</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -5376,7 +5376,7 @@ window.BBXBk=(function(){
     const H=HIST[dayKeyOff(viewOff)];
     if(!H){ $('pastSum').hidden=true; $('pastSum').innerHTML=''; sumMeasure(); box.innerHTML='<div class="mp-empty">Rien n’est enregistré pour ce jour.<small>Un jour est enregistré dès que tu coches ce que tu as mangé.</small></div>'; return; }
     const gk=H.kg||S.kg, gp=H.pg||S.pg, rk=gk-H.k, rp=gp-H.p;
-    const colH=(cls,t,eaten,goal,unit,rem,f)=>`<div class="sx-c ${cls}${rem<0?' over':''}"><div class="sx-h"><span class="sx-t">${t}</span><b>${Math.abs(Math.round(rem*10)/10)}</b></div><div class="sx-bar"><i style="width:${Math.max(0,Math.min(1,f||0))*100}%"></i></div><div class="sx-l">${eaten} / ${goal}${unit}</div></div>`;
+    const colH=(cls,t,eaten,goal,unit,rem,f)=>`<div class="sx-c ${cls}${rem<0?' over':''}" style="--rp:${(Math.max(0,Math.min(1,f||0))*100).toFixed(1)}"><div class="sx-h"><span class="sx-t">${t}</span><b>${Math.abs(Math.round(rem*10)/10)}</b></div><div class="sx-bar"><i style="width:${Math.max(0,Math.min(1,f||0))*100}%"></i></div><div class="sx-l">${eaten} / ${goal}${unit}</div></div>`;
     const cols=colH('k','Kcal',H.k,gk,' kcal',rk,H.k/gk)+colH('p','Protéines',H.p,gp,'g',rp,H.p/gp)+(H.f!=null?colH('f','Lipides',H.f,H.fg||S.fg,'g',(H.fg||S.fg)-H.f,H.f/(H.fg||S.fg))+colH('c','Glucides',H.c,H.cg||S.cg,'g',(H.cg||S.cg)-H.c,H.c/(H.cg||S.cg)):'');
     const mini=(cls,t,v,g)=>`<div class="mc-mini ${cls}${v>g?' over':''}"><div class="mm-h"><span>${t}</span><div class="mm-r"><small>${v<=g?'Restants':'Dépassé'}</small><b>${Math.abs(Math.round((g-v)*10)/10)}</b></div></div><div class="mm-l">${v} / ${g} g</div><div class="mc-bar"><i style="width:${Math.max(0,Math.min(1,g>0?v/g:0))*100}%"></i></div></div>`;
     const bar=(cls,txt,rem,lab,f)=>`<div class="mc-row ${cls}${rem<0?' over':''}"><div class="mc-l">${txt}</div><div class="mc-r"><small>${rem>=0?'Restants':'Dépassé'}</small><b>${Math.abs(Math.round(rem*10)/10)}</b></div><div class="mc-bar"><i style="width:${Math.max(0,Math.min(1,f))*100}%"></i></div></div>`;
