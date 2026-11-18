@@ -3228,6 +3228,36 @@ html.mt-beta.mt-b2 body #mealView .sum-full .sx-c.k .sx-t::after{ content:"Calor
 html.mt-beta.mt-b2 body #mealView .sum-full .sx-c .sx-t{ color:#15171C !important; -webkit-text-fill-color:#15171C; }
 html.mt-beta.mt-b2 body #mealView .sum-full .sx-c .sx-l{ font-size:clamp(8.5px,2.6vw,11px) !important; font-weight:800 !important; font-style:italic; color:#2E1F2A !important; margin-top:-4px; }
 html.mt-beta.mt-b2 body #mealView .sum-full .sx-c .sx-l .sm-in{ color:#2E1F2A !important; font-style:italic; }
+
+/* ---- Bêta : écran « Idées » au même design que « Rechercher » ---- */
+html.mt-beta.mt-b2 body #mealIdeas .mc-head b{ font-size:17.5px !important; letter-spacing:-.01em; white-space:nowrap; }
+html.mt-beta.mt-b2 body #mealIdeas .id-sub{ text-align:center; font-size:14px !important; font-weight:800 !important; color:#2E1F2A !important; margin:0 0 12px !important; line-height:1.35; }
+html.mt-beta.mt-b2 body #mealIdeas .id-rem{ justify-content:center; margin:0 0 14px !important; }
+html.mt-beta.mt-b2 body #mealIdeas .id-want{ margin:0 0 14px !important; position:relative; }
+html.mt-beta.mt-b2 body #mealIdeas #idWant{ height:56px !important; border-radius:999px !important; border:2px solid #CBD2DA !important; background:#fff !important; box-shadow:none !important; padding:0 24px !important; font-size:16px !important; color:#15171C !important; outline:0 !important; width:100%; box-sizing:border-box; }
+html.mt-beta.mt-b2 body #mealIdeas #idWant::placeholder{ font-style:italic; color:#6B7280 !important; }
+html.mt-beta.mt-b2 body #mealIdeas #idWant:focus{ border-color:#7DD957 !important; box-shadow:0 0 0 3px rgba(125,217,87,.22) !important; }
+html.mt-beta.mt-b2 body #mealIdeas .id-taste{ display:flex; gap:4px; padding:5px !important; margin:0 26px 14px !important; border-radius:999px !important; background:#fff !important; border:0 !important; box-shadow:0 6px 18px rgba(20,24,40,.10) !important; }
+html.mt-beta.mt-b2 body #mealIdeas .id-taste button{ flex:1 1 0; height:40px !important; border:0 !important; border-radius:999px !important; background:transparent !important; color:#2E1F2A !important; font-size:15px !important; font-weight:800 !important; box-shadow:none !important; cursor:pointer; }
+html.mt-beta.mt-b2 body #mealIdeas .id-taste button.on{ background:#7DD957 !important; color:#fff !important; }
+html.mt-beta.mt-b2 body #mealIdeas #idList .sr-it{ background:transparent !important; border:0 !important; border-bottom:1px solid #CBD2DA !important; border-radius:0 !important; box-shadow:none !important; margin:0 !important; padding:12px 2px !important; gap:12px !important; align-items:center !important; min-height:0 !important; }
+html.mt-beta.mt-b2 body #mealIdeas .sr-th{ width:56px !important; height:56px !important; border-radius:12px !important; background:#FDEBD3 !important; font-size:30px !important; flex:none; }
+html.mt-beta.mt-b2 body #mealIdeas .sr-nm b{ font-size:14px !important; font-weight:800 !important; color:#15171C !important; }
+html.mt-beta.mt-b2 body #mealIdeas .sr-nm>span{ font-size:12px !important; font-weight:700 !important; color:#4B5563 !important; }
+html.mt-beta.mt-b2 body #mealIdeas .sr-nm .id-n{ color:#4B5563 !important; }
+html.mt-beta.mt-b2 body #mealIdeas .sr-nm .id-n i{ font-style:normal; color:#15171C; font-weight:800; }
+html.mt-beta.mt-b2 body #mealIdeas .sr-nm .id-c{ display:flex; flex-wrap:wrap; gap:4px; margin-top:4px; }
+html.mt-beta.mt-b2 body #mealIdeas .sr-nm .id-c>span{ font-size:11px !important; padding:2px 8px !important; border-radius:999px !important; margin:0 !important; }
+html.mt-beta.mt-b2 body #mealIdeas .sr-go{ flex:none; width:52px !important; height:52px !important; border-radius:50% !important; background:#fff !important; color:#111 !important; box-shadow:0 4px 14px rgba(20,24,40,.14) !important; display:grid !important; place-items:center; font-size:26px !important; font-weight:900; border:0 !important; }
+html.mt-beta.mt-b2 body #mealIdeas .sr-go.added{ background:#34C759 !important; color:#fff !important; box-shadow:0 6px 14px -6px rgba(52,199,89,.8) !important; }
+@media (max-width:390px){
+  html.mt-beta.mt-b2 body #mealIdeas .mc-head b{ font-size:clamp(13px,4.3vw,17px) !important; }
+  html.mt-beta.mt-b2 body #mealIdeas .id-taste{ margin:0 4px 12px !important; }
+  html.mt-beta.mt-b2 body #mealIdeas .id-taste button{ font-size:14px !important; }
+  html.mt-beta.mt-b2 body #mealIdeas .sr-th{ width:46px !important; height:46px !important; font-size:24px !important; }
+  html.mt-beta.mt-b2 body #mealIdeas .sr-go{ width:44px !important; height:44px !important; font-size:22px !important; }
+  html.mt-beta.mt-b2 body #mealIdeas #idList .sr-it{ gap:10px !important; }
+}
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3433,7 +3463,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 18/11 · 21 h 00</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 18/11 · 21 h 10</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
