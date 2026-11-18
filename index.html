@@ -3432,7 +3432,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 18/11 · 11 h 20</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 18/11 · 12 h 10</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -3951,14 +3951,36 @@ window.BBXBk=(function(){
   }
   function ocrWarm(){ try{ ocrWorker().catch(()=>{}); }catch(e){} }
   document.addEventListener('click',e=>{ const t=e.target; if(t&&t.closest&&t.closest('#mfOcrBtn,#mealPick,#mfOcrFile,#mfOcrGal,.sr-hb')) ocrWarm(); },true);
+  async function aiRead(file){   // lecture du tableau par l'IA (Gemini via Supabase) ; null si indisponible
+    if(!window.BBXSync||!BBXSync.ai||navigator.onLine===false) return {skip:'hors ligne'};
+    const im=await ocrImg(file), W=im.naturalWidth||im.width, H=im.naturalHeight||im.height, s=Math.min(1,1600/Math.max(W,H));
+    const c=document.createElement('canvas'); c.width=Math.round(W*s); c.height=Math.round(H*s); const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(im,0,0,c.width,c.height);
+    const data=c.toDataURL('image/jpeg',0.85);
+    try{
+      return await Promise.race([BBXSync.ai({image:data,mime:'image/jpeg'}), new Promise((_,ko)=>setTimeout(()=>ko(new Error('délai dépassé')),45000))]);
+    }catch(e){ const m=(e&&e.message)||''; return {skip: /non connect/.test(m)?'non connecté':(e&&e.status===429)?'quota':m||'erreur'}; }
+  }
   async function ocrRun(file){
     const info=t=>{ $('mfInfo').textContent=t; $('mfInfo').className='mf-info ok'; };
     const err=t=>{ $('mfInfo').textContent=t; $('mfInfo').className='mf-info err'; };
     if(!document.getElementById('ocrUnsureCss')){ const st=document.createElement('style'); st.id='ocrUnsureCss'; st.textContent='.mf-unsure{box-shadow:0 0 0 2.5px #f59e0b !important;border-radius:12px !important;background:rgba(245,158,11,.10) !important}'; document.head.appendChild(st); }
     ['mfKcal','mfProt','mfFat','mfCarb'].forEach(id=>$(id).classList.remove('mf-unsure'));
     $('mealForm').scrollTop=0; $('mfOcrBtn').classList.remove('pulse'); $('mfOcrBtn').classList.add('busy'); info('Préparation de la photo…');
-    let w=null;
+    let w=null, why='';
     try{
+      info('Lecture du tableau par l’IA…');
+      const ai=await aiRead(file).catch(e=>({skip:(e&&e.message)||'erreur'}));
+      if(ai&&!ai.skip&&ai.ok!==false&&[ai.kcal,ai.prot,ai.fat,ai.carb].some(v=>v!=null)){
+        const r={kcal:ai.kcal,prot:ai.prot,fat:ai.fat,carb:ai.carb,unsure:[],warn:[]};
+        if(r.kcal==null&&r.prot!=null&&r.fat!=null&&r.carb!=null) r.kcal=Math.round(4*r.prot+9*r.fat+4*r.carb);
+        if(ai.name&&!$('mfName').value.trim()) $('mfName').value=String(ai.name).slice(0,60);
+        ocrFill(r,'Tableau lu par l’IA');
+        if(ai.unit==='ml'){ try{ setUnit('ml'); fmPrev(); }catch(e){} }
+        if(!$('mfName').value.trim()) $('mfName').focus();
+        return;
+      }
+      why=ai&&ai.skip==='non connecté'?' (connecte-toi dans Réglages › Synchronisation pour la lecture par IA)':ai&&ai.skip==='quota'?' (quota IA du jour atteint)':ai&&ai.ok===false?' (l’IA ne voit pas de tableau)':' (IA indisponible)';
+      info('Lecture sur le téléphone'+why+'…');
       const im=await ocrImg(file); let A=ocrBase(im); await new Promise(r=>setTimeout(r,0));
       const ang=ocrSkew(A); if(Math.abs(ang)>=0.7) A=ocrRot(A,-ang);
       info('Chargement du lecteur de texte (la première fois, ça peut prendre un moment)…');
@@ -3978,7 +4000,7 @@ window.BBXBk=(function(){
         for(const deg of [90,270]){ pass=' (photo pivotée)'; await run(ocrRot(A,deg),6); if(sol.kcal!=null||sol.prot!=null) break; }
       }
       const r=sol, got=[r.kcal,r.prot,r.fat,r.carb].filter(v=>v!=null).length;
-      if(!got){ err('Je n’ai pas réussi à lire le tableau sur la photo. Essaie « Coller le texte » (Texte en direct de l’iPhone ou Google Lens) : c’est le plus rapide et le plus fiable.'); return; }
+      if(!got){ err('Je n’ai pas réussi à lire le tableau sur la photo'+why+'. Essaie « Coller le texte » (Texte en direct de l’iPhone ou Google Lens) : c’est le plus rapide et le plus fiable.'); return; }
       const ids={kcal:'mfKcal',prot:'mfProt',fat:'mfFat',carb:'mfCarb'};
       for(const k in ids){ if(r[k]!=null) $(ids[k]).value=r1(r[k]); }
       r.unsure.forEach(k=>{ if(r[k]!=null) $(ids[k]).classList.add('mf-unsure'); });
@@ -3989,7 +4011,7 @@ window.BBXBk=(function(){
       if(r.unsure.length) msg+=' Les cases en orange sont à contrôler.'; if(r.warn.length) msg+=' Attention : '+r.warn.join(', ')+'.';
       if(miss.length||r.warn.length||r.unsure.length) err(msg); else info(msg);
       if(!$('mfName').value.trim()) $('mfName').focus();
-    }catch(e){ ocrWP=null; err('Lecture de la photo impossible ('+((e&&e.message)||'erreur')+'). Essaie « Coller le texte » : c’est le plus rapide et le plus fiable.'); }
+    }catch(e){ ocrWP=null; err('Lecture de la photo impossible ('+((e&&e.message)||'erreur')+')'+why+'. Essaie « Coller le texte » : c’est le plus rapide et le plus fiable.'); }
     finally{ ocrLog=null; $('mfOcrBtn').classList.remove('busy'); }
   }
   function ocrFill(r,lead){
@@ -5675,7 +5697,8 @@ window.BBXBk=(function(){
     newPwd:function(){ var p=document.getElementById('syncNew').value||''; if(p.length<6) return setMsg('Mot de passe : 6 caractères minimum.',1); if(!recTok) return;
       api('/auth/v1/user',{method:'PUT',token:recTok,body:{password:p}}).then(function(j){ var em=(j&&j.email)||''; recTok=null; document.getElementById('syncNew').value=''; var se={at:'',rt:'',exp:0,email:em}; setMsg('✓ Mot de passe changé. Connecte-toi avec le nouveau.'); var e=document.getElementById('syncEmail'); if(e&&em) e.value=em; }).catch(function(x){ setMsg(x.message,1); }); },
     signOut:function(){ try{ LS.removeItem(SK); LS.removeItem(MK); }catch(e){} setMsg('Déconnecté. Les données restent sur ce téléphone.'); },
-    now:function(){ setMsg('Synchronisation…'); cycle({reload:true}); }
+    now:function(){ setMsg('Synchronisation…'); cycle({reload:true}); },
+    ai:function(body){ return token().then(function(t){ return api('/functions/v1/nutri-ocr',{method:'POST',token:t,body:body}); }); }
   };
   window.BBXSync=API;
   document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible'){ applyNow(); cycle({reload:true}); } else cycle({reload:false}); });
