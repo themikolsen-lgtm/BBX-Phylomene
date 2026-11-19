@@ -3053,8 +3053,8 @@ html body #mealView .sum-full .sx-c .sx-l .sm-in{ width:auto !important; min-wid
 <style id="noNova">.hl-n{ display:none !important; }
 #mealForm .mf-health .mh-row:has(.mh-nv){ display:none !important; }
 #mealForm .mf-health .mh-row{ grid-column:1/-1; }</style>
-<style id="mealNoIcon">/* essai : sans le picto de chaque repas */
-html body #mealView .my-card .my-mh>.my-mi{display:none !important}
+<style id="mealNoSub">/* repas : sans la ligne « aliments · prot. » sous le nom */
+html body #mealView .my-card .my-mh .my-mt>span{display:none !important}
 </style>
 <style id="mealFade">/* Meal : même dégradé discret que le Workout quand la liste passe sous l’en-tête */
 html body #mealView .my-fixed::before{bottom:-34px !important;background:linear-gradient(to bottom,rgba(245,252,242,.92) 0%,rgba(245,252,242,.78) 62%,rgba(245,252,242,0) 100%) !important;-webkit-backdrop-filter:blur(10px) !important;backdrop-filter:blur(10px) !important;-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 60%,transparent 100%) !important;mask-image:linear-gradient(to bottom,#000 0%,#000 60%,transparent 100%) !important}
@@ -3469,7 +3469,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 19/11 · 15 h 15</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 19/11 · 15 h 20</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
