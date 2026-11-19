@@ -3053,6 +3053,9 @@ html body #mealView .sum-full .sx-c .sx-l .sm-in{ width:auto !important; min-wid
 <style id="noNova">.hl-n{ display:none !important; }
 #mealForm .mf-health .mh-row:has(.mh-nv){ display:none !important; }
 #mealForm .mf-health .mh-row{ grid-column:1/-1; }</style>
+<style id="mealFade">/* Meal : même dégradé discret que le Workout quand la liste passe sous l’en-tête */
+html body #mealView .my-fixed::before{bottom:-34px !important;background:linear-gradient(to bottom,rgba(245,252,242,.92) 0%,rgba(245,252,242,.78) 62%,rgba(245,252,242,0) 100%) !important;-webkit-backdrop-filter:blur(10px) !important;backdrop-filter:blur(10px) !important;-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 60%,transparent 100%) !important;mask-image:linear-gradient(to bottom,#000 0%,#000 60%,transparent 100%) !important}
+</style>
 <style id="ocrCtaCss">.sr-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 7px 1px 0;vertical-align:middle;box-shadow:0 0 0 2px #fff}#mealForm .mf-ocrcta{display:flex;align-items:center;justify-content:center;gap:9px;width:calc(100% - 28px);margin:2px 14px 12px;height:52px;border-radius:999px;border:1.5px dashed #16a34a;background:rgba(22,163,74,.08);color:#166534;font:inherit;font-size:15px;font-weight:800;cursor:pointer}#mealForm .mf-ctaw{order:8}#mealForm .mf-ctaw[hidden]{display:none!important}html.mt-b2 body #mealForm .mf-ctaw{background:#fff;padding:0 var(--cardx,0px) 4px}#mealForm .mf-ocrcta svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}#mealForm .mf-ocrcta:active{transform:scale(.98)}</style>
 <style id="themeB2">
 /* ===== Thème Bêta — copie du design normal (Meal), puis personnalisation =====
@@ -3463,7 +3466,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 19/11 · 09 h 20</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 19/11 · 14 h 45</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
