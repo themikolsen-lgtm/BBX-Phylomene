@@ -3463,7 +3463,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 18/11 · 21 h 25</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 19/11 · 09 h 20</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -3490,7 +3490,7 @@ window.BBXBk=(function(){
   <div class="mc-head"><b>Rechercher</b><button class="sr-hb" type="button" onclick="BBXMeal.srTable()" aria-label="Photographier un tableau nutritionnel" title="Tableau nutritionnel"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M4 9.5h16M4 14.5h16M10 9.5V20M15 9.5V20"/></svg></button><button class="sr-hb" type="button" onclick="BBXMeal.srScan()" aria-label="Scanner un code-barres" title="Scanner"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M8 12h8"/></svg></button><button class="mc-x" onclick="BBXMeal.closeSearch()" aria-label="Fermer">✕</button></div>
   <div class="sr-bar"><input id="srQ" type="search" autocomplete="off" autocapitalize="off" placeholder="Nom du produit ou code-barres" enterkeyhint="search"><button onclick="BBXMeal.doSearch()" aria-label="Chercher" title="Chercher"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></button></div>
   <div class="sr-acts"><button onclick="BBXMeal.srScan()" aria-label="Scanner un code-barres"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M7 12h10"/></svg><span>Scanner</span></button><button onclick="BBXMeal.srManual()" aria-label="Ajouter à la main"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg><span>Saisie</span></button><button class="sr-rec" onclick="BBXMeal.recurring()" aria-label="Récurrent : ajouter mes produits habituels"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg><span>Récurrent</span></button></div>
-  <div class="sr-tabs" id="srTabs" role="tablist" aria-label="Filtre"><button type="button" data-t="r" class="on" onclick="BBXMeal.srTab('r')">Récent</button><button type="button" data-t="s" onclick="BBXMeal.srTab('s')">Suivi</button></div>
+  <div class="sr-tabs" id="srTabs" role="tablist" aria-label="Filtre"><button type="button" data-t="r" class="on" onclick="BBXMeal.srTab('r')">Récent</button><button type="button" data-t="s" onclick="BBXMeal.srTab('s')">Suivi</button><button type="button" data-t="h" onclick="BBXMeal.srTab('h')">Habitudes</button></div>
   <div class="sr-meal" id="srMeal"></div>
   <div id="srList"></div>
 </div>
@@ -4769,7 +4769,7 @@ window.BBXBk=(function(){
   }
   // thème Bêta : onglets Récent (mes produits) / Suivi (tous les produits ajoutés, tous comptes) / Autres (bases en ligne et aliments courants)
   const srB2=()=>document.documentElement.classList.contains('mt-b2');
-  function srTabOk(x,t){ if((($('srQ')||{}).value||'').trim()) return true; return t==='s'?!!(x.cat||x.suivi):!!x.fav; }   // recherche tapée : tous les résultats ; sinon Récent ou Suivi   // Suivi = produits ajoutés depuis le 17/11 au soir, tous comptes   // Autres + recherche tapée = tous les résultats   // Suivi = tous les produits ajoutés (les miens + ceux des autres comptes)
+  function srTabOk(x,t){ if((($('srQ')||{}).value||'').trim()) return true; return t==='h'?!!x.habT:t==='s'?!!(x.cat||x.suivi):!!x.fav; }   // recherche tapée : tous les résultats ; sinon Récent ou Suivi   // Suivi = produits ajoutés depuis le 17/11 au soir, tous comptes   // Autres + recherche tapée = tous les résultats   // Suivi = tous les produits ajoutés (les miens + ceux des autres comptes)
   function srPh(){ const q=$('srQ'); if(q) q.placeholder=srB2()?'Nom, Code-barres':'Nom du produit ou code-barres'; }
   function srTab(t,auto){ if(!auto) sr.tabManual=!!(($('srQ')||{}).value||'').trim(); sr.tab=t; document.querySelectorAll('#srTabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t)); srRender(sr.lastExtra); $('mealSearch').scrollTop=0; }
   function srRender(extra){
@@ -4778,17 +4778,24 @@ window.BBXBk=(function(){
     sr.list.forEach(x=>{ const cp=x&&x.name&&portGet(x.name); if(cp&&Math.abs((x.serving||0)-cp.g)>0.05){ const lb=x.label&&!/^portion de 100\b/.test(x.label)?x.label:'portion'; x.serving=cp.g; x.label=lb; x.portions=[{label:lb,g:cp.g}].concat((x.portions||[]).filter(q=>q.label!==lb&&!/^portion de 100\b/.test(q.label||''))); } });   // unité corrigée (base commune) prioritaire
     const L0=sr.list; L0.forEach((x,i)=>{ x._i=i; }); const t=sr.tab||'r', L=srB2()?L0.filter(x=>srTabOk(x,t)):L0;
     const sMode=srB2()&&t==='s'&&!((($('srQ')||{}).value||'').trim());
+    const hMode=srB2()&&t==='h'&&!((($('srQ')||{}).value||'').trim()); if(hMode) L.sort((a,b)=>(a.habR||999)-(b.habR||999));
     if(sMode){ const tOf=x=>{ let v=x.t||0; try{ Object.keys(HAB||{}).forEach(m=>{ const h=HAB[m]&&HAB[m][x.name]; if(h&&(h.t||0)>v) v=h.t; }); }catch(e){} return v; }; L.sort((a,b)=>tOf(b)-tOf(a)); }   // Suivi : le dernier produit ajouté ou scanné en haut
     const dot=x=>{ if(!sMode) return ''; const ap=x.app||(x.fav?SK.slice(0,3):''); return ap==='bb9'?'<i class="sr-dot" style="background:#3B82F6" title="Ajouté sur BBX-11WM"></i>':ap==='phy'?'<i class="sr-dot" style="background:#EC4899" title="Ajouté sur Phylomene"></i>':''; };
-    if(srB2()&&!L.length&&L0.length){ const n={r:L0.filter(x=>srTabOk(x,'r')).length,s:L0.filter(x=>srTabOk(x,'s')).length}, nm={r:'Récent',s:'Suivi'}, oth=['r','s'].filter(k=>k!==t&&n[k]); if(oth.length) extra='<div class="sr-note">Rien ici. '+oth.map(k=>'<button class="sr-jump" onclick="BBXMeal.srTab(\''+k+'\')">'+n[k]+' dans '+nm[k]+'</button>').join(' ')+'</div>'+(extra||''); }
+    if(srB2()&&!L.length&&L0.length){ const n={r:L0.filter(x=>srTabOk(x,'r')).length,s:L0.filter(x=>srTabOk(x,'s')).length,h:L0.filter(x=>srTabOk(x,'h')).length}, nm={r:'Récent',s:'Suivi',h:'Habitudes'}, oth=['r','s','h'].filter(k=>k!==t&&n[k]); if(oth.length) extra='<div class="sr-note">Rien ici. '+oth.map(k=>'<button class="sr-jump" onclick="BBXMeal.srTab(\''+k+'\')">'+n[k]+' dans '+nm[k]+'</button>').join(' ')+'</div>'+(extra||''); }
     const row=x=>`<div class="sr-row"><button class="sr-it" onclick="BBXMeal.pick(${x._i},event)"><span class="sr-th">${esc(x.emoji||'🛒')}</span><span class="sr-nm"><b>${dot(x)}${esc(x.name)}</b><span>${x.kcal!=null?r(x.kcal):'?'} kcal · ${x.prot!=null?r1(x.prot):'?'} g prot.${x.fat!=null&&x.carb!=null?' · '+r1(x.fat)+' g lip. · '+r1(x.carb)+' g gluc.':''} / 100 ${x.unit||'g'}${x.serving>0&&x.label&&!/^portion de /.test(x.label)?' · 1 '+esc(x.label)+' ≈ '+r(x.serving)+' '+(x.unit||'g'):''}</span></span>${(srB2()&&sr.added&&sr.added[(x.code||'')+'|'+x.name])?'<span class="sr-go added">✓</span>':'<span class="sr-go">＋</span>'}</button>${x.fav?`<button class="sr-del" onclick="BBXMeal.favDel(${x._fi})" aria-label="Retirer de mes produits">✕</button>`:''}</div>`;
     const sec=(t,arr)=>arr.length?`<div class="sr-sec">${t}</div>`+arr.map(row).join(''):'';
     const h=sec('Tes habitudes · '+esc((MEALS[sr.target]||[''])[0]),L.filter(x=>x.fav&&x.hab))+sec('Mes produits (enregistrés sur ton téléphone)',L.filter(x=>x.fav&&!x.hab))+sec('Catalogue commun (produits ajoutés sur les autres comptes)',L.filter(x=>x.cat))+sec('Aliments courants',L.filter(x=>x.db))+sec('Ciqual · ANSES (base française)',L.filter(x=>x.ciq))+sec('Open Food Facts',L.filter(x=>x.off))+sec('USDA FoodData Central',L.filter(x=>x.usda));
+    if(hMode&&!L.length){ $('srList').innerHTML='<div class="sr-note">Pas encore d’habitude pour ce repas. Les produits que tu prends souvent ici apparaîtront dans cet onglet.</div>'; return; }
     const qv=$('srQ').value.trim();
-    $('srList').innerHTML=((sMode&&L.length?L.map(row).join(''):h)||'<div class="sr-note">Aucun résultat pour le moment.</div>')+(extra||'')+(qv.length>=2?'<button class="sr-manual" onclick="BBXMeal.addTyped()">＋ Ajouter « '+esc(qv)+' » à la main</button>':'');
+    $('srList').innerHTML=(((sMode||hMode)&&L.length?L.map(row).join(''):h)||'<div class="sr-note">Aucun résultat pour le moment.</div>')+(extra||'')+(qv.length>=2?'<button class="sr-manual" onclick="BBXMeal.addTyped()">＋ Ajouter « '+esc(qv)+' » à la main</button>':'');
+  }
+  function habAll(m){   // habitudes du repas visé, de la plus fréquente à la moins fréquente
+    if(m==null||!MEALS[m]) return []; const H=HAB[MEALS[m][0]]||{};
+    return Object.keys(H).map(n=>({n:n,h:H[n]})).filter(x=>x.h&&FAV.some(f=>f.name===x.n)).sort((a,b)=>habScore(b.h)-habScore(a.h)||(b.h.n||0)-(a.h.n||0)).map(x=>x.n);
   }
   function showFavs(){
     sr.n++; { const top=habTop(sr.target,8), used={}; top.forEach(x=>{ used[x.i]=1; }); sr.list=top.map(x=>Object.assign(asFav(FAV[x.i],x.i),{hab:true})).concat(FAV.map((f,i)=>({f:f,i:i})).filter(o=>!used[o.i]).slice(0,400).map(o=>asFav(o.f,o.i))).concat(catMatches('')); }
+    { const hn=habAll(sr.target), rk={}; hn.forEach((n,k)=>{ rk[n]=k+1; }); const seen={}; sr.list.forEach(x=>{ if(x&&x.fav&&rk[x.name]&&!seen[x.name]){ x.habT=true; x.habR=rk[x.name]; seen[x.name]=1; } }); hn.forEach(n=>{ if(!seen[n]){ const i=FAV.findIndex(f=>f.name===n); if(i>=0) sr.list.push(Object.assign(asFav(FAV[i],i),{habT:true,habR:rk[n]})); } }); }
     if(srB2()&&!sr.tabSet){ sr.tab='r'; }
     srRender(FAV.length?'<div class="sr-note">Tape le nom d’un aliment : les résultats s’affichent tout de suite, sans connexion.</div>':'<div class="sr-note">Tape le nom d’un aliment : les résultats s’affichent tout de suite, sans connexion. Chaque produit que tu ajoutes est gardé ici.</div>');
   }
