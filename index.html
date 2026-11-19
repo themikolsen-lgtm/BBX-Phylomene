@@ -3475,7 +3475,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 19/11 · 16 h 30</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 19/11 · 16 h 35</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -5584,7 +5584,8 @@ window.BBXBk=(function(){
     S.d[MEALS[m][0]+'|'+f.name]=true; bumpHabit(MEALS[m][0],f.name,g); refresh(); habInlineRender();
   }
   // fermer en faisant autre chose dans l'appli
-  document.addEventListener('pointerdown',e=>{ if(hi.m==null) return; const t=e.target; if(t.closest&&(t.closest('.my-habrow')||t.closest('.my-hbtn.hab'))) return; hi.m=null; habInlineRender(); },true);
+  /* fermer seulement sur un vrai appui ailleurs (un défilement n'est pas un appui) : autre bouton, zone vide, autre écran */
+  document.addEventListener('click',e=>{ if(hi.m==null) return; const t=e.target; if(t.closest&&(t.closest('.my-habrow')||t.closest('.my-hbtn.hab'))) return; hi.m=null; habInlineRender(); },true);
   // ---------- progression : rétrécit en défilant, se redéploie en haut ----------
   const fx=document.querySelector('.my-fixed'), mv=$('mealView');
   let fxD=1, fxRaf=0;
