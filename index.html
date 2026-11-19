@@ -3053,7 +3053,7 @@ html body #mealView .sum-full .sx-c .sx-l .sm-in{ width:auto !important; min-wid
 <style id="noNova">.hl-n{ display:none !important; }
 #mealForm .mf-health .mh-row:has(.mh-nv){ display:none !important; }
 #mealForm .mf-health .mh-row{ grid-column:1/-1; }</style>
-<style id="mealHabRow">#mealView .my-habrow{display:flex;gap:9px;overflow-x:auto;padding:4px 14px 14px;margin:0 -2px;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}#mealView .my-habrow::-webkit-scrollbar{display:none}#mealView .hv-it{flex:none;scroll-snap-align:start;display:flex;align-items:center;gap:8px;width:172px;min-height:58px;box-sizing:border-box;padding:8px 8px 8px 10px;border-radius:18px;background:#fff;box-shadow:0 6px 16px -8px rgba(20,24,40,.35),0 0 0 1px rgba(0,0,0,.04);animation:hvFloat 3.2s ease-in-out infinite}#mealView .hv-em{flex:none;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:21px;background:var(--mt,rgba(0,0,0,.05))}#mealView .hv-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}#mealView .hv-tx b{font-size:12.5px;line-height:1.2;font-weight:800;color:#15171C;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}#mealView .hv-tx small{font-size:11px;font-weight:700;color:#6B6570}#mealView .hv-add{flex:none;width:32px;height:32px;border-radius:50%;border:0;background:var(--mc,#16a34a);color:#fff;font-size:19px;font-weight:800;line-height:1;cursor:pointer;display:grid;place-items:center;box-shadow:0 4px 10px -4px var(--mc,#16a34a)}#mealView .hv-add:active{transform:scale(.9)}#mealView .hv-empty{font-size:12.5px;font-weight:600;color:#6B6570;padding:2px 2px 0}#mealView .my-hbtn.hab.on{background:var(--mc) !important}#mealView .my-hbtn.hab.on svg{stroke:#fff !important}@keyframes hvFloat{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-2px) rotate(-.6deg)}75%{transform:translateY(1.5px) rotate(.5deg)}}@media (prefers-reduced-motion:reduce){#mealView .hv-it{animation:none}}</style>
+<style id="mealHabRow">#mealView .my-habrow{display:flex;gap:9px;overflow-x:auto;padding:4px 14px 14px;margin:0 -2px;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}#mealView .my-habrow::-webkit-scrollbar{display:none}#mealView .hv-it{flex:none;scroll-snap-align:start;display:flex;align-items:center;gap:8px;width:172px;min-height:58px;box-sizing:border-box;padding:8px 8px 8px 10px;border-radius:18px;background:#fff;box-shadow:0 6px 16px -8px rgba(20,24,40,.35),0 0 0 1px rgba(0,0,0,.04);animation:hvFloat 3.2s ease-in-out infinite}#mealView .hv-em{flex:none;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:21px;background:var(--mt,rgba(0,0,0,.05))}#mealView .hv-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}#mealView .hv-tx b{font-size:12.5px;line-height:1.2;font-weight:800;color:#15171C;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}#mealView .hv-tx small{font-size:11px;font-weight:700;color:#6B6570}#mealView .hv-add{flex:none;width:32px;height:32px;border-radius:50%;border:0;background:var(--mc,#16a34a);color:#fff;font-size:19px;font-weight:800;line-height:1;cursor:pointer;display:grid;place-items:center;box-shadow:0 4px 10px -4px var(--mc,#16a34a)}#mealView .hv-add:active{transform:scale(.9)}#mealView .hv-empty{font-size:12.5px;font-weight:600;color:#6B6570;padding:2px 2px 0}#mealView .my-hbtn.hab.none{opacity:.3 !important;pointer-events:none !important;filter:grayscale(.6)}#mealView .my-hbtn.hab.on{background:var(--mc) !important}#mealView .my-hbtn.hab.on svg{stroke:#fff !important}@keyframes hvFloat{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-2px) rotate(-.6deg)}75%{transform:translateY(1.5px) rotate(.5deg)}}@media (prefers-reduced-motion:reduce){#mealView .hv-it{animation:none}}</style>
 <style id="mealNoSub">/* repas : sans la ligne « aliments · prot. » sous le nom */
 html body #mealView .my-card .my-mh .my-mt>span{display:none !important}
 html body #mealView .my-card .my-mh .my-mt{display:flex !important;flex-direction:column !important;align-items:flex-start !important;gap:1px !important;min-width:0 !important}
@@ -3475,7 +3475,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 19/11 · 16 h 40</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 19/11 · 16 h 50</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -3686,7 +3686,7 @@ window.BBXBk=(function(){
     $('mlCg').oninput=e=>{ S.cg=Math.max(0,+e.target.value||0); calc(); save(); };
     try{ $('mlDate').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}); }catch(e){}
   }
-  function calc(){
+  function calc(){ setTimeout(()=>{ try{ habBtnState(); }catch(e){} },0);
     let K=0,P=0,F=0,C=0,TK=0,TP=0,unk=0; const HI=[], HM={};
     MEALS.forEach(([t,ic,items],m)=>{ let mk=0,mp=0,nd=0;
       items.forEach((it,i)=>{ const f=W(m,i,it)/(it[2]*it[3]), ik=it[4]*f, ip=it[5]*f, ifa=(it[8]||0)*f, ic=(it[9]||0)*f, known=it[8]!=null&&it[9]!=null; mk+=ik; mp+=ip; const dn=isDn(m,i);
@@ -5572,19 +5572,22 @@ window.BBXBk=(function(){
     const m=hi.m; if(m==null||!MEALS[m]) return;
     const card=document.querySelector('#mlMeals .my-card[data-m="'+m+'"]'), mh=card&&card.querySelector('.my-mh'); if(!mh) return;
     const hbtn=mh.querySelector('.my-hbtn.hab'); if(hbtn) hbtn.classList.add('on');
-    const list=habitsFor(m); hi.list=list;
+    const list=habitsFor(m); hi.list=list; if(!list.length&&hi.closeEmpty){ hi.m=null; hi.closeEmpty=false; if(hbtn) hbtn.classList.remove('on'); habBtnState(); return; }
     const row=document.createElement('div'); row.className='my-habrow';
     row.innerHTML=list.length?list.map((x,i)=>{ const f=x.f, uw=f.serving>0?f.serving:100, g=x.h.g>0?x.h.g:uw;
       return `<div class="hv-it" style="animation-delay:${(-i*0.37).toFixed(2)}s"><span class="hv-em">${esc(f.emoji||'🍽️')}</span><span class="hv-tx"><b>${esc(f.name)}</b><small>${r(f.kcal*g/100)} kcal</small></span><button type="button" class="hv-add" onclick="BBXMeal.habAdd(${i})" aria-label="Ajouter ${esc(f.name)}">＋</button></div>`; }).join('')
       :'<div class="hv-empty">Pas encore d’habitude ici : un produit devient une habitude quand tu le manges 3 jours de suite à ce repas.</div>';
     mh.insertAdjacentElement('afterend',row);
   }
+  function habBtnState(){   // plus aucune habitude disponible -> bouton grisé et inactif
+    document.querySelectorAll('#mlMeals .my-card[data-m]').forEach(c=>{ const m=+c.dataset.m, b=c.querySelector('.my-hbtn.hab'); if(!b||!MEALS[m]) return; let n=0; try{ n=habitsFor(m).length; }catch(e){} b.classList.toggle('none',!n); b.disabled=!n; b.setAttribute('aria-disabled',!n); });
+  }
   function habInline(m){ const shown=!!document.querySelector('#mlMeals .my-habrow'); hi.m=(shown&&hi.m===m)?null:m; habInlineRender(); }
   function habInlineAdd(i){
     const x=hi.list[i], m=hi.m; if(!x||m==null||!MEALS[m]) return; const f=x.f, uw=f.serving>0?f.serving:100, g=x.h.g>0?x.h.g:uw;
     const label=f.serving>0?(f.label||'portion'):'portion de 100 '+f.unit;
     MEALS[m][2].push([f.name,label,uw,g/uw,f.kcal*g/100,f.prot*g/100,f.unit,f.emoji||'🍽️',f.fat!=null?f.fat*g/100:null,f.carb!=null?f.carb*g/100:null]);
-    S.d[MEALS[m][0]+'|'+f.name]=true; bumpHabit(MEALS[m][0],f.name,g); refresh(); habInlineRender();
+    S.d[MEALS[m][0]+'|'+f.name]=true; bumpHabit(MEALS[m][0],f.name,g); refresh(); hi.closeEmpty=true; habInlineRender(); hi.closeEmpty=false; habBtnState();
   }
   // fermer en faisant autre chose dans l'appli
   /* fermer seulement sur un vrai appui ailleurs (un défilement n'est pas un appui) : autre bouton, zone vide, autre écran */
