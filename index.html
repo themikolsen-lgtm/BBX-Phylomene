@@ -3475,7 +3475,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 19/11 · 16 h 15</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 19/11 · 16 h 30</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4797,13 +4797,13 @@ window.BBXBk=(function(){
     const row=x=>`<div class="sr-row"><button class="sr-it" onclick="BBXMeal.pick(${x._i},event)"><span class="sr-th">${esc(x.emoji||'🛒')}</span><span class="sr-nm"><b>${dot(x)}${esc(x.name)}</b><span>${x.kcal!=null?r(x.kcal):'?'} kcal · ${x.prot!=null?r1(x.prot):'?'} g prot.${x.fat!=null&&x.carb!=null?' · '+r1(x.fat)+' g lip. · '+r1(x.carb)+' g gluc.':''} / 100 ${x.unit||'g'}${x.serving>0&&x.label&&!/^portion de /.test(x.label)?' · 1 '+esc(x.label)+' ≈ '+r(x.serving)+' '+(x.unit||'g'):''}</span></span>${(srB2()&&sr.added&&sr.added[(x.code||'')+'|'+x.name])?'<span class="sr-go added">✓</span>':'<span class="sr-go">＋</span>'}</button>${x.fav?`<button class="sr-del" onclick="BBXMeal.favDel(${x._fi})" aria-label="Retirer de mes produits">✕</button>`:''}</div>`;
     const sec=(t,arr)=>arr.length?`<div class="sr-sec">${t}</div>`+arr.map(row).join(''):'';
     const h=sec('Tes habitudes · '+esc((MEALS[sr.target]||[''])[0]),L.filter(x=>x.fav&&x.hab))+sec('Mes produits (enregistrés sur ton téléphone)',L.filter(x=>x.fav&&!x.hab))+sec('Catalogue commun (produits ajoutés sur les autres comptes)',L.filter(x=>x.cat))+sec('Aliments courants',L.filter(x=>x.db))+sec('Ciqual · ANSES (base française)',L.filter(x=>x.ciq))+sec('Open Food Facts',L.filter(x=>x.off))+sec('USDA FoodData Central',L.filter(x=>x.usda));
-    if(hMode&&!L.length){ $('srList').innerHTML='<div class="sr-note">Pas encore d’habitude pour ce repas. Les produits que tu prends souvent ici apparaîtront dans cet onglet.</div>'; return; }
+    if(hMode&&!L.length){ $('srList').innerHTML='<div class="sr-note">Pas encore d’habitude pour ce repas : un produit devient une habitude quand tu le manges 3 jours de suite à ce repas.</div>'; return; }
     const qv=$('srQ').value.trim();
     $('srList').innerHTML=(((sMode||hMode)&&L.length?L.map(row).join(''):h)||'<div class="sr-note">Aucun résultat pour le moment.</div>')+(extra||'')+(qv.length>=2?'<button class="sr-manual" onclick="BBXMeal.addTyped()">＋ Ajouter « '+esc(qv)+' » à la main</button>':'');
   }
   function habAll(m){   // habitudes du repas visé, de la plus fréquente à la moins fréquente
-    if(m==null||!MEALS[m]) return []; const H=HAB[MEALS[m][0]]||{};
-    return Object.keys(H).map(n=>({n:n,h:H[n]})).filter(x=>x.h&&FAV.some(f=>f.name===x.n)).sort((a,b)=>habScore(b.h)-habScore(a.h)||(b.h.n||0)-(a.h.n||0)).map(x=>x.n);
+    if(m==null||!MEALS[m]) return [];
+    return habStreak(MEALS[m][0]).filter(n=>FAV.some(f=>f.name===n));
   }
   function showFavs(){
     sr.n++; { const top=habTop(sr.target,8), used={}; top.forEach(x=>{ used[x.i]=1; }); sr.list=top.map(x=>Object.assign(asFav(FAV[x.i],x.i),{hab:true})).concat(FAV.map((f,i)=>({f:f,i:i})).filter(o=>!used[o.i]).slice(0,400).map(o=>asFav(o.f,o.i))).concat(catMatches('')); }
@@ -5523,11 +5523,21 @@ window.BBXBk=(function(){
     return Object.keys(H).filter(n=>!present.has(n)).map(n=>({h:H[n],i:FAV.findIndex(f=>f.name===n)})).filter(x=>x.i>=0)
       .map(x=>({i:x.i,sc:habScore(x.h)})).sort((a,b)=>b.sc-a.sc).slice(0,max||8);
   }
+  // habitude = produit mangé dans ce repas 3 jours de suite (sur les 30 derniers jours) ; recalculé à chaque affichage
+  function habStreak(title){
+    const now=new Date(), k=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'), run={}, best={}, last={}, cnt={};
+    for(let i=29;i>=0;i--){ const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i), h=HIST[k(d)], seen={};
+      if(h&&h.i) h.i.forEach(x=>{ if(x&&x[0]===title&&x[1]) seen[x[1]]=1; });
+      if(i===0) (MEALS.find(M=>M[0]===title)||[,,[]])[2].forEach(it=>{ if(it&&it[0]) seen[it[0]]=1; });
+      Object.keys(run).forEach(n=>{ if(!seen[n]) run[n]=0; });
+      Object.keys(seen).forEach(n=>{ run[n]=(run[n]||0)+1; best[n]=Math.max(best[n]||0,run[n]); last[n]=i; cnt[n]=(cnt[n]||0)+1; });
+    }
+    return Object.keys(best).filter(n=>best[n]>=3).sort((a,b)=>last[a]-last[b]||cnt[b]-cnt[a]);
+  }
   const hb={m:0,list:[]};
   function habitsFor(m){
     const title=MEALS[m][0], present=new Set(MEALS[m][2].map(it=>it[0])), H=HAB[title]||{};
-    return Object.keys(H).filter(n=>!present.has(n)).map(n=>({name:n,h:H[n],f:FAV.find(f=>f.name===n)})).filter(x=>x.f)
-      .sort((a,b)=>b.h.n-a.h.n||b.h.t-a.h.t).slice(0,25);
+    return habStreak(title).filter(n=>!present.has(n)).map(n=>({name:n,h:H[n]||{n:0,g:0},f:FAV.find(f=>f.name===n)})).filter(x=>x.f).slice(0,25);
   }
   function recentFor(m){
     const present=new Set(MEALS[m][2].map(it=>it[0]));
@@ -5559,11 +5569,11 @@ window.BBXBk=(function(){
     const m=hi.m; if(m==null||!MEALS[m]) return;
     const card=document.querySelector('#mlMeals .my-card[data-m="'+m+'"]'), mh=card&&card.querySelector('.my-mh'); if(!mh) return;
     const hbtn=mh.querySelector('.my-hbtn.hab'); if(hbtn) hbtn.classList.add('on');
-    let list=habitsFor(m); if(!list.length) list=recentFor(m); hi.list=list;
+    const list=habitsFor(m); hi.list=list;
     const row=document.createElement('div'); row.className='my-habrow';
     row.innerHTML=list.length?list.map((x,i)=>{ const f=x.f, uw=f.serving>0?f.serving:100, g=x.h.g>0?x.h.g:uw;
       return `<div class="hv-it" style="animation-delay:${(-i*0.37).toFixed(2)}s"><span class="hv-em">${esc(f.emoji||'🍽️')}</span><span class="hv-tx"><b>${esc(f.name)}</b><small>${r(f.kcal*g/100)} kcal</small></span><button type="button" class="hv-add" onclick="BBXMeal.habAdd(${i})" aria-label="Ajouter ${esc(f.name)}">＋</button></div>`; }).join('')
-      :'<div class="hv-empty">Pas encore d’habitude pour ce repas : ajoute des produits, les plus fréquents apparaîtront ici.</div>';
+      :'<div class="hv-empty">Pas encore d’habitude ici : un produit devient une habitude quand tu le manges 3 jours de suite à ce repas.</div>';
     mh.insertAdjacentElement('afterend',row);
   }
   function habInline(m){ const shown=!!document.querySelector('#mlMeals .my-habrow'); hi.m=(shown&&hi.m===m)?null:m; habInlineRender(); }
