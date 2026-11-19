@@ -3053,6 +3053,7 @@ html body #mealView .sum-full .sx-c .sx-l .sm-in{ width:auto !important; min-wid
 <style id="noNova">.hl-n{ display:none !important; }
 #mealForm .mf-health .mh-row:has(.mh-nv){ display:none !important; }
 #mealForm .mf-health .mh-row{ grid-column:1/-1; }</style>
+<style id="mealHabRow">#mealView .my-habrow{display:flex;gap:9px;overflow-x:auto;padding:4px 14px 14px;margin:0 -2px;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}#mealView .my-habrow::-webkit-scrollbar{display:none}#mealView .hv-it{flex:none;scroll-snap-align:start;display:flex;align-items:center;gap:8px;width:172px;min-height:58px;box-sizing:border-box;padding:8px 8px 8px 10px;border-radius:18px;background:#fff;box-shadow:0 6px 16px -8px rgba(20,24,40,.35),0 0 0 1px rgba(0,0,0,.04);animation:hvFloat 3.2s ease-in-out infinite}#mealView .hv-em{flex:none;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:21px;background:var(--mt,rgba(0,0,0,.05))}#mealView .hv-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}#mealView .hv-tx b{font-size:12.5px;line-height:1.2;font-weight:800;color:#15171C;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}#mealView .hv-tx small{font-size:11px;font-weight:700;color:#6B6570}#mealView .hv-add{flex:none;width:32px;height:32px;border-radius:50%;border:0;background:var(--mc,#16a34a);color:#fff;font-size:19px;font-weight:800;line-height:1;cursor:pointer;display:grid;place-items:center;box-shadow:0 4px 10px -4px var(--mc,#16a34a)}#mealView .hv-add:active{transform:scale(.9)}#mealView .hv-empty{font-size:12.5px;font-weight:600;color:#6B6570;padding:2px 2px 0}#mealView .my-hbtn.hab.on{background:var(--mc) !important}#mealView .my-hbtn.hab.on svg{stroke:#fff !important}@keyframes hvFloat{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-2px) rotate(-.6deg)}75%{transform:translateY(1.5px) rotate(.5deg)}}@media (prefers-reduced-motion:reduce){#mealView .hv-it{animation:none}}</style>
 <style id="mealNoSub">/* repas : sans la ligne « aliments · prot. » sous le nom */
 html body #mealView .my-card .my-mh .my-mt>span{display:none !important}
 html body #mealView .my-card .my-mh .my-mt{display:flex !important;flex-direction:column !important;align-items:flex-start !important;gap:1px !important;min-width:0 !important}
@@ -3474,7 +3475,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 19/11 · 16 h 00</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 19/11 · 16 h 15</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -3661,7 +3662,7 @@ window.BBXBk=(function(){
     S.v=5; save();
   }
   function build(){
-    $('mlMeals').innerHTML=MEALS.map(([t,ic,items],m)=>`<section class="my-card" data-m="${m}" style="--mc:${mcol(t)[0]};--mx:${mcx(t)};--md:${mcd(t)};--mt:${mcol(t)[1]}"><div class="my-mh"><div class="my-mi">${ic}</div><div class="my-mt"><b>${t}</b><div class="my-mk"><b id="mymk${m}"></b><small>kcal</small></div><span id="mymp${m}"></span></div><div class="my-hb"><button class="my-hbtn idea" onclick="BBXMeal.ideas(${m})" aria-label="Idées pour ${t}" title="Idées adaptées à tes restes du jour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 18h5.6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.1V16h5v-.1c0-.8.4-1.6 1.1-2.1A6 6 0 0 0 12 3z"/></svg></button><button class="my-hbtn scan" onclick="BBXMeal.scan(${m})" aria-label="Scanner un code-barres"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M7 12h10"/></svg></button><button class="my-hbtn hab" onclick="BBXMeal.habTab(${m})" aria-label="Mes habitudes pour ${t}" title="Ce que tu manges d’habitude dans ce repas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5M3.5 3.5v5h5M12 7.5V12l3 2"/></svg></button><button class="my-hbtn plus" onclick="BBXMeal.search(${m})" aria-label="Ajouter un produit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div><label class="my-ck all" title="Tout cocher"><input type="checkbox" id="mlall${m}" aria-label="Tout cocher : ${t}"><span></span></label></div>`+
+    $('mlMeals').innerHTML=MEALS.map(([t,ic,items],m)=>`<section class="my-card" data-m="${m}" style="--mc:${mcol(t)[0]};--mx:${mcx(t)};--md:${mcd(t)};--mt:${mcol(t)[1]}"><div class="my-mh"><div class="my-mi">${ic}</div><div class="my-mt"><b>${t}</b><div class="my-mk"><b id="mymk${m}"></b><small>kcal</small></div><span id="mymp${m}"></span></div><div class="my-hb"><button class="my-hbtn idea" onclick="BBXMeal.ideas(${m})" aria-label="Idées pour ${t}" title="Idées adaptées à tes restes du jour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 18h5.6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.1V16h5v-.1c0-.8.4-1.6 1.1-2.1A6 6 0 0 0 12 3z"/></svg></button><button class="my-hbtn scan" onclick="BBXMeal.scan(${m})" aria-label="Scanner un code-barres"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M7 12h10"/></svg></button><button class="my-hbtn hab" onclick="BBXMeal.habInline(${m})" aria-label="Mes habitudes pour ${t}" title="Ce que tu manges d’habitude dans ce repas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5M3.5 3.5v5h5M12 7.5V12l3 2"/></svg></button><button class="my-hbtn plus" onclick="BBXMeal.search(${m})" aria-label="Ajouter un produit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div><label class="my-ck all" title="Tout cocher"><input type="checkbox" id="mlall${m}" aria-label="Tout cocher : ${t}"><span></span></label></div>`+
       items.map((it,i)=>`<div class="my-it" id="myit${m}-${i}"><div class="my-row" data-m="${m}" data-i="${i}"><div class="my-th">${it[7]}</div><div class="my-nm"><b>${it[0]}</b><span id="mymt${m}-${i}"></span></div><div class="my-kc"><b id="mykc${m}-${i}"></b><small>kcal</small></div><label class="my-ck"><input type="checkbox" id="mlk${m}-${i}" ${S.d[key(m,i)]?'checked':''}><span></span></label></div>
         <div class="my-edit"><div class="my-st"><button data-d="-1" aria-label="Moins">−</button><input type="number" inputmode="decimal" min="0" step="any" id="mlc${m}-${i}" value="${r2(W(m,i,it)/it[2])}"><button data-d="1" aria-label="Plus">+</button></div><span class="my-u">${it[1]}</span>
         <div class="my-wf"><input type="number" inputmode="decimal" min="0" step="any" id="mlw${m}-${i}" value="${r1(W(m,i,it))}"><span class="my-u">${it[6]}</span></div>
@@ -5549,6 +5550,31 @@ window.BBXBk=(function(){
     const it=[f.name,label,uw,g/uw,f.kcal*g/100,f.prot*g/100,f.unit,f.emoji||'🍽️',f.fat!=null?f.fat*g/100:null,f.carb!=null?f.carb*g/100:null];
     MEALS[m][2].push(it); S.d[MEALS[m][0]+'|'+f.name]=true; bumpHabit(MEALS[m][0],f.name,g); refresh(); renderHabits('✓ « '+f.name+' » ajouté'+(AUTO?' et compté':' et coché'));
   }
+
+  // ---------- habitudes en vignettes dans la carte du repas (bouton horloge) ----------
+  const hi={m:null,list:[]};
+  function habInlineRender(){
+    document.querySelectorAll('#mlMeals .my-habrow').forEach(e=>e.remove());
+    document.querySelectorAll('#mlMeals .my-hbtn.hab.on').forEach(b=>b.classList.remove('on'));
+    const m=hi.m; if(m==null||!MEALS[m]) return;
+    const card=document.querySelector('#mlMeals .my-card[data-m="'+m+'"]'), mh=card&&card.querySelector('.my-mh'); if(!mh) return;
+    const hbtn=mh.querySelector('.my-hbtn.hab'); if(hbtn) hbtn.classList.add('on');
+    let list=habitsFor(m); if(!list.length) list=recentFor(m); hi.list=list;
+    const row=document.createElement('div'); row.className='my-habrow';
+    row.innerHTML=list.length?list.map((x,i)=>{ const f=x.f, uw=f.serving>0?f.serving:100, g=x.h.g>0?x.h.g:uw;
+      return `<div class="hv-it" style="animation-delay:${(-i*0.37).toFixed(2)}s"><span class="hv-em">${esc(f.emoji||'🍽️')}</span><span class="hv-tx"><b>${esc(f.name)}</b><small>${r(f.kcal*g/100)} kcal</small></span><button type="button" class="hv-add" onclick="BBXMeal.habAdd(${i})" aria-label="Ajouter ${esc(f.name)}">＋</button></div>`; }).join('')
+      :'<div class="hv-empty">Pas encore d’habitude pour ce repas : ajoute des produits, les plus fréquents apparaîtront ici.</div>';
+    mh.insertAdjacentElement('afterend',row);
+  }
+  function habInline(m){ const shown=!!document.querySelector('#mlMeals .my-habrow'); hi.m=(shown&&hi.m===m)?null:m; habInlineRender(); }
+  function habInlineAdd(i){
+    const x=hi.list[i], m=hi.m; if(!x||m==null||!MEALS[m]) return; const f=x.f, uw=f.serving>0?f.serving:100, g=x.h.g>0?x.h.g:uw;
+    const label=f.serving>0?(f.label||'portion'):'portion de 100 '+f.unit;
+    MEALS[m][2].push([f.name,label,uw,g/uw,f.kcal*g/100,f.prot*g/100,f.unit,f.emoji||'🍽️',f.fat!=null?f.fat*g/100:null,f.carb!=null?f.carb*g/100:null]);
+    S.d[MEALS[m][0]+'|'+f.name]=true; bumpHabit(MEALS[m][0],f.name,g); refresh(); habInlineRender();
+  }
+  // fermer en faisant autre chose dans l'appli
+  document.addEventListener('pointerdown',e=>{ if(hi.m==null) return; const t=e.target; if(t.closest&&(t.closest('.my-habrow')||t.closest('.my-hbtn.hab'))) return; hi.m=null; habInlineRender(); },true);
   // ---------- progression : rétrécit en défilant, se redéploie en haut ----------
   const fx=document.querySelector('.my-fixed'), mv=$('mealView');
   let fxD=1, fxRaf=0;
@@ -5644,6 +5670,7 @@ window.BBXBk=(function(){
     openHist:openHist, closeHist:()=>$('mealHist').classList.remove('show'), histDay:histDay, clearHist:clearHist,
     addMeal:()=>openName('add'), renameMeal:m=>openName('edit',m), saveName:saveName, closeName:()=>$('mealName').classList.remove('show'), delMeal:delMeal,
     habTab:m=>{ srOpen(m); srTab('h'); },
+    habInline:habInline, habAdd:habInlineAdd,
     srTab:srTab, srTable:()=>{ const t=sr.target; openForm('add',t,null,{info:'Prends en photo le tableau nutritionnel du produit.'}); ocrWarm(); $('mfOcrFile').click(); },
     addTyped:addTyped, setMeal:setMeal, unit:u=>{ fm.unitTouched=1; setUnit(u); }, qty:qtyStep, units:setQtyUnits, portion:setPortion, favDel:favDel, search:srOpen, closeSearch:closeSearch, doSearch:doSearch, pick:pick
   };
