@@ -3486,7 +3486,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 19/11 · 17 h 15</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 19/11 · 17 h 20</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -3687,7 +3687,7 @@ window.BBXBk=(function(){
         w.oninput=()=>{ const n=Math.max(0,parseFloat(w.value)||0); S.w[key(m,i)]=n; c.value=r2(n/it[2]); calc(); save(); };
         c.parentNode.querySelectorAll('button').forEach(b=>b.onclick=()=>setN((parseFloat(c.value)||0)+step*b.dataset.d));
         $('mlk'+m+'-'+i).onchange=e=>{ S.d[key(m,i)]=e.target.checked; if(e.target.checked) bumpHabit(MEALS[m][0],it[0],W(m,i,it)); calc(); save(); };
-        $('myit'+m+'-'+i).querySelector('.my-row').onclick=e=>{ if(e.target.closest('label')||Date.now()-lastSwipe<450) return; $('myit'+m+'-'+i).classList.toggle('open'); };
+        $('myit'+m+'-'+i).querySelector('.my-row').onclick=e=>{ if(e.target.closest('label')||Date.now()-lastSwipe<450) return; const me=$('myit'+m+'-'+i); document.querySelectorAll('#mlMeals .my-it.open').forEach(x=>{ if(x!==me) x.classList.remove('open'); }); me.classList.toggle('open'); };
       });
     });
     $('mlKg').value=S.kg; $('mlPg').value=S.pg; $('mlFg').value=S.fg; $('mlCg').value=S.cg;
