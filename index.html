@@ -3475,7 +3475,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 19/11 · 16 h 35</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 19/11 · 16 h 40</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -5532,7 +5532,10 @@ window.BBXBk=(function(){
       Object.keys(run).forEach(n=>{ if(!seen[n]) run[n]=0; });
       Object.keys(seen).forEach(n=>{ run[n]=(run[n]||0)+1; best[n]=Math.max(best[n]||0,run[n]); last[n]=i; cnt[n]=(cnt[n]||0)+1; });
     }
-    return Object.keys(best).filter(n=>best[n]>=3).sort((a,b)=>last[a]-last[b]||cnt[b]-cnt[a]);
+    const out=Object.keys(best).filter(n=>best[n]>=3).sort((a,b)=>last[a]-last[b]||cnt[b]-cnt[a]);
+    // exceptionnel : le 19 et le 20/11/2026 seulement, les produits de la veille comptent aussi comme habitudes
+    if(k(now)<='2026-11-20'){ const y=HIST[k(new Date(now.getFullYear(),now.getMonth(),now.getDate()-1))]; if(y&&y.i) y.i.forEach(x=>{ if(x&&x[0]===title&&x[1]&&out.indexOf(x[1])<0) out.push(x[1]); }); }
+    return out;
   }
   const hb={m:0,list:[]};
   function habitsFor(m){
