@@ -3053,6 +3053,7 @@ html body #mealView .sum-full .sx-c .sx-l .sm-in{ width:auto !important; min-wid
 <style id="noNova">.hl-n{ display:none !important; }
 #mealForm .mf-health .mh-row:has(.mh-nv){ display:none !important; }
 #mealForm .mf-health .mh-row{ grid-column:1/-1; }</style>
+<style id="mealWater">#mealView .my-water{flex:none;display:flex;align-items:center;gap:4px;height:42px;padding:0 10px 0 6px;border:0;border-radius:999px;background:rgba(255,255,255,.18);color:inherit;font:inherit;font-weight:900;font-style:italic;font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}#mealView .my-water[hidden]{display:none !important}#mealView .my-dn[hidden]{display:none !important}#mealView .my-water svg{width:18px;height:26px;overflow:visible}#mealView .my-water .mw-o{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round;stroke-linecap:round}#mealView .my-water #mwFill{fill:#38BDF8;transition:y .35s ease,height .35s ease}#mealView .my-water.full #mwFill{fill:#0EA5E9}#mealView .my-water.pop svg{animation:mwPop .3s ease}@keyframes mwPop{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}</style>
 <style id="mealRowAct">/* produit d’un repas : au toucher, crayon + corbeille juste après les kcal ; plus de réglage quantité / poids */
 html body #mealView .my-it .my-edit{display:none !important}
 html body #mealView .my-row .my-ract{display:none;flex:none;gap:6px;align-items:center;margin-left:6px}
@@ -3324,6 +3325,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <button class="my-dn" id="mlPrev" onclick="BBXMeal.dayPrev()" aria-label="Jour précédent"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
     <div class="my-dt"><b id="mlDay">Aujourd’hui</b><span id="mlDate"></span></div>
     <button class="my-dn" id="mlNext" onclick="BBXMeal.dayNext()" aria-label="Jour suivant" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+    <button class="my-water" id="mlWater" type="button" aria-label="Eau bue aujourd’hui : appuie pour ajouter un verre de 25 cl, appui long pour en retirer un"><svg viewBox="0 0 24 32" aria-hidden="true"><defs><clipPath id="mwClip"><path d="M9.5 2.5h5v3.2c0 .9.5 1.6 1.2 2.3 1.4 1.3 2.3 3 2.3 5V27a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 6 27V13c0-2 .9-3.7 2.3-5 .7-.7 1.2-1.4 1.2-2.3z"/></clipPath></defs><rect id="mwFill" x="0" y="30" width="24" height="0" clip-path="url(#mwClip)"/><path class="mw-o" d="M9.5 2.5h5v3.2c0 .9.5 1.6 1.2 2.3 1.4 1.3 2.3 3 2.3 5V27a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 6 27V13c0-2 .9-3.7 2.3-5 .7-.7 1.2-1.4 1.2-2.3z"/><path class="mw-o" d="M9 2.5h6"/></svg><span id="mwTxt">0 L</span></button>
   </div>
   <div class="my-sum">
     <div class="sum-full">
@@ -3486,7 +3488,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 22/11 · 13 h 50</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 22/11 · 14 h 05</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -5629,11 +5631,33 @@ window.BBXBk=(function(){
   try{ const v=JSON.parse(sessionStorage.getItem('meal-viewoff')||'null'); if(v&&v.o<0&&v.d===dayKeyOff(0)&&Date.now()-v.t<3600000){ viewOff=v.o; setTimeout(()=>{ try{ renderPast(); }catch(e){} },0); } }catch(e){}
   function oldestOff(){ const ks=Object.keys(HIST).sort(); if(!ks.length) return 0; return Math.round((fd(ks[0])-fd(today()))/86400000); }
   function dayLabel(o){ return o===0?'Aujourd’hui':(o===-1?'Hier':dlabel(dayKeyOff(o))); }
+
+  // ---------- eau du jour (bouteille 1,5 L) : appui = +25 cl, appui long = −25 cl ----------
+  const WATK='phy-water', WATG=1500, WATS=250;
+  function waterGet(){ try{ const o=JSON.parse(localStorage.getItem(WATK)||'{}'); return +o[today()]||0; }catch(e){ return 0; } }
+  function waterSet(ml){ let o={}; try{ o=JSON.parse(localStorage.getItem(WATK)||'{}')||{}; }catch(e){} o[today()]=Math.max(0,Math.min(6000,ml));
+    const ks=Object.keys(o).sort(); while(ks.length>60){ delete o[ks.shift()]; } try{ localStorage.setItem(WATK,JSON.stringify(o)); }catch(e){} waterRender(); }
+  function waterRender(){
+    const b=$('mlWater'); if(!b) return; const on=viewOff>=0; b.hidden=!on; $('mlNext').hidden=on;
+    const ml=waterGet(), f=Math.min(1,ml/WATG), h=27*f;
+    const r=$('mwFill'); if(r){ r.setAttribute('y',String(29.5-h)); r.setAttribute('height',String(h)); }
+    $('mwTxt').textContent=(ml/1000).toFixed(2).replace(/0$/,'').replace(/\.0$/,'').replace(/\.$/,'').replace('.',',')+' L';
+    b.classList.toggle('full',ml>=WATG);
+  }
+  (function(){ const b=$('mlWater'); if(!b) return; let t=0, long=false;
+    const add=d=>{ waterSet(waterGet()+d); b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); try{ navigator.vibrate&&navigator.vibrate(d>0?15:[10,40,10]); }catch(e){} };
+    b.addEventListener('pointerdown',()=>{ long=false; clearTimeout(t); t=setTimeout(()=>{ long=true; add(-WATS); },550); });
+    ['pointerup','pointercancel','pointerleave'].forEach(ev=>b.addEventListener(ev,()=>clearTimeout(t)));
+    b.addEventListener('contextmenu',e=>e.preventDefault());
+    b.addEventListener('click',e=>{ e.preventDefault(); if(long){ long=false; return; } add(WATS); });
+  })();
+  setTimeout(()=>{ try{ waterRender(); }catch(e){} },0);
   function renderPast(){
     try{ sessionStorage.setItem('meal-viewoff',JSON.stringify({o:viewOff,d:dayKeyOff(0),t:Date.now()})); }catch(e){}   // le jour affiché survit à un rechargement
     $('mealView').classList.toggle('past',viewOff<0);
     $('mlDay').textContent=dayLabel(viewOff);
     $('mlNext').disabled=viewOff>=0;
+    try{ waterRender(); }catch(e){}
     const box=$('mealPast');
     if(viewOff>=0){ box.hidden=true; box.innerHTML=''; $('pastSum').hidden=true; $('pastSum').innerHTML=''; sumMeasure(); return; }
     box.hidden=false;
