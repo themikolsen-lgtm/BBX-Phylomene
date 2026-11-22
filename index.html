@@ -3053,6 +3053,7 @@ html body #mealView .sum-full .sx-c .sx-l .sm-in{ width:auto !important; min-wid
 <style id="noNova">.hl-n{ display:none !important; }
 #mealForm .mf-health .mh-row:has(.mh-nv){ display:none !important; }
 #mealForm .mf-health .mh-row{ grid-column:1/-1; }</style>
+<style id="mealSteps">#mealView .my-day{display:grid !important;grid-template-columns:1fr auto 1fr !important;align-items:center}#mealView .my-day>#mlPrev{grid-column:1;justify-self:start}#mealView .my-day>.my-dt{grid-column:2;text-align:center}#mealView .my-day>#mlNext,#mealView .my-day>#mlWater{grid-column:3;grid-row:1;justify-self:end}#mealView .my-steps{margin:0 auto;flex:none;display:flex;align-items:center;gap:5px;height:40px;padding:0 13px 0 10px;border:0;border-radius:999px;background:#fff;box-shadow:0 4px 14px -8px rgba(20,24,40,.35);color:#15171C;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}#mealView .my-steps svg{width:18px;height:18px;fill:currentColor;opacity:.85}#mealView .my-steps b{font-size:15px;font-weight:900;font-style:italic;letter-spacing:-.01em}#mealView .my-steps small{font-size:11px;font-weight:700;opacity:.65}#mealView .my-steps:active{transform:scale(.96)}@media (max-width:400px){#mealView .my-steps{height:36px;padding:0 10px 0 8px;gap:4px;margin:0 6px 0 auto}#mealView .my-steps b{font-size:13.5px}#mealView .my-steps small{display:none}#mealView .my-steps svg{width:16px;height:16px}}</style>
 <style id="mealWater">#mealView .my-water{flex:none;display:flex;align-items:center;gap:4px;height:42px;padding:0 10px 0 6px;border:0;border-radius:999px;background:rgba(255,255,255,.18);color:inherit;font:inherit;font-weight:900;font-style:italic;font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}#mealView .my-water[hidden]{display:none !important}#mealView .my-dn[hidden]{display:none !important}#mealView .my-water svg{width:18px;height:26px;overflow:visible}#mealView .my-water .mw-o{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round;stroke-linecap:round}#mealView .my-water #mwFill{fill:#38BDF8;transition:y .35s ease,height .35s ease}#mealView .my-water.full #mwFill{fill:#0EA5E9}#mealView .my-water.pop svg{animation:mwPop .3s ease}@keyframes mwPop{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}</style>
 <style id="mealRowAct">/* produit d’un repas : au toucher, crayon + corbeille juste après les kcal ; plus de réglage quantité / poids */
 html body #mealView .my-it .my-edit{display:none !important}
@@ -3314,7 +3315,8 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
   <div class="my-fixed">
   <div class="my-head">
     <div class="my-brand"><img class="app-logo" id="mlLogo" alt="BBX"></div>
-    <div class="my-hr my-pill">
+    <button class="my-steps" id="mlSteps" type="button" onclick="BBXMeal.steps()" aria-label="Pas du jour : appuie pour les saisir"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.2 3.5c1.6 0 2.6 1.6 2.6 3.7 0 1.9-.8 3.4-1.1 4.7-.2.8-.9 1.3-1.7 1.3-1.1 0-1.9-.8-2.1-2.1-.3-1.7-.2-3.6.3-5.1.4-1.5 1.1-2.5 2-2.5zM6.6 15h3.6c.4 1.9-.1 3.8-1.6 4.6-1.3.7-2.6-.2-2.6-1.7 0-1.2.3-2.1.6-2.9zM15.8 7.5c.9 0 1.6 1 2 2.5.5 1.5.6 3.4.3 5.1-.2 1.3-1 2.1-2.1 2.1-.8 0-1.5-.5-1.7-1.3-.3-1.3-1.1-2.8-1.1-4.7 0-2.1 1-3.7 2.6-3.7zM14.2 19h3.6c.3.8.6 1.7.6 2.9"/></svg><b id="msTxt">—</b><small>pas</small></button>
+      <div class="my-hr my-pill">
       <button class="my-suivi" onclick="BBXMeal.openHist()" aria-label="Suivi des jours"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V9M9.7 20V4M14.3 20V8M19 20V13"/></svg><span class="my-sl">Suivi</span></button>
       <i class="my-sep" aria-hidden="true"></i>
       <button class="my-cfg" onclick="BBXMeal.openCfg()" aria-label="Réglages Meal"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg></button>
@@ -3488,7 +3490,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 22/11 · 14 h 05</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 22/11 · 14 h 20</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -5632,6 +5634,17 @@ window.BBXBk=(function(){
   function oldestOff(){ const ks=Object.keys(HIST).sort(); if(!ks.length) return 0; return Math.round((fd(ks[0])-fd(today()))/86400000); }
   function dayLabel(o){ return o===0?'Aujourd’hui':(o===-1?'Hier':dlabel(dayKeyOff(o))); }
 
+
+  // ---------- pas du jour (en-tête Meal) : saisie à la main, ou par un raccourci iPhone qui ouvre l'appli avec ?pas=1234 ----------
+  const STK='phy-steps';
+  function stepsGet(){ try{ const o=JSON.parse(localStorage.getItem(STK)||'{}'); return o[today()]; }catch(e){ return null; } }
+  function stepsSet(n){ let o={}; try{ o=JSON.parse(localStorage.getItem(STK)||'{}')||{}; }catch(e){} o[today()]=Math.max(0,Math.min(200000,Math.round(n)));
+    const ks=Object.keys(o).sort(); while(ks.length>90){ delete o[ks.shift()]; } try{ localStorage.setItem(STK,JSON.stringify(o)); }catch(e){} stepsRender(); }
+  function stepsRender(){ const t=$('msTxt'); if(!t) return; const n=stepsGet(); t.textContent=(n==null)?'—':String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' '); }
+  function stepsAsk(){ const cur=stepsGet(); const v=prompt('Nombre de pas aujourd’hui',cur!=null?String(cur):''); if(v==null) return; const n=parseInt(String(v).replace(/[^\d]/g,''),10); if(isFinite(n)) stepsSet(n); }
+  try{ const q=new URLSearchParams(location.search), h=new URLSearchParams(location.hash.replace(/^#/,'')), v=q.get('pas')||h.get('pas');
+    if(v!=null){ const n=parseInt(String(v).replace(/[^\d]/g,''),10); if(isFinite(n)) stepsSet(n); q.delete('pas'); history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:'')); } }catch(e){}
+  setTimeout(()=>{ try{ stepsRender(); }catch(e){} },0);
   // ---------- eau du jour (bouteille 1,5 L) : appui = +25 cl, appui long = −25 cl ----------
   const WATK='phy-water', WATG=1500, WATS=250;
   function waterGet(){ try{ const o=JSON.parse(localStorage.getItem(WATK)||'{}'); return +o[today()]||0; }catch(e){ return 0; } }
@@ -5729,6 +5742,7 @@ window.BBXBk=(function(){
     openHist:openHist, closeHist:()=>$('mealHist').classList.remove('show'), histDay:histDay, clearHist:clearHist,
     addMeal:()=>openName('add'), renameMeal:m=>openName('edit',m), saveName:saveName, closeName:()=>$('mealName').classList.remove('show'), delMeal:delMeal,
     habTab:m=>{ srOpen(m); srTab('h'); },
+    steps:stepsAsk,
     habInline:habInline, habAdd:habInlineAdd, habEdit:habInlineEdit,
     srTab:srTab, srTable:()=>{ const t=sr.target; openForm('add',t,null,{info:'Prends en photo le tableau nutritionnel du produit.'}); ocrWarm(); $('mfOcrFile').click(); },
     addTyped:addTyped, setMeal:setMeal, unit:u=>{ fm.unitTouched=1; setUnit(u); }, qty:qtyStep, units:setQtyUnits, portion:setPortion, favDel:favDel, search:srOpen, closeSearch:closeSearch, doSearch:doSearch, pick:pick
