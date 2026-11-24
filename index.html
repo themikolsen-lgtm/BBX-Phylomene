@@ -3291,7 +3291,7 @@ html.mt-beta.mt-b2 body #mealIdeas .sr-go.added{ background:#34C759 !important; 
    un seul rayon (20 px cartes / 12 px vignettes / pastilles rondes), grille de 16 px,
    texte principal #16181D, texte secondaire #6B7280, couleur du repas uniquement en accent. */
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView{ --b3-bg:#F4F6F3; --b3-line:#E6EAE4; --b3-ink:#16181D; --b3-mut:#6B7280; --b3-r:20px; background:var(--b3-bg) !important; background-image:none !important; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-fixed::before{ top:0 !important; bottom:-22px !important; height:auto !important; background:linear-gradient(to bottom,#F4F6F3 0,#F4F6F3 calc(100% - 22px),rgba(244,246,243,.85) calc(100% - 14px),rgba(244,246,243,0) 100%) !important; -webkit-mask-image:none !important; mask-image:none !important; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }   /* opaque jusqu'au bas de la carte : plus de cadre fantôme */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-fixed::before{ top:0 !important; bottom:-8px !important; height:auto !important; background:linear-gradient(to bottom,#F4F6F3 0,#F4F6F3 calc(100% - 8px),rgba(244,246,243,0) 100%) !important; -webkit-mask-image:none !important; mask-image:none !important; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }   /* opaque jusqu'au bas de la carte : plus de cadre fantôme */
 
 /* en-tête */
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-head .my-pill{ background:#fff !important; border:1px solid var(--b3-line) !important; box-shadow:none !important; height:44px !important; padding:0 16px !important; border-radius:999px !important; }
@@ -3694,7 +3694,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 24/11 · 17 h 10</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 24/11 · 17 h 15</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
