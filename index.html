@@ -3495,6 +3495,24 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-nm b, html.mt-beta.mt-b2.m
 
 /* fondu doux sous la carte, uniquement quand on a défilé */
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView.b3sc .my-fixed::before{ bottom:-16px !important; background:linear-gradient(to bottom,#F4F6F3 0,#F4F6F3 calc(100% - 16px),rgba(244,246,243,.7) calc(100% - 10px),rgba(244,246,243,0) 100%) !important; }
+
+/* titres des écrans : même style partout (pas de majuscules italiques) */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) .mc-head>b, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) .mc-head #hbTitle{ font-size:20px !important; font-weight:800 !important; font-style:normal !important; text-transform:none !important; letter-spacing:-.01em !important; color:var(--b3-ink) !important; }
+/* boutons ronds du bas (Habitudes, etc.) côte à côte */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealHabits .mf-btns{ flex-direction:row !important; justify-content:center !important; align-items:center !important; gap:14px !important; }
+/* onglets de recherche : tiennent sur petit écran */
+@media (max-width:370px){ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #srTabs button{ font-size:13px !important; padding-left:3px !important; padding-right:3px !important; } html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #srTabs button[data-n]::after{ min-width:16px; height:16px; padding:0 4px; margin-left:3px; font-size:10px; } }
+
+/* boutons modifier / supprimer d'un produit : plus gros */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-ract{ gap:8px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-ract button{ width:54px !important; height:44px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-ract button svg{ width:22px !important; height:22px !important; stroke-width:2.2 !important; }
+/* volet nutriments : nom et valeurs plus petits, valeurs juste dessous */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c:not(.k) .sx-t, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.k .sx-t::after{ font-size:12.5px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c .sx-l, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c .sx-l .sm-in{ font-size:9.5px !important; margin-top:-5px !important; line-height:1.2 !important; color:#5B616B !important; }
+
+/* produit ouvert (boutons visibles) : le nom peut passer sur 2 lignes */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-it.open .my-nm b{ white-space:normal !important; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3702,7 +3720,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 24/11 · 17 h 50</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 24/11 · 18 h 05</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -3977,7 +3995,7 @@ function fEmo(name,cur){
       t.setAttribute('d',d); f.setAttribute('d',d);
       const L=f.getTotalLength(), fl=over?L:L*v/100; f.setAttribute('stroke-dasharray',fl+' '+(L+1));
       const pt=f.getPointAtLength(over?0:Math.max(0.01,fl)); dot.setAttribute('cx',pt.x); dot.setAttribute('cy',pt.y);
-      dot.style.display=(v>0||over)?'':'none'; c.classList.toggle('b3pg-on',true);
+      dot.style.display=(v>0||over)?'':'none'; f.style.display=(v>0||over)?'':'none'; c.classList.toggle('b3pg-on',true);
     });
   }catch(e){} }
   (function(){ const mv=document.getElementById('mealView'); if(!mv) return; const f=()=>mv.classList.toggle('b3sc',mv.scrollTop>6); mv.addEventListener('scroll',f,{passive:true}); f(); })();   /* fondu seulement en défilant */
@@ -5909,7 +5927,7 @@ function fEmo(name,cur){
   let fxD=1, fxRaf=0;
   function miniStrip(a,ids){ return a.map(x=>{ const lab=(x.t==='kcal'?'Kcal':x.t); const fr=(x.e!=null)?(x.e+' / '+x.g+(x.k==='K'?'':'g')):''; return `<div class="sm-i ${x.cls}${x.rem<0?' over':''}"><div class="sm-b"><i${ids?' id="mnb'+x.k+'"':''} style="width:${Math.max(0,Math.min(1,x.f||0))*100}%"></i></div><div class="sm-t"><span class="sm-l">${lab}</span><b class="sm-v"${ids?' id="mn'+x.k+'"':''}>${Math.abs(Math.round(x.rem))}</b></div><div class="sm-f"${ids?' id="mnf'+x.k+'"':''}>${fr}</div></div>`; }).join(''); }
   $('sumMini').innerHTML=miniStrip([{k:'K',t:'kcal',cls:'k',rem:0,f:0,e:0,g:0},{k:'P',t:'Prot.',cls:'p',rem:0,f:0,e:0,g:0},{k:'F',t:'Lip.',cls:'f',rem:0,f:0,e:0,g:0},{k:'C',t:'Gluc.',cls:'c',rem:0,f:0,e:0,g:0}],true);
-  let sLast=0, sC=0, sCur=null, sAnim=0; function sumPaint(){ sCur+=(sC-sCur)*0.4; if(Math.abs(sC-sCur)<0.4) sCur=sC; fx.style.setProperty('--c',sCur.toFixed(1)); fx.style.setProperty('--p',(sCur/fxD).toFixed(3)); sAnim=(sCur!==sC)?requestAnimationFrame(sumPaint):0; } function sumScroll(){ const st=Math.max(mv.scrollTop,0), d=st-sLast; sLast=st; if(st<=2) sC=0; else if(d>1) sC=fxD; else if(d<-1) sC=0; if(sCur===null) sCur=sC; if(!sAnim) sAnim=requestAnimationFrame(sumPaint); }
+  let sLast=0, sC=0, sCur=null, sAnim=0; function sumPaint(){ sCur+=(sC-sCur)*0.4; if(Math.abs(sC-sCur)<0.4) sCur=sC; fx.style.setProperty('--c',sCur.toFixed(1)); fx.style.setProperty('--p',(sCur/fxD).toFixed(3)); sAnim=(sCur!==sC)?requestAnimationFrame(sumPaint):0; } function sumScroll(){ const st=Math.max(mv.scrollTop,0), d=st-sLast; sLast=st; if(st<=2||(mv.scrollHeight-mv.clientHeight)<fxD+40) sC=0; else if(d>1) sC=fxD; else if(d<-1) sC=0; if(sCur===null) sCur=sC; if(!sAnim) sAnim=requestAnimationFrame(sumPaint); }
   function sumMeasure(){
     const full=[...fx.querySelectorAll('.sum-full')].find(e=>e.offsetHeight>0); if(!full) return;
     const hs=Math.ceil(full.offsetHeight); fx.style.setProperty('--hs',hs); fxD=Math.max(1,hs); fx.classList.add('ready'); sumScroll();
