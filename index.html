@@ -3466,15 +3466,15 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) .mc-head .mc-x::after{ content:"" !impor
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) .mc-head .mc-x:active{ transform:scale(.94); }
 @media (max-width:440px){ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh:has(.my-hbtn.hab)>.my-mi{ display:none !important; } }
 
-/* ===== Carte Aujourd'hui : demi-cadrans (proposition R) ===== */
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h b{ position:relative !important; isolation:isolate; width:78px !important; height:50px !important; border-radius:0 !important; background:none !important; box-shadow:none !important; display:grid !important; place-items:end center !important; padding:0 0 9px !important; box-sizing:border-box; color:#15171C !important; font-size:16px !important; line-height:1 !important; font-variant-numeric:tabular-nums; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h b::before{ content:"" !important; display:block !important; position:absolute; z-index:-1; left:0; right:0; top:0; height:50px; background:conic-gradient(from -90deg at 50% 100%,var(--rc) 0 calc(var(--rp,0) * 1.8deg),#EEF0F3 0 180deg,transparent 0); -webkit-mask:radial-gradient(circle at 50% 100%,transparent 28px,#000 28.5px 38px,transparent 38.5px); mask:radial-gradient(circle at 50% 100%,transparent 28px,#000 28.5px 38px,transparent 38.5px); transition:background .4s; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h b::after{ content:"RESTANTS" !important; display:block !important; position:absolute; left:-6px; right:-6px; bottom:0; font:800 7px/1 system-ui; letter-spacing:.05em; text-align:center; color:#6B7280; }
+/* ===== Carte Aujourd'hui : 4 pilules alignées, le contour se remplit (proposition AF) ===== */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h b{ position:relative !important; isolation:isolate; width:100% !important; min-width:0 !important; max-width:80px !important; flex:none !important; height:48px !important; border-radius:999px !important; background:#F7F8F9 !important; background:color-mix(in srgb,var(--rc) 13%,#fff) !important; box-shadow:none !important; display:grid !important; place-items:center !important; padding:0 0 8px !important; box-sizing:border-box; color:#15171C !important; color:color-mix(in srgb,var(--rc) 40%,#111) !important; font-size:16px !important; line-height:1 !important; font-variant-numeric:tabular-nums; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h b::before{ content:"" !important; display:block !important; position:absolute; z-index:-1; inset:0; padding:5px; box-sizing:border-box; border-radius:inherit; background:conic-gradient(var(--rc) 0 calc(var(--rp,0) * 3.6deg),color-mix(in srgb,var(--rc) 30%,#fff) 0); -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0); }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h b::after{ content:"RESTANTS" !important; display:block !important; position:absolute; left:0; right:0; bottom:10px; font:800 6.5px/1 system-ui; letter-spacing:.02em; text-align:center; color:#6B7280; color:color-mix(in srgb,var(--rc) 40%,#111); }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.k .sx-h b::after{ content:"RESTANTES" !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.over .sx-h b{ color:#C8102E !important; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.over .sx-h b::before{ background:conic-gradient(from -90deg at 50% 100%,var(--rc) 0 150deg,#E5484D 150deg 180deg,transparent 0); }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.over .sx-h b::before{ background:conic-gradient(var(--rc) 0 315deg,#E5484D 315deg 360deg); }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.over .sx-h b::after{ content:"EN TROP" !important; color:#C8102E; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h{ gap:4px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h{ gap:5px !important; width:100% !important; } html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full{ gap:6px !important; padding-left:8px !important; padding-right:8px !important; } html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c{ min-width:0 !important; width:100% !important; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3682,7 +3682,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 24/11 · 16 h 10</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 24/11 · 16 h 25</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
