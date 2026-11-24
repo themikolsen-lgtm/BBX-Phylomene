@@ -3610,7 +3610,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 24/11 · 10 h 35</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 24/11 · 11 h 05</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4916,19 +4916,22 @@ window.BBXBk=(function(){
   }
   // thème Bêta : onglets Récent (mes produits) / Suivi (tous les produits ajoutés, tous comptes) / Autres (bases en ligne et aliments courants)
   const srB2=()=>document.documentElement.classList.contains('mt-b2');
-  function srTabOk(x,t){ if((($('srQ')||{}).value||'').trim()) return true; return t==='h'?!!x.habT:t==='s'?!!(x.cat||x.suivi):!!x.fav; }   // recherche tapée : tous les résultats ; sinon Récent ou Suivi   // Suivi = produits ajoutés depuis le 17/11 au soir, tous comptes   // Autres + recherche tapée = tous les résultats   // Suivi = tous les produits ajoutés (les miens + ceux des autres comptes)
+  function srTabOk(x,t){ if((($('srQ')||{}).value||'').trim()&&(sr.all||!document.documentElement.classList.contains('mt-b3'))) return true;   /* Bêta 3 : la recherche reste dans l'onglet choisi */ return t==='h'?!!x.habT:t==='s'?!!(x.cat||x.suivi):!!x.fav; }   // recherche tapée : tous les résultats ; sinon Récent ou Suivi   // Suivi = produits ajoutés depuis le 17/11 au soir, tous comptes   // Autres + recherche tapée = tous les résultats   // Suivi = tous les produits ajoutés (les miens + ceux des autres comptes)
   function srPh(){ const q=$('srQ'); if(q) q.placeholder=srB2()?'Nom, Code-barres':'Nom du produit ou code-barres'; }
-  function srTab(t,auto){ if(!auto) sr.tabManual=!!(($('srQ')||{}).value||'').trim(); sr.tab=t; document.querySelectorAll('#srTabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t)); srRender(sr.lastExtra); $('mealSearch').scrollTop=0; }
+  function srTab(t,auto){ if(!auto) sr.tabManual=!!(($('srQ')||{}).value||'').trim(); sr.tab=t; sr.all=false; document.querySelectorAll('#srTabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t)); srRender(sr.lastExtra); $('mealSearch').scrollTop=0; }
   function srRender(extra){
     sr.lastExtra=extra;
     { const cs=new Set(catLoad().map(f=>normS(f&&f.name))); sr.list.forEach(x=>{ if(x&&x.fav) x.suivi=isSuivi(x.name,FAV[x._fi],cs); }); }
     sr.list.forEach(x=>{ const cp=x&&x.name&&portGet(x.name); if(cp&&Math.abs((x.serving||0)-cp.g)>0.05){ const lb=x.label&&!/^portion de 100\b/.test(x.label)?x.label:'portion'; x.serving=cp.g; x.label=lb; x.portions=[{label:lb,g:cp.g}].concat((x.portions||[]).filter(q=>q.label!==lb&&!/^portion de 100\b/.test(q.label||''))); } });   // unité corrigée (base commune) prioritaire
+    const b3q=document.documentElement.classList.contains('mt-b3')&&!!((($('srQ')||{}).value||'').trim());
+    if(b3q){ try{ const hn=new Set(habAll(sr.target)); sr.list.forEach(x=>{ if(x&&x.fav&&hn.has(x.name)) x.habT=true; }); }catch(e){} }
     const L0=sr.list; L0.forEach((x,i)=>{ x._i=i; }); const t=sr.tab||'r', L=srB2()?L0.filter(x=>srTabOk(x,t)):L0;
     const sMode=srB2()&&t==='s'&&!((($('srQ')||{}).value||'').trim());
     const hMode=srB2()&&t==='h'&&!((($('srQ')||{}).value||'').trim()); if(hMode) L.sort((a,b)=>(a.habR||999)-(b.habR||999));
     if(sMode){ const tOf=x=>{ let v=x.t||0; try{ Object.keys(HAB||{}).forEach(m=>{ const h=HAB[m]&&HAB[m][x.name]; if(h&&(h.t||0)>v) v=h.t; }); }catch(e){} return v; }; L.sort((a,b)=>tOf(b)-tOf(a)); }   // Suivi : le dernier produit ajouté ou scanné en haut
     const dot=x=>{ if(!sMode) return ''; const ap=x.app||(x.fav?SK.slice(0,3):''); return ap==='bb9'?'<i class="sr-dot" style="background:#3B82F6" title="Ajouté sur BBX-11WM"></i>':ap==='phy'?'<i class="sr-dot" style="background:#EC4899" title="Ajouté sur Phylomene"></i>':''; };
     if(srB2()&&!L.length&&L0.length){ const n={r:L0.filter(x=>srTabOk(x,'r')).length,s:L0.filter(x=>srTabOk(x,'s')).length,h:L0.filter(x=>srTabOk(x,'h')).length}, nm={r:'Récent',s:'Suivi',h:'Habitudes'}, oth=['r','s','h'].filter(k=>k!==t&&n[k]); if(oth.length) extra='<div class="sr-note">Rien ici. '+oth.map(k=>'<button class="sr-jump" onclick="BBXMeal.srTab(\''+k+'\')">'+n[k]+' dans '+nm[k]+'</button>').join(' ')+'</div>'+(extra||''); }
+    if(b3q&&!sr.all&&L.length<L0.length){ const nAll=L0.length; extra=(extra||'')+'<button class="sr-jump sr-all" onclick="BBXMeal.srAll()">Voir tous les résultats ('+nAll+')</button>'; }
     const row=x=>`<div class="sr-row"><button class="sr-it" onclick="BBXMeal.pick(${x._i},event)"><span class="sr-th">${esc(x.emoji||'🛒')}</span><span class="sr-nm"><b>${dot(x)}${esc(x.name)}</b><span>${x.kcal!=null?r(x.kcal):'?'} kcal · ${x.prot!=null?r1(x.prot):'?'} g prot.${x.fat!=null&&x.carb!=null?' · '+r1(x.fat)+' g lip. · '+r1(x.carb)+' g gluc.':''} / 100 ${x.unit||'g'}${x.serving>0&&x.label&&!/^portion de /.test(x.label)?' · 1 '+esc(x.label)+' ≈ '+r(x.serving)+' '+(x.unit||'g'):''}</span></span>${(srB2()&&sr.added&&sr.added[(x.code||'')+'|'+x.name])?'<span class="sr-go added">✓</span>':'<span class="sr-go">＋</span>'}</button>${x.fav?`<button class="sr-del" onclick="BBXMeal.favDel(${x._fi})" aria-label="Retirer de mes produits">✕</button>`:''}</div>`;
     const sec=(t,arr)=>arr.length?`<div class="sr-sec">${t}</div>`+arr.map(row).join(''):'';
     const h=sec('Tes habitudes · '+esc((MEALS[sr.target]||[''])[0]),L.filter(x=>x.fav&&x.hab))+sec('Mes produits (enregistrés sur ton téléphone)',L.filter(x=>x.fav&&!x.hab))+sec('Catalogue commun (produits ajoutés sur les autres comptes)',L.filter(x=>x.cat))+sec('Aliments courants',L.filter(x=>x.db))+sec('Ciqual · ANSES (base française)',L.filter(x=>x.ciq))+sec('Open Food Facts',L.filter(x=>x.off))+sec('USDA FoodData Central',L.filter(x=>x.usda));
@@ -5887,6 +5890,7 @@ window.BBXBk=(function(){
     habTab:m=>{ srOpen(m); srTab('h'); },
     steps:stepsAsk,
     habInline:habInline, habAdd:habInlineAdd, habEdit:habInlineEdit,
+    srAll:()=>{ sr.all=true; srRender(sr.lastExtra); },
     srTab:srTab, srTable:()=>{ const t=sr.target; openForm('add',t,null,{info:'Prends en photo le tableau nutritionnel du produit.'}); ocrWarm(); $('mfOcrFile').click(); },
     addTyped:addTyped, setMeal:setMeal, unit:u=>{ fm.unitTouched=1; setUnit(u); }, qty:qtyStep, units:setQtyUnits, portion:setPortion, favDel:favDel, search:srOpen, closeSearch:closeSearch, doSearch:doSearch, pick:pick
   };
