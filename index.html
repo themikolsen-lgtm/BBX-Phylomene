@@ -3487,6 +3487,11 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.over svg.b3pg 
 
 /* flèche du jour et bouteille d'eau sans fond gris */
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-dsum .my-dn, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-dsum .my-water{ background:transparent !important; box-shadow:none !important; border:0 !important; }
+
+/* lignes produit : titre et infos sur une seule ligne avec « … » */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-nm b, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-nm>span{ display:block !important; -webkit-line-clamp:unset !important; white-space:nowrap !important; overflow:hidden !important; text-overflow:ellipsis !important; max-width:100%; }
+/* bandeau repas sans picto (4 boutons) : nom et kcal un peu décalés vers la droite */
+@media (max-width:440px){ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh:has(.my-hbtn.hab) .my-mt{ padding-left:8px !important; } }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3694,7 +3699,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 24/11 · 17 h 15</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 24/11 · 17 h 25</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
