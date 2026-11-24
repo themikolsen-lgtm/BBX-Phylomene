@@ -3474,7 +3474,16 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.k .sx-h b::aft
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.over .sx-h b{ color:#C8102E !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.over .sx-h b::before{ background:conic-gradient(var(--rc) 0 315deg,#E5484D 315deg 360deg); }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.over .sx-h b::after{ content:"EN TROP" !important; color:#C8102E; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h{ gap:5px !important; width:100% !important; } html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full{ gap:6px !important; padding-left:8px !important; padding-right:8px !important; } html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c{ min-width:0 !important; width:100% !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h{ gap:5px !important; width:100% !important; }
+/* trait fin + point (dessiné en SVG par b3PillPaint) */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h{ position:relative !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.b3pg-on .sx-h b::before{ display:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full svg.b3pg{ position:absolute; z-index:2; top:-5px; left:50%; transform:translateX(-50%); pointer-events:none; overflow:visible; order:-1; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full svg.b3pg .t{ fill:none; stroke:var(--rc); stroke-opacity:.28; stroke-width:2; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full svg.b3pg .f{ fill:none; stroke:var(--rc); stroke-width:2.6; stroke-linecap:round; transition:stroke-dasharray .5s ease; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full svg.b3pg .d{ fill:var(--rc); stroke:#fff; stroke-width:2; transition:cx .5s ease,cy .5s ease; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.over svg.b3pg .d{ fill:#E5484D; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.over svg.b3pg .t{ stroke:#E5484D; stroke-opacity:1; } html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full{ gap:6px !important; padding-left:8px !important; padding-right:8px !important; } html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c{ min-width:0 !important; width:100% !important; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3682,7 +3691,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 24/11 · 16 h 25</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 24/11 · 16 h 40</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -3941,6 +3950,26 @@ function fEmo(name,cur){
     $('mlCg').oninput=e=>{ S.cg=Math.max(0,+e.target.value||0); calc(); save(); };
     try{ $('mlDate').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}); }catch(e){}
   }
+
+  /* Bêta 3 : jauge fine + point autour des pilules de la carte Aujourd'hui */
+  function b3PillPaint(){ try{
+    if(!document.documentElement.classList.contains('mt-b3')) return;
+    document.querySelectorAll('#mealView .sum-full .sx-c').forEach(c=>{
+      const h=c.querySelector('.sx-h'), b=h&&h.querySelector('b'); if(!b) return;
+      const w=b.offsetWidth, ht=b.offsetHeight; if(!w||!ht) return;
+      const v=Math.max(0,Math.min(100,parseFloat(c.style.getPropertyValue('--rp'))||0)), over=c.classList.contains('over');
+      let svg=h.querySelector('svg.b3pg');
+      if(!svg){ svg=document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('class','b3pg'); svg.setAttribute('aria-hidden','true'); svg.innerHTML='<path class="t"/><path class="f"/><circle class="d" r="4.2"/>'; h.insertBefore(svg,h.firstChild); }
+      const s=2, r=(ht-2*s)/2, cx=w/2, d='M'+cx+' '+s+'H'+(w-s-r)+'A'+r+' '+r+' 0 0 1 '+(w-s-r)+' '+(ht-s)+'H'+(s+r)+'A'+r+' '+r+' 0 0 1 '+(s+r)+' '+s+'Z';
+      svg.setAttribute('width',w); svg.setAttribute('height',ht); svg.setAttribute('viewBox','-5 -5 '+(w+10)+' '+(ht+10)); svg.style.width=(w+10)+'px'; svg.style.height=(ht+10)+'px';
+      const t=svg.querySelector('.t'), f=svg.querySelector('.f'), dot=svg.querySelector('.d');
+      t.setAttribute('d',d); f.setAttribute('d',d);
+      const L=f.getTotalLength(), fl=over?L:L*v/100; f.setAttribute('stroke-dasharray',fl+' '+(L+1));
+      const pt=f.getPointAtLength(over?0:Math.max(0.01,fl)); dot.setAttribute('cx',pt.x); dot.setAttribute('cy',pt.y);
+      dot.style.display=(v>0||over)?'':'none'; c.classList.toggle('b3pg-on',true);
+    });
+  }catch(e){} }
+  window.addEventListener('resize',()=>{ clearTimeout(window.__b3pgT); window.__b3pgT=setTimeout(b3PillPaint,120); });
   function B3P(){ return document.documentElement.classList.contains('mt-b3'); }   /* Bêta 3 : « +x » quand dépassé */
   function calc(){ setTimeout(()=>{ try{ habBtnState(); }catch(e){} },0);
     let K=0,P=0,F=0,C=0,TK=0,TP=0,unk=0; const HI=[], HM={};
@@ -3957,7 +3986,7 @@ function fEmo(name,cur){
     const prem=S.pg-P; $('myPt').textContent=r(P); $('myPrem').textContent=(prem<0&&B3P()?'+':'')+r(Math.abs(prem)); $('myPremLab').textContent=prem>=0?'Restants':'Dépassé';
     BW('barP',P/S.pg); $('barP').closest('.sx-c').classList.toggle('over',prem<0);
     const frem=S.fg-F; $('myFt').textContent=r(F); $('myFrem').textContent=(frem<0&&B3P()?'+':'')+r(Math.abs(frem)); $('myFremLab').textContent=frem>=0?'Restants':'Dépassé'; BW('barF',F/S.fg); $('barF').closest('.sx-c').classList.toggle('over',frem<0);
-    const crem=S.cg-C; $('myCt').textContent=r(C); $('myCrem').textContent=(crem<0&&B3P()?'+':'')+r(Math.abs(crem)); $('myCremLab').textContent=crem>=0?'Restants':'Dépassé'; BW('barC',S.cg>0?C/S.cg:0); $('barC').closest('.sx-c').classList.toggle('over',crem<0);
+    const crem=S.cg-C; $('myCt').textContent=r(C); $('myCrem').textContent=(crem<0&&B3P()?'+':'')+r(Math.abs(crem)); $('myCremLab').textContent=crem>=0?'Restants':'Dépassé'; BW('barC',S.cg>0?C/S.cg:0); $('barC').closest('.sx-c').classList.toggle('over',crem<0); requestAnimationFrame(b3PillPaint); setTimeout(b3PillPaint,400);
     const MN=(k,rem,f,e,g)=>{ const v=$('mn'+k), b=$('mnb'+k); if(!v) return; v.textContent=r(Math.abs(rem)); b.style.width=(Math.max(0,Math.min(1,f||0))*100)+'%'; v.closest('.sm-i').classList.toggle('over',rem<0); const fr=$('mnf'+k); if(fr) fr.textContent=r(e)+' / '+r(g)+(k==='K'?'':'g'); };
     MN('K',rem,K/S.kg,K,S.kg); MN('P',prem,P/S.pg,P,S.pg); MN('F',frem,F/S.fg,F,S.fg); MN('C',crem,S.cg>0?C/S.cg:0,C,S.cg);
     $('myMacNote').textContent=unk?('⚠️ '+unk+' produit'+(unk>1?'s':'')+(AUTO?' compté':' coché')+(unk>1?'s':'')+' sans lipides ni glucides : complète-les (Réglages ✎) pour un total exact.'):'';
