@@ -3286,7 +3286,113 @@ html.mt-beta.mt-b2 body #mealIdeas .sr-go.added{ background:#34C759 !important; 
 }
 </style>
 <style id="themeB3">
-/* ===== Meal Bêta 3 : copie exacte du Bêta (il hérite de html.mt-b2). Les personnalisations du Bêta 3 s'écrivent ici, sous html.mt-b3. ===== */
+/* ===== Meal Bêta 3 : flat design épuré =====
+   Repères : fond uni gris-vert très clair, cartes blanches sans ombre avec un filet fin,
+   un seul rayon (20 px cartes / 12 px vignettes / pastilles rondes), grille de 16 px,
+   texte principal #16181D, texte secondaire #6B7280, couleur du repas uniquement en accent. */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView{ --b3-bg:#F4F6F3; --b3-line:#E6EAE4; --b3-ink:#16181D; --b3-mut:#6B7280; --b3-r:20px; background:var(--b3-bg) !important; background-image:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-fixed::before{ background:linear-gradient(to bottom,rgba(244,246,243,.96) 0%,rgba(244,246,243,.85) 62%,rgba(244,246,243,0) 100%) !important; }
+
+/* en-tête */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-head .my-pill{ background:#fff !important; border:1px solid var(--b3-line) !important; box-shadow:none !important; height:44px !important; padding:0 16px !important; border-radius:999px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-head .my-pill *{ font-size:15px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-steps.soon .ms-soon b{ font-size:13px !important; font-style:normal !important; color:var(--b3-ink); }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-steps.soon .ms-soon small{ color:var(--b3-mut); opacity:1 !important; }
+
+/* carte du jour + anneaux */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-dsum{ border-radius:var(--b3-r) !important; box-shadow:none !important; border:1px solid var(--b3-line) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-day{ padding:0 10px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-day .my-dt, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView #mlDay{ font-size:22px !important; font-weight:800 !important; letter-spacing:-.01em !important; color:var(--b3-ink) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-dn{ width:40px !important; height:40px !important; border-radius:50% !important; background:var(--b3-bg) !important; box-shadow:none !important; border:0 !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-water{ background:var(--b3-bg) !important; font-style:normal !important; font-weight:800 !important; height:40px !important; }
+
+/* cartes des repas */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card{ border-radius:var(--b3-r) !important; box-shadow:none !important; border:1px solid var(--b3-line) !important; margin-bottom:14px !important; padding:0 !important; overflow:hidden !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh{ background:#fff !important; padding:12px !important; gap:10px !important; border-bottom:1px solid var(--b3-line) !important; position:relative; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh>.my-mi{ width:40px !important; height:40px !important; border-radius:12px !important; background:var(--mt) !important; font-size:22px !important; box-shadow:none !important; flex:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh .my-mt{ flex:1 1 auto !important; min-width:0 !important; width:auto !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh .my-mt .my-mk{ white-space:nowrap !important; display:flex !important; align-items:baseline !important; gap:3px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh .my-mt>b{ white-space:normal !important; overflow:hidden; display:-webkit-box !important; -webkit-line-clamp:2; -webkit-box-orient:vertical; line-height:1.15 !important; max-width:100%; font-size:15px !important; font-weight:800 !important; color:var(--b3-ink) !important; letter-spacing:-.005em !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh .my-mt .my-mk b{ font-size:15px !important; font-style:normal !important; font-weight:800 !important; color:var(--md,var(--mc)) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh .my-mt .my-mk small{ font-size:12px !important; font-weight:600 !important; color:var(--b3-mut) !important; text-transform:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh .my-hb{ gap:5px !important; margin-left:auto !important; padding:0 !important; width:auto !important; flex:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh .my-hbtn{ width:32px !important; height:32px !important; border:0 !important; border-radius:50% !important; background:var(--mt) !important; color:var(--md,var(--mc)) !important; box-shadow:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh .my-hbtn svg{ width:18px !important; height:18px !important; stroke:currentColor !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh .my-hbtn.plus{ background:var(--mc) !important; color:#fff !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh .my-hbtn.plus svg{ stroke:#fff !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh .my-hbtn.none{ display:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh .my-ck.all{ margin:0 !important; flex:none !important; width:26px !important; padding:0 !important; }
+
+/* lignes produits */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-it{ background:#fff !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-row{ padding:10px 12px 10px 14px !important; gap:12px !important; align-items:center !important; min-height:0 !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-row::after, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-row::before{ display:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-th{ width:40px !important; height:40px !important; border-radius:12px !important; font-size:21px !important; flex:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-nm{ min-width:0 !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-nm b{ font-size:14.5px !important; font-weight:700 !important; line-height:1.25 !important; color:var(--b3-ink) !important; display:-webkit-box !important; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-nm>span{ font-size:12px !important; line-height:1.35 !important; color:var(--b3-mut) !important; margin-top:2px !important; display:-webkit-box !important; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-kc{ display:flex !important; flex-direction:column !important; align-items:flex-end !important; min-width:44px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-kc b{ font-size:15px !important; font-style:normal !important; font-weight:800 !important; color:var(--b3-ink) !important; line-height:1.1 !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-kc small{ font-size:11px !important; font-weight:600 !important; color:var(--b3-mut) !important; text-transform:none !important; letter-spacing:0 !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-ck span{ width:24px !important; height:24px !important; border-width:1.5px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-ract button{ width:36px !important; height:36px !important; border:1px solid var(--b3-line) !important; background:#fff !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-ract button.del{ background:#FFF5F6 !important; border-color:#FBD3D9 !important; }
+
+/* bouton flottant (vers Workout) plus discret */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) .ws-fab, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #wsFab{ box-shadow:0 1px 0 var(--b3-line),0 6px 16px -10px rgba(20,24,40,.35) !important; }
+
+/* ---- écrans Rechercher / Idées / Ajouter un produit (même langage) ---- */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas,#mealForm){ --b3-bg:#F4F6F3; --b3-line:#E6EAE4; --b3-ink:#16181D; --b3-mut:#6B7280; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas,#mealForm) .mc-head b{ font-style:normal !important; text-transform:none !important; font-size:20px !important; font-weight:800 !important; letter-spacing:-.01em !important; color:var(--b3-ink) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas,#mealForm) :is(.mc-x,.mc-head button,.mc-big:not(.red)){ background:#fff !important; border:1px solid var(--b3-line) !important; box-shadow:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas,#mealForm) .mc-big.red{ box-shadow:none !important; }
+/* barre de recherche et champs */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealSearch #srQ, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealIdeas #idWant{ height:50px !important; border:1px solid var(--b3-line) !important; border-radius:14px !important; box-shadow:none !important; background:#fff !important; font-size:16px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealSearch #srQ::placeholder, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealIdeas #idWant::placeholder{ font-style:normal !important; color:#9CA3AF !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealSearch #srQ:focus, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealIdeas #idWant:focus{ border-color:var(--b3-ink) !important; box-shadow:0 0 0 3px rgba(22,24,29,.08) !important; }
+/* sélecteurs segmentés : rail gris, choix actif en encre foncée */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#srTabs,#mealIdeas .id-taste,#mealForm .mf-seg){ background:#EBEEE9 !important; box-shadow:none !important; border:0 !important; border-radius:14px !important; padding:4px !important; gap:4px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#srTabs button,#mealIdeas .id-taste button,#mealForm .mf-seg>*){ border-radius:10px !important; box-shadow:none !important; background:transparent !important; color:var(--b3-ink) !important; font-weight:700 !important; font-size:14px !important; height:38px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#srTabs button.on,#mealIdeas .id-taste button.on,#mealForm .mf-seg>.on){ background:var(--b3-ink) !important; color:#fff !important; }
+/* puces des repas */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-chip{ border:1px solid var(--b3-line) !important; box-shadow:none !important; background:#fff !important; font-weight:700 !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-chip.on{ background:var(--b3-ink) !important; color:#fff !important; border-color:var(--b3-ink) !important; }
+/* listes de résultats */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas) .sr-it{ padding:10px 2px !important; gap:12px !important; border-bottom:1px solid var(--b3-line) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas) .sr-th{ width:44px !important; height:44px !important; border-radius:12px !important; font-size:23px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas) .sr-nm b{ font-size:14.5px !important; font-weight:700 !important; line-height:1.25 !important; color:var(--b3-ink) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas) .sr-nm>span, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas) .sr-nm small{ font-size:12px !important; font-weight:500 !important; line-height:1.35 !important; color:var(--b3-mut) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas) .sr-go{ width:38px !important; height:38px !important; font-size:20px !important; box-shadow:none !important; border:1px solid var(--b3-line) !important; background:#fff !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas) .sr-go.added{ background:#22A65A !important; border-color:#22A65A !important; color:#fff !important; }
+/* fiche produit : carte plate, contrôles alignés */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm :is(.mf-name,.fv-h,.mf-ctaw,.mf-prev,.mf-seg,.mf-ue2,.mf-qty,.mf-btns){ box-shadow:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-qty button, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-ue2 button{ box-shadow:none !important; border:1px solid var(--b3-line) !important; background:#fff !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBU{ border:1px solid var(--b3-line) !important; border-radius:12px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfOk{ box-shadow:none !important; background:#22A65A !important; color:#fff !important; height:56px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfOk *{ color:#fff !important; stroke:#fff; }
+
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis{ background:#EBEEE9 !important; border-radius:14px !important; padding:4px !important; box-shadow:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis .bz{ background:transparent !important; box-shadow:none !important; border-radius:10px !important; color:var(--b3-ink) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis .bz.on{ background:var(--b3-ink) !important; color:#fff !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-quick .mc-big.red{ background:var(--b3-ink) !important; color:#fff !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-quick .mc-big.red *{ color:#fff !important; stroke:#fff !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis>*:not(.on), html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis::before{ background:transparent !important; box-shadow:none !important; }
+
+/* ---- animations mesurées ---- */
+@keyframes b3Up{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
+@keyframes b3Pop{ 0%{ transform:scale(.85); } 60%{ transform:scale(1.08); } 100%{ transform:scale(1); } }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView.show :is(.my-dsum,.my-card){ animation:b3Up .32s cubic-bezier(.2,.7,.2,1) both; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView.show .my-card:nth-child(1){ animation-delay:.04s } html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView.show .my-card:nth-child(2){ animation-delay:.08s } html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView.show .my-card:nth-child(3){ animation-delay:.12s } html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView.show .my-card:nth-child(n+4){ animation-delay:.16s }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealView,#mealSearch,#mealIdeas,#mealForm) :is(button,.my-row,.sr-it,label){ transition:transform .12s ease, background-color .18s ease, color .18s ease, opacity .18s ease !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealView,#mealSearch,#mealIdeas,#mealForm) button:active{ transform:scale(.94) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-row:active{ background:#F7F9F6 !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) .my-ck input:checked+span{ animation:b3Pop .28s ease; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas) .sr-go.added{ animation:b3Pop .3s ease; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas) .sr-it{ animation:b3Up .25s ease both; }
+@media (prefers-reduced-motion:reduce){ html.mt-b3 body *{ animation:none !important; transition:none !important; } }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm :is(.mf-seg,#mfBasis){ position:relative !important; isolation:isolate; background:#fff !important; padding:6px 20px !important; border-radius:0 !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm :is(.mf-seg,#mfBasis)::after{ content:''; position:absolute; inset:2px 16px; border-radius:14px; background:#EBEEE9; z-index:-1; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-quick .mc-big.red{ border-color:var(--b3-ink) !important; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3494,7 +3600,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 24/11 · 09 h 00</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 24/11 · 09 h 45</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -5982,6 +6088,21 @@ function BBXClear(){   // vide seulement le cache de l'app : les données et les
     if(skip>0){ skip--; return; }
     var id=stack.pop(); if(id) close(id);
   });
+})();
+</script>
+<script id="b3Haptics">
+/* Meal Bêta 3 : petites vibrations d'interaction (Android ; l'iPhone ne permet pas aux applis web de vibrer) */
+(function(){
+  var last=0;
+  function buzz(ms){ if(!document.documentElement.classList.contains('mt-b3')||!navigator.vibrate) return; var t=Date.now(); if(t-last<60) return; last=t; try{ navigator.vibrate(ms); }catch(e){} }
+  document.addEventListener('click',function(e){
+    var t=e.target; if(!t.closest) return;
+    if(!t.closest('#mealView,#mealSearch,#mealIdeas,#mealForm')) return;
+    if(t.closest('.sr-go,.hv-add,#mfOk,.my-hbtn.plus')) return buzz(14);          // ajout d'un produit
+    if(t.closest('.my-ract .del')) return buzz([10,40,10]);                          // suppression
+    if(t.closest('button,.my-row,[role=button]')) return buzz(6);                    // appui simple
+  },true);
+  document.addEventListener('change',function(e){ if(e.target&&e.target.matches&&e.target.matches('.my-ck input')) buzz(e.target.checked?12:6); },true);
 })();
 </script>
 </body>
