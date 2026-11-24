@@ -3300,7 +3300,7 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-steps.soon .ms-soon b{ fon
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-steps.soon .ms-soon small{ color:var(--b3-mut); opacity:1 !important; }
 
 /* carte du jour + anneaux */
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-dsum{ border-radius:var(--b3-r) !important; box-shadow:none !important; border:1px solid var(--b3-line) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-dsum{ border-radius:calc(var(--b3-r) + var(--p,0) * 20px) !important; box-shadow:none !important; border:1px solid var(--b3-line) !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-day{ padding:0 10px !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-day .my-dt, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView #mlDay{ font-size:22px !important; font-weight:800 !important; letter-spacing:-.01em !important; color:var(--b3-ink) !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-dn{ width:48px !important; height:38px !important; border-radius:999px !important; background:var(--b3-bg) !important; box-shadow:none !important; border:0 !important; }
@@ -3659,7 +3659,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 24/11 · 11 h 25</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 24/11 · 11 h 40</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
