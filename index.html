@@ -3478,7 +3478,7 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h{ gap:5px !impo
 /* trait fin + point (dessiné en SVG par b3PillPaint) */
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h{ position:relative !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.b3pg-on .sx-h b::before{ display:none !important; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full svg.b3pg{ position:absolute; z-index:2; top:-5px; left:50%; transform:translateX(-50%); pointer-events:none; overflow:visible; order:-1; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full svg.b3pg{ position:absolute; z-index:2; top:-5px; left:0; transform:none !important; animation:none !important; margin:0 !important; pointer-events:none; overflow:visible; order:-1; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full svg.b3pg .t{ display:none; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full svg.b3pg .f{ fill:none; stroke:var(--rc); stroke-width:3.4; stroke-linecap:round; transition:stroke-dasharray .5s ease; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full svg.b3pg .d{ fill:var(--rc); stroke:#fff; stroke-width:2; transition:cx .5s ease,cy .5s ease; }
@@ -3694,7 +3694,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 24/11 · 17 h 00</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 24/11 · 17 h 10</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -3964,7 +3964,7 @@ function fEmo(name,cur){
       let svg=h.querySelector('svg.b3pg');
       if(!svg){ svg=document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('class','b3pg'); svg.setAttribute('aria-hidden','true'); svg.innerHTML='<path class="t"/><path class="f"/><circle class="d" r="4.2"/>'; h.insertBefore(svg,h.firstChild); }
       const s=2, r=(ht-2*s)/2, cx=w/2, d='M'+cx+' '+s+'H'+(w-s-r)+'A'+r+' '+r+' 0 0 1 '+(w-s-r)+' '+(ht-s)+'H'+(s+r)+'A'+r+' '+r+' 0 0 1 '+(s+r)+' '+s+'Z';
-      svg.setAttribute('width',w); svg.setAttribute('height',ht); svg.setAttribute('viewBox','-5 -5 '+(w+10)+' '+(ht+10)); svg.style.width=(w+10)+'px'; svg.style.height=(ht+10)+'px';
+      svg.style.left=(b.offsetLeft-5)+'px'; svg.style.top=(b.offsetTop-5)+'px'; svg.setAttribute('width',w); svg.setAttribute('height',ht); svg.setAttribute('viewBox','-5 -5 '+(w+10)+' '+(ht+10)); svg.style.width=(w+10)+'px'; svg.style.height=(ht+10)+'px';
       const t=svg.querySelector('.t'), f=svg.querySelector('.f'), dot=svg.querySelector('.d');
       t.setAttribute('d',d); f.setAttribute('d',d);
       const L=f.getTotalLength(), fl=over?L:L*v/100; f.setAttribute('stroke-dasharray',fl+' '+(L+1));
@@ -3973,6 +3973,8 @@ function fEmo(name,cur){
     });
   }catch(e){} }
   window.addEventListener('resize',()=>{ clearTimeout(window.__b3pgT); window.__b3pgT=setTimeout(b3PillPaint,120); });
+  try{ document.fonts&&document.fonts.ready.then(()=>b3PillPaint()); }catch(e){}
+  try{ const ro=new ResizeObserver(()=>{ clearTimeout(window.__b3pgR); window.__b3pgR=setTimeout(b3PillPaint,60); }); setTimeout(()=>document.querySelectorAll('#mealView .sum-full .sx-h b').forEach(b=>ro.observe(b)),300); }catch(e){}
   function B3P(){ return document.documentElement.classList.contains('mt-b3'); }   /* Bêta 3 : « +x » quand dépassé */
   function calc(){ setTimeout(()=>{ try{ habBtnState(); }catch(e){} },0);
     let K=0,P=0,F=0,C=0,TK=0,TP=0,unk=0; const HI=[], HM={};
