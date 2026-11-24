@@ -3362,7 +3362,7 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas) .sr-it{ padd
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas) .sr-th{ width:44px !important; height:44px !important; border-radius:12px !important; font-size:23px !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas) .sr-nm b{ font-size:14.5px !important; font-weight:700 !important; line-height:1.25 !important; color:var(--b3-ink) !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas) .sr-nm>span, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas) .sr-nm small{ font-size:12px !important; font-weight:500 !important; line-height:1.35 !important; color:var(--b3-mut) !important; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas) .sr-go{ width:46px !important; height:36px !important; border-radius:999px !important; font-size:20px !important; box-shadow:none !important; border:1px solid var(--b3-line) !important; background:#fff !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas) .sr-go{ width:44px !important; height:44px !important; border-radius:50% !important; position:relative; font-size:20px !important; box-shadow:none !important; border:1px solid var(--b3-line) !important; background:#fff !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas) .sr-go.added{ background:#22A65A !important; border-color:#22A65A !important; color:#fff !important; }
 /* fiche produit : carte plate, contrôles alignés */
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm :is(.mf-name,.fv-h,.mf-ctaw,.mf-prev,.mf-seg,.mf-ue2,.mf-qty,.mf-btns){ box-shadow:none !important; }
@@ -3396,6 +3396,13 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-quick .mc-big.red{ border-
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealSearch :has(> #srQ){ background:none !important; box-shadow:none !important; border:0 !important; }
 @media (max-width:389px){ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh .my-hbtn{ width:44px !important; height:40px !important; } html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh{ gap:8px !important; padding:12px 10px !important; } }
 @media (max-width:389px){ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh:has(.my-hbtn.hab:not(.none))>.my-mi{ display:none !important; } html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh:has(.my-hbtn.hab:not(.none)) .my-hbtn{ width:42px !important; } }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas) .sr-go::after{ content:''; position:absolute; inset:-8px; border-radius:50%; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) :is(#mealSearch,#mealIdeas) .sr-go.added{ font-size:19px !important; font-weight:900 !important; }
+/* message d'ajout discret, sans bouton retour (un 2e appui sur ✓ retire le produit) */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x):has(#mealSearch.show) #toastUndo, html.mt-beta.mt-b2.mt-b3 body:not(#b3x):has(#mealIdeas.show) #toastUndo{ display:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealToast{ left:50% !important; right:auto !important; transform:translate(-50%,8px) !important; bottom:calc(18px + env(safe-area-inset-bottom)) !important; max-width:min(86vw,360px) !important; width:auto !important; padding:8px 14px !important; min-height:0 !important; border-radius:999px !important; background:rgba(22,24,29,.82) !important; color:#fff !important; box-shadow:none !important; font-size:13px !important; font-weight:600 !important; gap:8px !important; opacity:0; transition:opacity .2s ease, transform .2s ease !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealToast.show{ opacity:1 !important; transform:translate(-50%,0) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealToast #toastTxt{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#fff !important; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3603,7 +3610,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 24/11 · 10 h 20</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 24/11 · 10 h 35</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -5141,7 +5148,8 @@ window.BBXBk=(function(){
     MEALS[m][2].push(it); S.d[MEALS[m][0]+'|'+nm]=true; sr.fromForm=false;
     if(closeFn) closeFn(); refresh(); if(after) after(it,MEALS[m][0]);
     const title=MEALS[m][0];
-    showToast('✓ « '+x.name+' » ajouté à '+title+(AUTO?' et compté':''),()=>{
+    const b3=document.documentElement.classList.contains('mt-b3');
+    showToast(b3?'✓ Ajouté à '+title:'✓ « '+x.name+' » ajouté à '+title+(AUTO?' et compté':''),()=>{
       const mm=MEALS.findIndex(z=>z[0]===title); if(mm<0) return; const ix=MEALS[mm][2].indexOf(it); if(ix<0) return;
       dropState(mm,ix); MEALS[mm][2].splice(ix,1); refresh();
     },1800);   // message d'ajout bref
@@ -5153,7 +5161,7 @@ window.BBXBk=(function(){
       const gb=ev.target.closest('.sr-go'), key=(x.code||'')+'|'+x.name;   // on reste dans la recherche pour ajouter d'autres produits
       sr.added=sr.added||{};
       if(gb.classList.contains('added')){   // second appui sur ✓ : le produit ajouté est retiré du repas
-        const a=sr.added[key]; if(a&&a.it){ const mm=MEALS.findIndex(z=>z[0]===a.title), ix=mm<0?-1:MEALS[mm][2].indexOf(a.it); if(ix>=0){ dropState(mm,ix); MEALS[mm][2].splice(ix,1); refresh(); } showToast('« '+x.name+' » retiré du repas',null,1500); }
+        const a=sr.added[key]; if(a&&a.it){ const mm=MEALS.findIndex(z=>z[0]===a.title), ix=mm<0?-1:MEALS[mm][2].indexOf(a.it); if(ix>=0){ dropState(mm,ix); MEALS[mm][2].splice(ix,1); refresh(); } showToast(document.documentElement.classList.contains('mt-b3')?'Retiré du repas':'« '+x.name+' » retiré du repas',null,1500); }
         delete sr.added[key]; gb.textContent='＋'; gb.classList.remove('added'); return;
       }
       if(directAdd(sr.target,Object.assign({},x,{h:x.h||hlGet(x.name)}),0,null,(it,title)=>{ gb.textContent='✓'; gb.classList.add('added'); sr.added[key]={it:it,title:title}; if(!srB2()) setTimeout(()=>{ gb.textContent='＋'; gb.classList.remove('added'); },1600); })) return;
