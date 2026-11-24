@@ -3452,6 +3452,12 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-zc b{ width:36px !importan
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-zc span{ font:700 14px system-ui !important; font-style:normal !important; color:#16181D !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan :is(.ms-tab,#msTorch,.ms-zc b,.ms-row button,.ms-top button){ transition:transform .12s ease,background .2s; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan :is(.ms-tab,#msTorch,.ms-zc b,.ms-row button,.ms-top button):active{ transform:scale(.94); }
+
+/* boutons du bandeau repas élargis */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh .my-hbtn{ flex:0 0 auto !important; min-width:52px !important; width:52px !important; height:44px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh .my-hbtn svg{ width:22px !important; height:22px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh:has(.my-hbtn.hab:not(.none)) .my-hbtn{ min-width:46px !important; width:46px !important; }
+@media (max-width:389px){ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh .my-hbtn{ min-width:48px !important; width:48px !important; } html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh:has(.my-hbtn.hab:not(.none)) .my-hbtn{ min-width:44px !important; width:44px !important; } }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3659,7 +3665,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 24/11 · 11 h 40</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 24/11 · 14 h 05</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
