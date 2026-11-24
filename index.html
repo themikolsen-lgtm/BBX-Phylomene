@@ -3492,6 +3492,9 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-dsum .my-dn, html.mt-beta.
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-nm b, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-nm>span{ display:block !important; -webkit-line-clamp:unset !important; white-space:nowrap !important; overflow:hidden !important; text-overflow:ellipsis !important; max-width:100%; }
 /* bandeau repas sans picto (4 boutons) : nom et kcal un peu décalés vers la droite */
 @media (max-width:440px){ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh:has(.my-hbtn.hab) .my-mt{ padding-left:8px !important; } }
+
+/* fondu doux sous la carte, uniquement quand on a défilé */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView.b3sc .my-fixed::before{ bottom:-16px !important; background:linear-gradient(to bottom,#F4F6F3 0,#F4F6F3 calc(100% - 16px),rgba(244,246,243,.7) calc(100% - 10px),rgba(244,246,243,0) 100%) !important; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3699,7 +3702,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 24/11 · 17 h 40</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 24/11 · 17 h 50</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -3977,6 +3980,7 @@ function fEmo(name,cur){
       dot.style.display=(v>0||over)?'':'none'; c.classList.toggle('b3pg-on',true);
     });
   }catch(e){} }
+  (function(){ const mv=document.getElementById('mealView'); if(!mv) return; const f=()=>mv.classList.toggle('b3sc',mv.scrollTop>6); mv.addEventListener('scroll',f,{passive:true}); f(); })();   /* fondu seulement en défilant */
   window.addEventListener('resize',()=>{ clearTimeout(window.__b3pgT); window.__b3pgT=setTimeout(b3PillPaint,120); });
   try{ document.fonts&&document.fonts.ready.then(()=>b3PillPaint()); }catch(e){}
   try{ const ro=new ResizeObserver(()=>{ clearTimeout(window.__b3pgR); window.__b3pgR=setTimeout(b3PillPaint,60); }); setTimeout(()=>document.querySelectorAll('#mealView .sum-full .sx-h b').forEach(b=>ro.observe(b)),300); }catch(e){}
