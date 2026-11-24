@@ -3465,6 +3465,16 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) .mc-head .mc-x::before{ content:none !im
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) .mc-head .mc-x::after{ content:"" !important; display:block !important; position:absolute !important; inset:0 !important; margin:auto !important; width:22px !important; height:22px !important; line-height:0 !important; background:currentColor !important; -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 5l-7 7 7 7'/%3E%3C/svg%3E") center/contain no-repeat; mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 5l-7 7 7 7'/%3E%3C/svg%3E") center/contain no-repeat; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) .mc-head .mc-x:active{ transform:scale(.94); }
 @media (max-width:440px){ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh:has(.my-hbtn.hab)>.my-mi{ display:none !important; } }
+
+/* ===== Carte Aujourd'hui : bulles qui se remplissent (proposition AD) ===== */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h b{ position:relative !important; isolation:isolate; overflow:hidden !important; width:clamp(58px,16vw,70px) !important; height:clamp(58px,16vw,70px) !important; padding-bottom:9px !important; box-sizing:border-box; background:#F4F6F8 !important; background:color-mix(in srgb,var(--rc) 14%,#fff) !important; box-shadow:inset 0 0 0 2px var(--rc) !important; color:#15171C !important; font-size:clamp(14px,4vw,17px) !important; text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 2px #fff; -webkit-mask-image:-webkit-radial-gradient(white,black); }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h b::before{ content:"" !important; display:block !important; position:absolute; z-index:-1; left:-50%; width:200%; height:200%; top:calc((100 - var(--rp,0)) * 1% - 5%); border-radius:43%; background:var(--rc); opacity:.92; animation:b3wave 7s linear infinite; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h b::after{ content:"RESTANTS" !important; display:block !important; position:absolute; left:0; right:0; bottom:21%; font:800 7px/1 system-ui; letter-spacing:.06em; text-align:center; color:#15171C; text-shadow:0 0 3px #fff,0 0 2px #fff; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.k .sx-h b::after{ content:"RESTANTES" !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.over .sx-h b::after{ content:"EN TROP" !important; color:#C8102E; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.over .sx-h b{ box-shadow:inset 0 0 0 2.5px #E5484D !important; color:#C8102E !important; }
+@keyframes b3wave{ to{ transform:rotate(360deg); } }
+@media (prefers-reduced-motion:reduce){ html.mt-b3 #mealView .sum-full .sx-h b::before{ animation:none !important; border-radius:0 !important; } }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3672,7 +3682,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 24/11 · 15 h 55</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 24/11 · 16 h 00</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -3931,6 +3941,7 @@ function fEmo(name,cur){
     $('mlCg').oninput=e=>{ S.cg=Math.max(0,+e.target.value||0); calc(); save(); };
     try{ $('mlDate').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}); }catch(e){}
   }
+  function B3P(){ return document.documentElement.classList.contains('mt-b3'); }   /* Bêta 3 : « +x » quand dépassé */
   function calc(){ setTimeout(()=>{ try{ habBtnState(); }catch(e){} },0);
     let K=0,P=0,F=0,C=0,TK=0,TP=0,unk=0; const HI=[], HM={};
     MEALS.forEach(([t,ic,items],m)=>{ let mk=0,mp=0,nd=0;
@@ -3941,12 +3952,12 @@ function fEmo(name,cur){
       const all=$('mlall'+m); all.checked=items.length>0&&nd===items.length; all.indeterminate=nd>0&&nd<items.length; });
     const BW=(id,f)=>{ const e=$(id); if(e){ const v=Math.max(0,Math.min(1,f||0))*100; e.style.width=v+'%'; const c=e.closest('.sx-c'); if(c) c.style.setProperty('--rp',v.toFixed(1)); } };
     $('myEat').textContent=r(K);
-    const rem=S.kg-K; $('myRem').textContent=r(Math.abs(rem)); $('myRemLab').textContent=rem>=0?'Restants':'Dépassé';
+    const rem=S.kg-K; $('myRem').textContent=(rem<0&&B3P()?'+':'')+r(Math.abs(rem)); $('myRemLab').textContent=rem>=0?'Restants':'Dépassé';
     BW('barK',K/S.kg); $('barK').closest('.sx-c').classList.toggle('over',rem<0);
-    const prem=S.pg-P; $('myPt').textContent=r(P); $('myPrem').textContent=r(Math.abs(prem)); $('myPremLab').textContent=prem>=0?'Restants':'Dépassé';
+    const prem=S.pg-P; $('myPt').textContent=r(P); $('myPrem').textContent=(prem<0&&B3P()?'+':'')+r(Math.abs(prem)); $('myPremLab').textContent=prem>=0?'Restants':'Dépassé';
     BW('barP',P/S.pg); $('barP').closest('.sx-c').classList.toggle('over',prem<0);
-    const frem=S.fg-F; $('myFt').textContent=r(F); $('myFrem').textContent=r(Math.abs(frem)); $('myFremLab').textContent=frem>=0?'Restants':'Dépassé'; BW('barF',F/S.fg); $('barF').closest('.sx-c').classList.toggle('over',frem<0);
-    const crem=S.cg-C; $('myCt').textContent=r(C); $('myCrem').textContent=r(Math.abs(crem)); $('myCremLab').textContent=crem>=0?'Restants':'Dépassé'; BW('barC',S.cg>0?C/S.cg:0); $('barC').closest('.sx-c').classList.toggle('over',crem<0);
+    const frem=S.fg-F; $('myFt').textContent=r(F); $('myFrem').textContent=(frem<0&&B3P()?'+':'')+r(Math.abs(frem)); $('myFremLab').textContent=frem>=0?'Restants':'Dépassé'; BW('barF',F/S.fg); $('barF').closest('.sx-c').classList.toggle('over',frem<0);
+    const crem=S.cg-C; $('myCt').textContent=r(C); $('myCrem').textContent=(crem<0&&B3P()?'+':'')+r(Math.abs(crem)); $('myCremLab').textContent=crem>=0?'Restants':'Dépassé'; BW('barC',S.cg>0?C/S.cg:0); $('barC').closest('.sx-c').classList.toggle('over',crem<0);
     const MN=(k,rem,f,e,g)=>{ const v=$('mn'+k), b=$('mnb'+k); if(!v) return; v.textContent=r(Math.abs(rem)); b.style.width=(Math.max(0,Math.min(1,f||0))*100)+'%'; v.closest('.sm-i').classList.toggle('over',rem<0); const fr=$('mnf'+k); if(fr) fr.textContent=r(e)+' / '+r(g)+(k==='K'?'':'g'); };
     MN('K',rem,K/S.kg,K,S.kg); MN('P',prem,P/S.pg,P,S.pg); MN('F',frem,F/S.fg,F,S.fg); MN('C',crem,S.cg>0?C/S.cg:0,C,S.cg);
     $('myMacNote').textContent=unk?('⚠️ '+unk+' produit'+(unk>1?'s':'')+(AUTO?' compté':' coché')+(unk>1?'s':'')+' sans lipides ni glucides : complète-les (Réglages ✎) pour un total exact.'):'';
