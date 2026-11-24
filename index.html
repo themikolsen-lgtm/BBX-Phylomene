@@ -3466,15 +3466,15 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) .mc-head .mc-x::after{ content:"" !impor
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) .mc-head .mc-x:active{ transform:scale(.94); }
 @media (max-width:440px){ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-card .my-mh:has(.my-hbtn.hab)>.my-mi{ display:none !important; } }
 
-/* ===== Carte Aujourd'hui : bulles qui se remplissent (proposition AD) ===== */
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h b{ position:relative !important; isolation:isolate; overflow:hidden !important; width:clamp(58px,16vw,70px) !important; height:clamp(58px,16vw,70px) !important; padding-bottom:9px !important; box-sizing:border-box; background:#F4F6F8 !important; background:color-mix(in srgb,var(--rc) 14%,#fff) !important; box-shadow:inset 0 0 0 2px var(--rc) !important; color:#15171C !important; font-size:clamp(14px,4vw,17px) !important; text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 2px #fff; -webkit-mask-image:-webkit-radial-gradient(white,black); }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h b::before{ content:"" !important; display:block !important; position:absolute; z-index:-1; left:-50%; width:200%; height:200%; top:calc((100 - var(--rp,0)) * 1% - 5%); border-radius:43%; background:var(--rc); opacity:.92; animation:b3wave 7s linear infinite; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h b::after{ content:"RESTANTS" !important; display:block !important; position:absolute; left:0; right:0; bottom:21%; font:800 7px/1 system-ui; letter-spacing:.06em; text-align:center; color:#15171C; text-shadow:0 0 3px #fff,0 0 2px #fff; }
+/* ===== Carte Aujourd'hui : demi-cadrans (proposition R) ===== */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h b{ position:relative !important; isolation:isolate; width:78px !important; height:50px !important; border-radius:0 !important; background:none !important; box-shadow:none !important; display:grid !important; place-items:end center !important; padding:0 0 9px !important; box-sizing:border-box; color:#15171C !important; font-size:16px !important; line-height:1 !important; font-variant-numeric:tabular-nums; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h b::before{ content:"" !important; display:block !important; position:absolute; z-index:-1; left:0; right:0; top:0; height:50px; background:conic-gradient(from -90deg at 50% 100%,var(--rc) 0 calc(var(--rp,0) * 1.8deg),#EEF0F3 0 180deg,transparent 0); -webkit-mask:radial-gradient(circle at 50% 100%,transparent 28px,#000 28.5px 38px,transparent 38.5px); mask:radial-gradient(circle at 50% 100%,transparent 28px,#000 28.5px 38px,transparent 38.5px); transition:background .4s; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h b::after{ content:"RESTANTS" !important; display:block !important; position:absolute; left:-6px; right:-6px; bottom:0; font:800 7px/1 system-ui; letter-spacing:.05em; text-align:center; color:#6B7280; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.k .sx-h b::after{ content:"RESTANTES" !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.over .sx-h b{ color:#C8102E !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.over .sx-h b::before{ background:conic-gradient(from -90deg at 50% 100%,var(--rc) 0 150deg,#E5484D 150deg 180deg,transparent 0); }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.over .sx-h b::after{ content:"EN TROP" !important; color:#C8102E; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c.over .sx-h b{ box-shadow:inset 0 0 0 2.5px #E5484D !important; color:#C8102E !important; }
-@keyframes b3wave{ to{ transform:rotate(360deg); } }
-@media (prefers-reduced-motion:reduce){ html.mt-b3 #mealView .sum-full .sx-h b::before{ animation:none !important; border-radius:0 !important; } }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-h{ gap:4px !important; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3682,7 +3682,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 24/11 · 16 h 00</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 24/11 · 16 h 10</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
