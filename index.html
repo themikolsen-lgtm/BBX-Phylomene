@@ -3403,6 +3403,55 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x):has(#mealSearch.show) #toastUndo, html.m
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealToast{ left:50% !important; right:auto !important; transform:translate(-50%,8px) !important; bottom:calc(18px + env(safe-area-inset-bottom)) !important; max-width:min(86vw,360px) !important; width:auto !important; padding:8px 14px !important; min-height:0 !important; border-radius:999px !important; background:rgba(22,24,29,.82) !important; color:#fff !important; box-shadow:none !important; font-size:13px !important; font-weight:600 !important; gap:8px !important; opacity:0; transition:opacity .2s ease, transform .2s ease !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealToast.show{ opacity:1 !important; transform:translate(-50%,0) !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealToast #toastTxt{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#fff !important; }
+
+/* recherche : compteurs par onglet quand on tape */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #srTabs button{ white-space:nowrap !important; min-width:0; padding-left:6px !important; padding-right:6px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #srTabs button[data-n]::after{ content:attr(data-n); display:inline-grid; place-items:center; min-width:18px; height:18px; padding:0 5px; margin-left:5px; border-radius:999px; background:rgba(22,24,29,.08); color:var(--b3-mut,#6B7280); font:800 11px/1 system-ui; vertical-align:1px; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #srTabs button.on[data-n]::after{ background:rgba(255,255,255,.2); color:#fff; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #srTabs button[data-n="0"]{ opacity:.5; }
+
+/* ===== Scanner Bêta 3 : flat, épuré ===== */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan{ background:#0B0C0F !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-top{ padding:calc(14px + env(safe-area-inset-top,0px)) 16px 14px 20px !important; background:linear-gradient(to bottom,rgba(11,12,15,.55),rgba(11,12,15,0)) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-top b{ font:700 17px/1.2 system-ui !important; letter-spacing:-.01em; color:#fff; opacity:1 !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-top button{ width:40px !important; height:40px !important; border-radius:50% !important; border:0 !important; background:rgba(255,255,255,.16) !important; color:#fff !important; font-size:16px !important; box-shadow:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan #msStatus{ top:calc(70px + env(safe-area-inset-top,0px)) !important; padding:8px 14px !important; border-radius:999px !important; background:rgba(11,12,15,.72) !important; border:0 !important; font:600 13px/1.3 system-ui !important; color:#fff !important; box-shadow:none !important; max-width:84% !important; }
+/* cadre : zone claire, extérieur assombri, coins fins */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-frame{ left:8% !important; right:8% !important; top:38% !important; height:24% !important; border-radius:18px !important; box-shadow:0 0 0 100vmax rgba(11,12,15,.5) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-frame s{ width:30px !important; height:30px !important; border-width:3px !important; border-color:#fff !important; filter:none !important; transition:border-color .2s; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-frame s:nth-of-type(1){ border-top-left-radius:18px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-frame s:nth-of-type(2){ border-top-right-radius:18px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-frame s:nth-of-type(3){ border-bottom-left-radius:18px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-frame s:nth-of-type(4){ border-bottom-right-radius:18px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-frame i{ display:block !important; position:absolute; left:10% !important; right:10% !important; top:50%; height:2px !important; border-radius:2px; background:linear-gradient(90deg,transparent,#fff 20%,#fff 80%,transparent) !important; opacity:.85 !important; box-shadow:none !important; animation:b3scanLine 2.2s ease-in-out infinite alternate; }
+@keyframes b3scanLine{ from{ top:14%; } to{ top:86%; } }
+@media (prefers-reduced-motion:reduce){ html.mt-b3 #mealScan .ms-frame i{ animation:none !important; } }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan.hit .ms-frame s{ border-color:#22C55E !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan.hit .ms-frame{ filter:none !important; box-shadow:0 0 0 100vmax rgba(11,12,15,.5),inset 0 0 0 2px #22C55E !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan.hit .ms-frame i{ background:#22C55E !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-tip{ top:calc(38% + 12% + 14px) !important; font:500 13px/1.3 system-ui !important; color:rgba(255,255,255,.78) !important; text-shadow:none !important; }
+/* panneau du bas : feuille blanche */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-dock{ background:#fff !important; border-radius:24px 24px 0 0 !important; padding:10px 16px calc(16px + env(safe-area-inset-bottom,0px)) !important; gap:12px !important; box-shadow:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-dock::before{ content:''; align-self:center; width:36px; height:4px; border-radius:2px; background:#E5E7EB; margin-bottom:2px; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-r1{ order:2; gap:8px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-dock .ms-row{ order:1; height:52px !important; padding:0 4px 0 18px !important; border-radius:999px !important; background:#F3F4F6 !important; border:1px solid transparent !important; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; box-shadow:none !important; transition:border-color .2s,background .2s; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-dock .ms-row:focus-within{ background:#fff !important; border-color:#16181D !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-dock .ms-row input,html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan #msCode{ font:600 16px system-ui !important; font-style:normal !important; letter-spacing:.04em; color:#16181D !important; -webkit-text-fill-color:#16181D !important; caret-color:#16181D; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan #msCode::placeholder{ font-style:normal !important; letter-spacing:0; color:#9CA3AF !important; -webkit-text-fill-color:#9CA3AF !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-dock .ms-row button{ width:44px !important; height:44px !important; border-radius:50% !important; background:#16181D !important; border:0 !important; box-shadow:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-dock .ms-row button svg{ width:20px !important; height:20px !important; stroke:#fff !important; stroke-width:2.4 !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-dock .ms-tab{ width:auto !important; flex:1 1 0; height:48px !important; padding:0 14px !important; gap:8px !important; border-radius:999px !important; background:#F3F4F6 !important; border:0 !important; box-shadow:none !important; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-dock .ms-tab::after{ content:'Tableau'; font:700 14px system-ui; color:#16181D; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-dock .ms-tab svg,html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan #msTorch svg{ width:20px !important; height:20px !important; stroke:#16181D !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan #msTorch{ width:48px !important; height:48px !important; flex:0 0 48px; border-radius:50% !important; background:#F3F4F6 !important; border:0 !important; box-shadow:none !important; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan #msTorch svg{ fill:#16181D !important; stroke-width:1 !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan #msTorch.on{ background:#FACC15 !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-zc{ flex:1 1 0; max-width:none !important; height:48px !important; padding:0 6px !important; border-radius:999px !important; background:#F3F4F6 !important; border:0 !important; box-shadow:none !important; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-zc.off{ opacity:.45; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-zc b{ width:36px !important; height:36px !important; border-radius:50% !important; background:#fff !important; color:#16181D !important; font:700 20px/1 system-ui !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan .ms-zc span{ font:700 14px system-ui !important; font-style:normal !important; color:#16181D !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan :is(.ms-tab,#msTorch,.ms-zc b,.ms-row button,.ms-top button){ transition:transform .12s ease,background .2s; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealScan :is(.ms-tab,#msTorch,.ms-zc b,.ms-row button,.ms-top button):active{ transform:scale(.94); }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3610,7 +3659,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 24/11 · 11 h 05</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 24/11 · 11 h 25</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4769,7 +4818,7 @@ window.BBXBk=(function(){
   function closeSearch(){ $('mealSearch').classList.remove('show'); if(sr.fromForm){ sr.fromForm=false; $('mealForm').classList.add('show'); } }
   function srOpen(m){
     sr.fromForm=(m==='form'); if(sr.fromForm) $('mealForm').classList.remove('show');
-    sr.target=(m==='form')?(+$('mfMeal').value||0):((m==null)?0:m); sr.list=[]; sr.n++; sr.added={}; sr.tabManual=false; sr.tab='r'; srPh(); document.querySelectorAll('#srTabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t==='r'));
+    sr.target=(m==='form')?(+$('mfMeal').value||0):((m==null)?0:m); sr.list=[]; sr.n++; sr.added={}; sr.tabManual=false; sr.tab='r'; sr.all=false; sr.qOn=false; srPh(); document.querySelectorAll('#srTabs [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t==='r'));
     $('srMeal').textContent='Ajout dans : '+MEALS[sr.target][0];
     showFavs();
     $('srQ').value=''; $('mealSearch').classList.add('show'); setTimeout(()=>{ try{ $('srQ').focus(); }catch(e){} },150);
@@ -4925,6 +4974,7 @@ window.BBXBk=(function(){
     sr.list.forEach(x=>{ const cp=x&&x.name&&portGet(x.name); if(cp&&Math.abs((x.serving||0)-cp.g)>0.05){ const lb=x.label&&!/^portion de 100\b/.test(x.label)?x.label:'portion'; x.serving=cp.g; x.label=lb; x.portions=[{label:lb,g:cp.g}].concat((x.portions||[]).filter(q=>q.label!==lb&&!/^portion de 100\b/.test(q.label||''))); } });   // unité corrigée (base commune) prioritaire
     const b3q=document.documentElement.classList.contains('mt-b3')&&!!((($('srQ')||{}).value||'').trim());
     if(b3q){ try{ const hn=new Set(habAll(sr.target)); sr.list.forEach(x=>{ if(x&&x.fav&&hn.has(x.name)) x.habT=true; }); }catch(e){} }
+    { const b3=document.documentElement.classList.contains('mt-b3'), tabsAll=b3q&&sr.all; document.querySelectorAll('#srTabs [data-t]').forEach(b=>{ b.classList.toggle('on',!tabsAll&&b.dataset.t===(sr.tab||'r')); const k=b.dataset.t, n=b3q?sr.list.filter(x=>k==='h'?!!x.habT:k==='s'?!!(x.cat||x.suivi):!!x.fav).length:-1; if(b3&&n>=0) b.setAttribute('data-n',n); else b.removeAttribute('data-n'); }); const tb=$('srTabs'); if(tb) tb.classList.toggle('all',!!tabsAll); }
     const L0=sr.list; L0.forEach((x,i)=>{ x._i=i; }); const t=sr.tab||'r', L=srB2()?L0.filter(x=>srTabOk(x,t)):L0;
     const sMode=srB2()&&t==='s'&&!((($('srQ')||{}).value||'').trim());
     const hMode=srB2()&&t==='h'&&!((($('srQ')||{}).value||'').trim()); if(hMode) L.sort((a,b)=>(a.habR||999)-(b.habR||999));
@@ -4952,6 +5002,7 @@ window.BBXBk=(function(){
   let srTimer=0;
   function liveSearch(){
     const q=$('srQ').value.trim(); clearTimeout(srTimer);
+    if(document.documentElement.classList.contains('mt-b3')){ if(q&&!sr.qOn) sr.all=true; if(!q) sr.all=false; sr.qOn=!!q; }   /* Bêta 3 : on tape → tout ; clic sur un onglet → cet onglet seulement */
     if(q.length<1){ showFavs(); return; }
     if(isCodeQ(q)){ srTimer=setTimeout(()=>searchCode(q),250); return; }
     sr.n++; sr.list=localResults(q); srRender();
