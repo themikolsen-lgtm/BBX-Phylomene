@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<script>document.documentElement.classList.add('mt-beta');try{localStorage.removeItem('phy-mtheme');if(localStorage.getItem('phy-mtheme2')!=='normal')document.documentElement.classList.add('mt-b2');if(localStorage.getItem('phy-mtheme2')==='beta3')document.documentElement.classList.add('mt-b3');}catch(e){}</script>
+<script>document.documentElement.classList.add('mt-beta');try{localStorage.removeItem('phy-mtheme');if(!localStorage.getItem('phy-mt3def')){localStorage.setItem('phy-mtheme2','beta3');localStorage.setItem('phy-mt3def','1');}var mt2=localStorage.getItem('phy-mtheme2');if(mt2!=='normal')document.documentElement.classList.add('mt-b2');if(mt2!=='normal'&&mt2!=='beta')document.documentElement.classList.add('mt-b3');}catch(e){}</script>
 
 <script id="bbxSafe">
 /* Sauvegarde automatique : copie des données (bb9*) dans IndexedDB à chaque changement + restauration si le navigateur efface le stockage */
@@ -3652,7 +3652,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     
   <div class="cf-sec" style="--c:#B79CFF"><div class="cf-h"><i>🎨</i>Thème</div>
     <div class="cm-box"><div class="cm-t">Apparence de Meal</div>
-      <div class="cm-seg" id="themeSeg" role="group" aria-label="Thème"><button data-u="normal" onclick="BBXMeal.setTheme('normal')">Normal</button><button data-u="beta" onclick="BBXMeal.setTheme('beta')">Bêta</button><button data-u="beta3" onclick="BBXMeal.setTheme('beta3')">Bêta 3</button></div>
+      <div class="cm-seg" id="themeSeg" role="group" aria-label="Thème"><button data-u="normal" onclick="BBXMeal.setTheme('normal')">Classique</button><button data-u="beta" onclick="BBXMeal.setTheme('beta')">Bêta</button><button data-u="beta3" onclick="BBXMeal.setTheme('beta3')">Normal</button></div>
       <div class="cm-d" id="themeD"></div></div>
   </div>
   <div class="cf-sec" style="--c:#7CB9FF"><div class="cf-h"><i>☁️</i>Synchronisation</div>
@@ -3720,7 +3720,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 24/11 · 18 h 05</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 25/11 · 12 h 15</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4749,8 +4749,8 @@ function fEmo(name,cur){
   }
   const LENSKEY='phy-camlens', camLens=()=>{ try{ return localStorage.getItem(LENSKEY)==='main'?'main':'auto'; }catch(e){ return 'auto'; } };
   function lensSeg(){ const v=camLens(); document.querySelectorAll('#lensSeg [data-u]').forEach(b=>{ const o=b.dataset.u===v; b.classList.toggle('on',o); b.setAttribute('aria-pressed',o); }); const d=$('lensD'); if(d) d.textContent=v==='main'?'Objectif principal : celui que choisit le téléphone par défaut.':'Auto : utilise le second objectif (double capteur) quand le téléphone en a un, plus net de près.'; }
-  const THEMEKEY='phy-mtheme2', themeOf=()=>{ try{ const v=localStorage.getItem(THEMEKEY); return v==='normal'?'normal':v==='beta3'?'beta3':'beta'; }catch(e){ return 'beta'; } };   // Bêta par défaut
-  function themeSeg(){ const v=themeOf(); document.querySelectorAll('#themeSeg [data-u]').forEach(b=>{ const o=b.dataset.u===v; b.classList.toggle('on',o); b.setAttribute('aria-pressed',o); }); const d=$('themeD'); if(d) d.textContent=v==='beta3'?'Bêta 3 : copie du Bêta, prête à être personnalisée.':v==='beta'?'Bêta : copie du design normal, prête à être personnalisée.':'Normal : le design habituel de Meal.'; }
+  const THEMEKEY='phy-mtheme2', themeOf=()=>{ try{ const v=localStorage.getItem(THEMEKEY); return v==='normal'?'normal':v==='beta'?'beta':'beta3'; }catch(e){ return 'beta3'; } };   // Bêta 3 = design par défaut
+  function themeSeg(){ const v=themeOf(); document.querySelectorAll('#themeSeg [data-u]').forEach(b=>{ const o=b.dataset.u===v; b.classList.toggle('on',o); b.setAttribute('aria-pressed',o); }); const d=$('themeD'); if(d) d.textContent=v==='beta3'?'Normal : le design de Meal, activé par défaut.':v==='beta'?'Bêta : copie du design normal, prête à être personnalisée.':'Classique : l’ancien design de Meal.'; }
   function camSwitch(){
     const cams=sc.cams||[]; if(cams.length<2) return; const cur=(cam.stream&&cam.stream.getVideoTracks()[0].getSettings().deviceId)||'', i=Math.max(0,cams.findIndex(c=>c.deviceId===cur)), nx=cams[(i+1)%cams.length];
     try{ cam.stream&&cam.stream.getTracks().forEach(t=>t.stop()); }catch(e){} cam.stream=null; cam.deviceId=nx.deviceId; st('Objectif : '+(nx.label||'suivant')); startCam();
