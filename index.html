@@ -3655,6 +3655,11 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
       <div class="cm-seg" id="themeSeg" role="group" aria-label="Thème"><button data-u="normal" onclick="BBXMeal.setTheme('normal')">Classique</button><button data-u="beta" onclick="BBXMeal.setTheme('beta')">Bêta</button><button data-u="beta3" onclick="BBXMeal.setTheme('beta3')">Normal</button></div>
       <div class="cm-d" id="themeD"></div></div>
   </div>
+  <div class="cf-sec" style="--c:#7FD6A4"><div class="cf-h"><i>🤖</i>Lecture des tableaux (photo)</div>
+    <div class="cm-box"><div class="cm-t">Utiliser ChatGPT</div>
+      <div class="cm-seg" id="aiProvSeg" role="group" aria-label="IA de lecture"><button data-u="gemini" onclick="BBXMeal.setAiProv('gemini')">Désactivé</button><button data-u="openai" onclick="BBXMeal.setAiProv('openai')">Activé</button></div>
+      <div class="cm-d" id="aiProvD"></div></div>
+  </div>
   <div class="cf-sec" style="--c:#7CB9FF"><div class="cf-h"><i>☁️</i>Synchronisation</div>
   <div class="cm-box" id="syncBox">
     <div class="cm-t">Sauvegarde en ligne (Supabase)</div>
@@ -3720,7 +3725,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 25/11 · 12 h 15</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 25/11 · 19 h 00</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4062,7 +4067,7 @@ function fEmo(name,cur){
   function refresh(){ saveDef(); save(); build(); calc(); renderCfg(); }
   function renderCfg(){
     usdaSeg();
-    themeSeg();
+    themeSeg(); aiProvSeg();
     lensSeg();
     if(window.BBXSync) BBXSync.render();
     ciqSeg();
@@ -4365,7 +4370,7 @@ function fEmo(name,cur){
     const data=c.toDataURL('image/jpeg',0.8);
     let p=15, iv=null; const est=aiEst(); if(prog){ prog(p,'Envoi de la photo…'); iv=setInterval(()=>{ const el=Date.now()-aiT0; p=Math.max(p,Math.min(97,15+82*(1-Math.exp(-1.6*el/est)))); prog(p,p<30?'Envoi de la photo…':p<80?'Analyse par l’IA…':'Presque fini…'); },120); }
     try{
-      return await Promise.race([BBXSync.ai({image:data,mime:'image/jpeg'}), new Promise((_,ko)=>setTimeout(()=>ko(new Error('délai dépassé')),45000))]);
+      return await Promise.race([BBXSync.ai({image:data,mime:'image/jpeg',provider:aiProv()}), new Promise((_,ko)=>setTimeout(()=>ko(new Error('délai dépassé')),45000))]);
     }catch(e){ const m=(e&&e.message)||''; return {skip: /non connect/.test(m)?'non connecté':(e&&e.status===429)?'quota':m||'erreur'}; }
     finally{ if(iv) clearInterval(iv); }
   }
@@ -4380,6 +4385,7 @@ function fEmo(name,cur){
       aiT0=Date.now(); aiWait(1); aiBar(3,'Préparation de la photo…');
       const ai=await aiRead(file,aiBar).catch(e=>({skip:(e&&e.message)||'erreur'}));
       const aiMs=Date.now()-aiT0;
+      if(ai&&ai.fb&&aiProv()==='openai') setTimeout(()=>showToast(ai.fb==='no_openai_key'?'ChatGPT pas encore configuré : lu avec Gemini':'ChatGPT indisponible : lu avec Gemini'),600);
       const aiOkRes=ai&&!ai.skip&&ai.ok!==false&&[ai.kcal,ai.prot,ai.fat,ai.carb].some(v=>v!=null);
       if(!aiOkRes) aiWait(0);
       if(ai&&!ai.skip){ try{ localStorage.setItem('bbx-ai-ms',String(Math.round(aiEst()*0.6+aiMs*0.4))); }catch(e){} }
@@ -4750,6 +4756,8 @@ function fEmo(name,cur){
   const LENSKEY='phy-camlens', camLens=()=>{ try{ return localStorage.getItem(LENSKEY)==='main'?'main':'auto'; }catch(e){ return 'auto'; } };
   function lensSeg(){ const v=camLens(); document.querySelectorAll('#lensSeg [data-u]').forEach(b=>{ const o=b.dataset.u===v; b.classList.toggle('on',o); b.setAttribute('aria-pressed',o); }); const d=$('lensD'); if(d) d.textContent=v==='main'?'Objectif principal : celui que choisit le téléphone par défaut.':'Auto : utilise le second objectif (double capteur) quand le téléphone en a un, plus net de près.'; }
   const THEMEKEY='phy-mtheme2', themeOf=()=>{ try{ const v=localStorage.getItem(THEMEKEY); return v==='normal'?'normal':v==='beta'?'beta':'beta3'; }catch(e){ return 'beta3'; } };   // Bêta 3 = design par défaut
+  const AIPK='phy-aiprov', aiProv=()=>{ try{ return localStorage.getItem(AIPK)==='openai'?'openai':'gemini'; }catch(e){ return 'gemini'; } };
+  function aiProvSeg(){ const v=aiProv(); document.querySelectorAll('#aiProvSeg [data-u]').forEach(b=>{ const o=b.dataset.u===v; b.classList.toggle('on',o); b.setAttribute('aria-pressed',o); }); const d=$('aiProvD'); if(d) d.textContent=v==='openai'?'Activé : les photos de tableaux sont lues par ChatGPT. S’il ne répond pas, Gemini prend le relais automatiquement.':'Désactivé : les photos de tableaux sont lues par Gemini.'; }
   function themeSeg(){ const v=themeOf(); document.querySelectorAll('#themeSeg [data-u]').forEach(b=>{ const o=b.dataset.u===v; b.classList.toggle('on',o); b.setAttribute('aria-pressed',o); }); const d=$('themeD'); if(d) d.textContent=v==='beta3'?'Normal : le design de Meal, activé par défaut.':v==='beta'?'Bêta : copie du design normal, prête à être personnalisée.':'Classique : l’ancien design de Meal.'; }
   function camSwitch(){
     const cams=sc.cams||[]; if(cams.length<2) return; const cur=(cam.stream&&cam.stream.getVideoTracks()[0].getSettings().deviceId)||'', i=Math.max(0,cams.findIndex(c=>c.deviceId===cur)), nx=cams[(i+1)%cams.length];
@@ -6051,7 +6059,8 @@ function fEmo(name,cur){
   window.BBXMeal={
     setCiq:v=>{ try{ localStorage.setItem(CIQON,v==='off'?'off':'on'); }catch(e){} ciqSeg(); },
     setUsda:v=>{ try{ localStorage.setItem(USDAON,v==='off'?'off':'on'); }catch(e){} usdaSeg(); },
-    setTheme:v=>{ v=(v==='beta'||v==='beta3')?v:'normal'; try{ localStorage.setItem(THEMEKEY,v); }catch(e){} document.documentElement.classList.add('mt-beta'); document.documentElement.classList.toggle('mt-b2',v!=='normal'); document.documentElement.classList.toggle('mt-b3',v==='beta3'); themeSeg(); },
+    setAiProv:v=>{ try{ localStorage.setItem(AIPK,v==='openai'?'openai':'gemini'); }catch(e){} aiProvSeg(); },
+    setTheme:v=>{ v=(v==='beta'||v==='beta3')?v:'normal'; try{ localStorage.setItem(THEMEKEY,v); }catch(e){} document.documentElement.classList.add('mt-beta'); document.documentElement.classList.toggle('mt-b2',v!=='normal'); document.documentElement.classList.toggle('mt-b3',v==='beta3'); themeSeg(); aiProvSeg(); },
     setLens:v=>{ try{ localStorage.setItem(LENSKEY,v==='main'?'main':'auto'); }catch(e){} window.__camAuto=false; lensSeg(); },
     setUsdaKey:v=>{ try{ v=String(v||'').trim(); if(v) localStorage.setItem(USDAKEY,v); else localStorage.removeItem(USDAKEY); }catch(e){} },
     fab:fabOpen, fabClose:fabClose, fabSel:fabSel, fabGo:fabGo,
