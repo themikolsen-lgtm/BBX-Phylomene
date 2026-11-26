@@ -3940,7 +3940,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 16 h 10</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 16 h 20</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4910,8 +4910,8 @@ function fEmo(name,cur){
     if(!chat.msgs.length) h='<div class="ch-hi"><div class="ch-av">💡</div><p><b>Salut !</b> Je suis ton assistant repas. Demande-moi une idée pour ce repas, une recette avec ce que tu as, un snack léger, une liste de courses… Je tiens compte de ce qu’il te reste aujourd’hui.</p></div>';
     const mn=MEALS[chat.m]?MEALS[chat.m][0]:'repas';
     chat.msgs.forEach((x,xi)=>{ if(x.hidden) return;
-      if(x.role==='model'&&!x.err&&!x.opts&&!x.oc&&!x.live){ x.oc=1; try{ const o2=chatOptsFromText(x.text); if(o2.length) x.opts=o2; }catch(e){} }
-      let btns=''; if(x.role==='model'&&Array.isArray(x.opts)&&x.opts.length){ btns='<div class="ch-add">'+x.opts.map((o,oi)=>{ const k=Math.round(chatOptTot(o).k); const done=0;
+      if(x.role==='model'&&!x.err&&!x.opts&&!x.oc2&&!x.live){ x.oc2=1; try{ const o2=chatOptsFromText(x.text); if(o2.length) x.opts=o2; }catch(e){} }
+      let btns=''; if(x.role==='model'&&Array.isArray(x.opts)&&x.opts.length){ btns='<div class="ch-add">'+x.opts.map((o,oi)=>{ const k=Math.round(chatOptTot(o).k||+o.kcalTot||0); const done=0;
         return '<button type="button" class="'+(done?'done':'')+'" '+(done?'disabled':'')+' onclick="BBXMeal.chatAdd('+xi+','+oi+')"><b>'+(done?'✓ Ajouté':'＋ Ajouter')+'</b><span>'+esc(o.titre||('Option '+(oi+1)))+(k?' · ≈ '+k+' kcal':'')+'</span></button>'; }).join('')+'<small>dans '+esc(mn)+'</small></div>'; }
       let prows=''; if(x.role==='model'&&Array.isArray(x.prods)&&x.prods.length){ prows='<div class="ch-prods">'+x.prods.map((it,pi)=>{ const ok=x.padded&&x.padded[pi];
           return '<div class="ch-prod"><span class="ch-pe">'+esc(fEmo(it.name,it.emoji))+'</span><span class="ch-pn"><b>'+esc(it.name)+'</b><small>'+Math.round(it.kcal)+' kcal / 100 '+esc(it.unit||'g')+'</small></span><button type="button" class="'+(ok?'done':'')+'" '+(ok?'disabled':'')+' onclick="BBXMeal.chatProd('+xi+','+pi+')" aria-label="Ajouter '+esc(it.name)+'">'+(ok?'✓':'+')+'</button></div>'; }).join('')+'</div>'; }
@@ -5002,7 +5002,7 @@ function fEmo(name,cur){
     return {g,k:(+f.kcal||0)*g/100,p:(+f.prot||0)*g/100,l:f.lip!=null?(+f.lip)*g/100:null,c:f.gluc!=null?(+f.gluc)*g/100:null}; }
   function chatOptTot(o){ const T={g:0,k:0,p:0,l:0,c:0,ln:0,cn:0}; (o.aliments||[]).forEach(f=>{ const v=chatOptItem(f); T.g+=v.g; T.k+=v.k; T.p+=v.p; if(v.l!=null){T.l+=v.l;T.ln++;} if(v.c!=null){T.c+=v.c;T.cn++;} }); return T; }
   function chatAdd(xi,oi){ const x=chat.msgs[xi]; const o=x&&x.opts&&x.opts[oi]; if(!o) return; const m=chat.m;
-    const T=chatOptTot(o); const g=Math.max(1,Math.round(T.g||100)), per=v=>v*100/g;
+    const T=chatOptTot(o); if(o.kcalTot!=null&&!(T.k>0)) T.k=+o.kcalTot; const g=Math.max(1,Math.round(T.g||100)), per=v=>v*100/g;
     let name=String(o.titre||'Recette').replace(/^option\s*\d+\s*[:·-]?\s*/i,'').trim()||'Recette'; if(name.length>60) name=name.slice(0,57).trim()+'…';
     x.added=x.added||{}; x.added[oi]=1; chatSave();
     $('mealChat').classList.remove('show'); $('mealChatBg').classList.remove('show'); sr.fromForm=false;
@@ -5015,7 +5015,12 @@ function fEmo(name,cur){
         const q=af.match(/^\s*\(?\s*(\d+(?:[.,]\d+)?)\s*(kg|g|ml|cl|l)\b/i); let g=0; if(q){ const v=parseFloat(q[1].replace(',','.')),u=q[2].toLowerCase(); g=u==='kg'||u==='l'?v*1000:u==='cl'?v*10:v; }
         if(!g){ const c=bf.match(/(\d+)\s*$/); g=c&&fv.serving>0?+c[1]*fv.serving:(fv.serving>0?fv.serving:100); }
         al.push({nom:fv.name,g,kcal:fv.kcal,prot:fv.prot||0,lip:fv.fat,gluc:fv.carb}); names.push(fv.name.replace(/\s*\(.*$/,'')); }
-      if(al.length) out.push({titre:names.join(' + '),aliments:al}); });
+      const lk=l.match(/(\d+(?:[.,]\d+)?)\s*kcal/i), plain=l.replace(/^\s*(?:[-•*]|\d+[.)])\s+/,'').replace(/\*\*/g,'').replace(/^option\s*\d+\s*[:·-]?\s*/i,'').trim();
+      if(al.length&&!lk) out.push({titre:names.join(' + '),aliments:al});
+      else if(lk||/option|recette|bol|salade|assiette|wrap|omelette|tartine|poêlée|poelee/i.test(l)){   /* produits inconnus : on garde le nom et les kcal donnés par l’IA */
+        const tit=(names.length?names.join(' + '):plain.split(/[(:,.—–]| - /)[0]).trim()||'Recette';
+        out.push({titre:tit,kcalTot:lk?parseFloat(lk[1].replace(',','.')):null,aliments:al}); } });
+    if(!out.length){ const tk=String(t||'').match(/≈\s*(\d+)\s*kcal/); if(tk) out.push({titre:'Idée de l’assistant',kcalTot:+tk[1],aliments:[]}); }
     return out; }
   function chatGrow(el){ el.style.height='auto'; el.style.height=Math.min(120,el.scrollHeight)+'px'; }
   function openIdeas(m){ if(ideasPlusOn()) return chatOpen(m); return _openIdeasBase(m); }
