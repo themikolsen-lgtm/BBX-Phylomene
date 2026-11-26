@@ -3925,7 +3925,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 16 h 15</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 16 h 30</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4911,8 +4911,18 @@ function fEmo(name,cur){
     let reply='', err=0;
     try{
       if(!window.BBXSync||!BBXSync.ai) throw new Error('Assistant indisponible');
-      const res=await BBXSync.ai({chat:{messages:chat.msgs.filter(x=>!x.err).map(x=>({role:x.role,text:x.text})),ctx:chatCtx()}});
-      if(res&&res.reply) reply=res.reply; else throw new Error((res&&res.error)||'Pas de réponse');
+      const hist=chat.msgs.filter(x=>!x.err).map(x=>({role:x.role,text:x.text}));
+      if(BBXSync.aiStream){
+        const live={role:'model',text:'',live:1}; let shown=false;
+        reply=await BBXSync.aiStream({chat:{messages:hist,ctx:chatCtx(),stream:true}},all=>{ const k=all.indexOf('@@'); live.text=(k>=0?all.slice(0,k):all).trim(); if(!live.text) return;
+          if(!shown){ shown=true; chat.busy=false; chat.msgs.push(live); chatRender(); }
+          else { const els=document.querySelectorAll('#chList .ch-msg.ai'); const el=els[els.length-1]; if(el) el.innerHTML=chatFmt(live.text); const L=$('chList'); if(L.scrollHeight-L.scrollTop-L.clientHeight<140) L.scrollTop=L.scrollHeight; } });
+        { const i=chat.msgs.indexOf(live); if(i>=0) chat.msgs.splice(i,1); }
+        if(!reply||!String(reply).trim()) throw new Error('Pas de réponse');
+      } else {
+        const res=await BBXSync.ai({chat:{messages:hist,ctx:chatCtx()}});
+        if(res&&res.reply) reply=res.reply; else throw new Error((res&&res.error)||'Pas de réponse');
+      }
     }catch(e){ err=1; const msg=String(e&&e.message||e); reply=/connect|401|session|jwt/i.test(msg)?'Connecte-toi à ton compte (Réglages Meal › Synchronisation) pour utiliser l’assistant.':/quota/i.test(msg)?'Le quota gratuit du jour est atteint, réessaie demain.':'Je n’arrive pas à répondre pour le moment. Réessaie dans un instant.'; }
     let opts=null; if(!err){ const k=reply.indexOf('@@AJOUT@@'); if(k>=0){ const js=reply.slice(k+9).trim(); reply=reply.slice(0,k).trim(); try{ const a=js.indexOf('{'), b=js.lastIndexOf('}'); const o=JSON.parse(js.slice(a,b+1)); if(o&&Array.isArray(o.options)) opts=o.options.filter(z=>z&&Array.isArray(z.aliments)&&z.aliments.length).slice(0,3); }catch(e){} } }
     chat.busy=false; chat.msgs.push({role:'model',text:reply,err:err||undefined,opts:opts||undefined}); chatSave(); chatRender(); }
@@ -6594,7 +6604,14 @@ function fEmo(name,cur){
       api('/auth/v1/user',{method:'PUT',token:recTok,body:{password:p}}).then(function(j){ var em=(j&&j.email)||''; recTok=null; document.getElementById('syncNew').value=''; var se={at:'',rt:'',exp:0,email:em}; setMsg('✓ Mot de passe changé. Connecte-toi avec le nouveau.'); var e=document.getElementById('syncEmail'); if(e&&em) e.value=em; }).catch(function(x){ setMsg(x.message,1); }); },
     signOut:function(){ try{ LS.removeItem(SK); LS.removeItem(MK); }catch(e){} setMsg('Déconnecté. Les données restent sur ce téléphone.'); },
     now:function(){ setMsg('Synchronisation…'); cycle({reload:true}); },
-    ai:function(body){ return token().then(function(t){ return api('/functions/v1/nutri-ocr',{method:'POST',token:t,body:body}); }); }
+    ai:function(body){ return token().then(function(t){ return api('/functions/v1/nutri-ocr',{method:'POST',token:t,body:body}); }); },
+    aiStream:function(body,onText){ return token().then(function(t){   /* réponse de l'assistant en continu */
+      return fetch(URL_+'/functions/v1/nutri-ocr',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify(body)}).then(function(r){
+        var ct=r.headers.get('content-type')||'';
+        if(!r.ok||ct.indexOf('text/plain')<0||!r.body) return r.text().then(function(x){ var j=null; try{ j=JSON.parse(x); }catch(e){} if(r.ok&&j&&j.reply){ onText&&onText(j.reply); return j.reply; } var e=new Error((j&&j.error)||('HTTP '+r.status)); e.status=r.status; throw e; });
+        var rd=r.body.getReader(), dec=new TextDecoder(), all='';
+        function step(){ return rd.read().then(function(c){ if(c.done) return all; all+=dec.decode(c.value,{stream:true}); onText&&onText(all); return step(); }); }
+        return step(); }); }); }
   };
   window.BBXSync=API;
   document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible'){ applyNow(); cycle({reload:true}); } else cycle({reload:false}); });
