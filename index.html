@@ -3584,6 +3584,19 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis .bz.on{ background:#8
 
 /* fiche produit, mode « Pour … g » : plus de compteur, de portions ni de choix g/ml (tout se règle dans le bouton) */
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm :is(#mfGq,#mfUnits,#mfSeg){ display:none !important; }
+
+/* fiche produit, mode unité : − 1 + en pilules grises, « soit … g » sous le nombre ; bouton Ajouter vert clair */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUq{ display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:14px; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUq>button{ height:58px !important; width:100% !important; min-width:0 !important; border-radius:999px !important; border:0 !important; background:#F1F2F4 !important; box-shadow:none !important; color:#15171C !important; font-size:30px !important; font-weight:800 !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUq .mf-in{ background:none !important; border:0 !important; box-shadow:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUq #mfUn{ width:3ch !important; font-size:36px !important; font-weight:900 !important; text-align:center !important; background:none !important; border:0 !important; padding:0 !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUq #mfUl{ display:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUg:not([style*="none"]){ display:block !important; text-align:center; margin:0 !important; padding:2px 0 14px !important; background:#fff !important; font-size:12px !important; font-weight:500 !important; color:#6B7280 !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-btns #mfOk{ width:auto !important; min-width:0 !important; height:52px !important; padding:0 64px !important; border-radius:999px !important; background:#6DD35A !important; border:0 !important; box-shadow:none !important; color:#fff !important; gap:0 !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-btns #mfOk svg{ display:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-btns #mfOk #mfOkT{ font-size:17px !important; font-weight:800 !important; color:#fff !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-btns #mfOk:active{ transform:scale(.97); }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUq{ margin-bottom:0 !important; padding-bottom:0 !important; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3791,7 +3804,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 11 h 55</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 12 h 10</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4235,7 +4248,7 @@ function fEmo(name,cur){
     return; const empty=['mfKcal','mfProt','mfFat','mfCarb'].every(id=>!String(($(id)||{}).value||'').trim()||+String($(id).value).replace(',','.')===0); b.hidden=!empty; }
   function fmPrev(){ try{ basisHi(); fmUnitBtn(); }catch(e){} try{ ocrCta(); }catch(e){}
     fmUnitBtn();
-    if(fm.basis==='u'&&fm.serving>0){ const g=num($('mfQty').value); if(document.activeElement===$('mfUn')){ const n=num($('mfUn').value); if(n>=0) $('mfQty').value=r1(n*fm.serving); } else if(g>0) $('mfUn').value=r2(g/fm.serving); $('mfUg').textContent='= '+r1(num($('mfQty').value)||0)+' '+$('mfUnit').value+' · 1 '+unitLabel()+' ≈ '+r1(fm.serving)+' '+$('mfUnit').value; }
+    if(fm.basis==='u'&&fm.serving>0){ const g=num($('mfQty').value); if(document.activeElement===$('mfUn')){ const n=num($('mfUn').value); if(n>=0) $('mfQty').value=r1(n*fm.serving); } else if(g>0) $('mfUn').value=r2(g/fm.serving); $('mfUg').textContent=document.documentElement.classList.contains('mt-b3')?('soit '+r1(num($('mfQty').value)||0)+' '+$('mfUnit').value):('= '+r1(num($('mfQty').value)||0)+' '+$('mfUnit').value+' · 1 '+unitLabel()+' ≈ '+r1(fm.serving)+' '+$('mfUnit').value); }
     const k=num($('mfKcal').value), p=num($('mfProt').value), q=num($('mfQty').value), u=$('mfUnit').value, fa=num($('mfFat').value), ca=num($('mfCarb').value);
     { const eff=q>0?q:100, pv=$('mfPrev'); let mac=pv.querySelector('.mf-mac');
       if(!mac){ const D=[['Calories','mfKcal',0,'kcal','#2E7D1E'],['Protéines','mfProt',1,'g','#0F7C8A'],['Lipides','mfFat',1,'g','#B45F06'],['Glucides','mfCarb',1,'g','#C8102E']];
