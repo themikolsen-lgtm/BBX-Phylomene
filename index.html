@@ -3719,6 +3719,19 @@ html body:not(#b3x) #mealChat .mc-head .mc-x, html.mt-beta.mt-b2.mt-b3 body:not(
 #mealChat .ch-prod button{ width:40px; height:40px; flex:none; border-radius:50%; border:0; background:#6DD35A; color:#fff; font-size:22px; font-weight:700; line-height:1; display:grid; place-items:center; cursor:pointer; }
 #mealChat .ch-prod button.done{ background:#E5E7EB; color:#6B7280; font-size:17px; }
 #mealChat .ch-prod button:active{ transform:scale(.92); }
+/* Fiche produit : tailles et espaces qui suivent la hauteur d’écran (moins de grand vide sur les grands écrans) */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm{ --sp1:clamp(4px,1.1vh,14px); --sp2:clamp(6px,2vh,24px); --sp3:clamp(8px,3vh,34px); }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfPrev{ display:flex !important; flex-direction:column !important; justify-content:center !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfPrev>.mf-mac{ margin-bottom:clamp(0px,calc((100vh - 760px)*.12),40px) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac{ row-gap:clamp(8px,1.4vh,14px) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span b{ height:clamp(50px,6.6vh,76px) !important; max-width:min(100%,clamp(84px,11vh,108px)) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span b input{ font-size:clamp(15px,2.15vh,21px) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span b u{ font-size:clamp(11px,1.4vh,13.5px) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span i, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span:nth-child(1) i{ font-size:clamp(13.5px,1.8vh,16px) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-nameview{ font-size:clamp(18px,2.5vh,23px) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUq>button{ height:clamp(50px,6.6vh,64px) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUq #mfUn{ font-size:clamp(36px,5vh,50px) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-btns #mfOk{ height:clamp(52px,6.8vh,62px) !important; font-size:clamp(17px,2.2vh,19px) !important; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3940,7 +3953,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 16 h 20</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 16 h 30</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
