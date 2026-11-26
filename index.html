@@ -3705,6 +3705,11 @@ html body:not(#b3x) #mealChat .mc-head .mc-x, html.mt-beta.mt-b2.mt-b3 body:not(
 #mealChat .ch-add button.done b{ color:#6B7280; }
 #mealChat .ch-add small{ font-size:11px; color:#8A919E; padding-left:4px; }
 /* Idées + : produits cités → lignes avec « + » */
+#mealChat .ch-msg.ai b.ch-lk{ cursor:pointer; color:#15803D; text-decoration:underline; text-decoration-color:rgba(21,128,61,.35); text-decoration-thickness:2px; text-underline-offset:3px; border-radius:6px; -webkit-tap-highlight-color:transparent; }
+#mealChat .ch-msg.ai b.ch-lk::after{ content:'+'; display:inline-grid; place-items:center; width:17px; height:17px; margin-left:4px; border-radius:50%; background:#6DD35A; color:#fff; font-size:13px; line-height:1; vertical-align:2px; text-decoration:none; }
+#mealChat .ch-msg.ai b.ch-lk.done{ color:#6B7280; text-decoration:none; }
+#mealChat .ch-msg.ai b.ch-lk.done::after{ content:'✓'; background:#E5E7EB; color:#6B7280; font-size:11px; }
+#mealChat .ch-msg.ai b.ch-lk:active{ background:rgba(109,211,90,.18); }
 #mealChat .ch-prods{ display:flex; flex-direction:column; gap:6px; margin-top:10px; }
 #mealChat .ch-prod{ display:flex; align-items:center; gap:10px; background:#F7F8F9; border-radius:16px; padding:6px 6px 6px 8px; }
 #mealChat .ch-pe{ width:34px; height:34px; flex:none; border-radius:10px; background:#fff; display:grid; place-items:center; font-size:18px; }
@@ -3935,7 +3940,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 17 h 30</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 15 h 55</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4896,7 +4901,7 @@ function fEmo(name,cur){
       'Produits habituels : '+(fav.join(' ; ')||'—'),
       'FORMAT OBLIGATOIRE : quand tu proposes des aliments ou des plats à manger (idées, options, recette), termine ta réponse par UNE ligne qui commence par @@AJOUT@@ suivie d’un JSON compact : {"options":[{"titre":"…","aliments":[{"nom":"…","g":120,"kcal":110,"prot":23,"lip":1.5,"gluc":0}]}]} — une option par idée (3 maximum, 5 aliments maximum chacune), g = quantité en grammes à manger, kcal/prot/lip/gluc = valeurs POUR 100 g. Reprends le nom EXACT d’un produit habituel quand tu l’utilises. Pas de cette ligne pour une simple explication. Ne mentionne jamais cette ligne dans le texte.',
       'AJOUT RAPIDE : si le message est (ou contient) simplement un aliment ou un produit, avec ou sans quantité (ex. « haricots fins Cassegrain 200 g », « 2 œufs », « une banane »), c’est qu’il veut l’ajouter à son repas : réponds en 1 à 2 lignes (ce que ça représente pour cette quantité : kcal et protéines) et propose-le avec la ligne @@AJOUT@@ (une seule option, titre = le nom du produit, g = la quantité donnée convertie en grammes, sinon une portion habituelle).'].join('\n'); }
-  function chatFmt(t){ const e=esc(String(t||'')).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>'); const out=[]; let ul=null;
+  function chatFmt(t,xi,dn){ let bk=0; const e=esc(String(t||'')).replace(/\*\*(.+?)\*\*/g,(_,v)=>{ const k=bk++; return xi==null?'<b>'+v+'</b>':'<b class="ch-lk'+(dn&&dn[k]?' done':'')+'" role="button" tabindex="0" onclick="BBXMeal.chatLk('+xi+','+k+')">'+v+'</b>'; }); const out=[]; let ul=null;
     e.split(/\n/).forEach(l=>{ const m=l.match(/^\s*(?:[-•*]|(\d+)[.)])\s+(.*)$/); if(m){ const tag=m[1]?'ol':'ul'; if(!ul||ul.t!==tag){ if(ul) out.push('</'+ul.t+'>'); ul={t:tag}; out.push('<'+tag+'>'); } out.push('<li>'+m[2]+'</li>'); } else { if(ul){ out.push('</'+ul.t+'>'); ul=null; } out.push(l.trim()?'<p>'+l+'</p>':''); } });
     if(ul) out.push('</'+ul.t+'>'); return out.join(''); }
   function chatRender(scroll){ const R=chatRemain();
@@ -4909,7 +4914,7 @@ function fEmo(name,cur){
         return '<button type="button" class="'+(done?'done':'')+'" '+(done?'disabled':'')+' onclick="BBXMeal.chatAdd('+xi+','+oi+')"><b>'+(done?'✓ Ajouté':'＋ Ajouter')+'</b><span>'+esc(o.titre||('Option '+(oi+1)))+(k?' · ≈ '+k+' kcal':'')+'</span></button>'; }).join('')+'<small>dans '+esc(mn)+'</small></div>'; }
       let prows=''; if(x.role==='model'&&Array.isArray(x.prods)&&x.prods.length){ prows='<div class="ch-prods">'+x.prods.map((it,pi)=>{ const ok=x.padded&&x.padded[pi];
           return '<div class="ch-prod"><span class="ch-pe">'+esc(fEmo(it.name,it.emoji))+'</span><span class="ch-pn"><b>'+esc(it.name)+'</b><small>'+Math.round(it.kcal)+' kcal / 100 '+esc(it.unit||'g')+'</small></span><button type="button" class="'+(ok?'done':'')+'" '+(ok?'disabled':'')+' onclick="BBXMeal.chatProd('+xi+','+pi+')" aria-label="Ajouter '+esc(it.name)+'">'+(ok?'✓':'+')+'</button></div>'; }).join('')+'</div>'; }
-      h+='<div class="ch-msg '+(x.role==='model'?'ai':'me')+(x.err?' err':'')+'">'+(x.role==='model'?chatFmt(x.text):'<p>'+esc(x.text).replace(/\n/g,'<br>')+'</p>')+prows+btns+'</div>'; });
+      h+='<div class="ch-msg '+(x.role==='model'?'ai':'me')+(x.err?' err':'')+'">'+(x.role==='model'?chatFmt(x.text,x.err?null:xi,x.badd):'<p>'+esc(x.text).replace(/\n/g,'<br>')+'</p>')+prows+btns+'</div>'; });
     if(chat.busy) h+='<div class="ch-msg ai typing"><i></i><i></i><i></i></div>';
     L.innerHTML=h;
     const sug=['Une idée pour ce repas avec ce qu’il me reste','Une recette rapide riche en protéines','Un snack de moins de 200 kcal','Que manger ce soir ?'];
@@ -4972,6 +4977,23 @@ function fEmo(name,cur){
     return out; }
   function chatProd(xi,pi){ const x=chat.msgs[xi], it=x&&x.prods&&x.prods[pi]; if(!it) return;
     if(directAdd(chat.m,Object.assign({},it,{emoji:fEmo(it.name,it.emoji)}))){ x.padded=x.padded||{}; x.padded[pi]=1; chatSave(); chatRender(false); } }
+  /* clic sur un nom en gras dans la réponse : ajout direct (quantité citée juste après, ex. « (150 g) ») */
+  function chatFindProd(nm){ const n=chNorm(nm).replace(/\s*\(\d+\)$/,''); if(n.length<3) return null;
+    const tk=v=>chNorm(v).replace(/\(\d+\)/g,'').split(/[^a-z0-9%+]+/).filter(w=>w.length>1);
+    let fv=(FAV||[]).find(z=>chNorm(z.name).replace(/\s*\(\d+\)$/,'')===n);
+    if(!fv){ const want=tk(nm); fv=(FAV||[]).filter(z=>z.kcal!=null).map(z=>{ const h=tk(z.name); return {z,ok:want.every(w=>h.some(x=>x.startsWith(w.slice(0,5))||w.startsWith(x.slice(0,5)))),d:Math.abs(h.length-want.length)}; }).filter(o=>o.ok).sort((p,q)=>p.d-q.d).map(o=>o.z)[0]; }
+    if(!fv){ try{ const L=(localResults(nm.replace(/[()]/g,' '))||[]).filter(x=>x&&x.kcal!=null); fv=L.find(x=>chNorm(x.name).replace(/\s*\(\d+\)$/,'')===n)||L[0]; }catch(e){} }
+    return fv&&fv.kcal!=null?fv:null; }
+  function chatLk(xi,k){ const x=chat.msgs[xi]; if(!x||x.role!=='model') return; const t=String(x.text||'');
+    const re=/\*\*(.+?)\*\*/g; let m,i=0,hit=null; while((m=re.exec(t))){ if(i++===k){ hit=m; break; } } if(!hit) return;
+    const nm=hit[1].trim(), after=t.slice(hit.index+hit[0].length,hit.index+hit[0].length+40), before=t.slice(Math.max(0,hit.index-12),hit.index);
+    const qm=after.match(/^\s*\(?\s*(\d+(?:[.,]\d+)?)\s*(kg|g|ml|cl|l)\b/i);
+    let g=0; if(qm){ const v=parseFloat(qm[1].replace(',','.')), u=qm[2].toLowerCase(); g=u==='kg'||u==='l'?v*1000:u==='cl'?v*10:v; }
+    const fv=chatFindProd(nm);
+    if(!fv){ $('mealChat').classList.remove('show'); $('mealChatBg').classList.remove('show'); srOpen(chat.m); $('srQ').value=nm.replace(/\s*\(\d+\)$/,''); doSearch(); return; }
+    if(!g){ const cm=before.match(/(\d+)\s*$/); if(cm&&fv.serving>0) g=+cm[1]*fv.serving; }
+    const it={name:fv.name,kcal:fv.kcal,prot:fv.prot||0,fat:fv.fat,carb:fv.carb,serving:fv.serving||0,label:fv.label,portions:fv.portions,unit:fv.unit||'g',emoji:fEmo(fv.name,fv.emoji)};
+    if(directAdd(chat.m,it,g||0)){ x.badd=x.badd||{}; x.badd[k]=1; chatSave(); chatRender(false); } }
   function chatAdd(xi,oi){ const x=chat.msgs[xi]; const o=x&&x.opts&&x.opts[oi]; if(!o) return; const m=chat.m; let n=0;
     const norm=v=>String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();
     (o.aliments||[]).forEach(f=>{ const g=Math.max(1,Math.round(+f.g||0)); if(!f.nom||!g) return;
@@ -6453,7 +6475,7 @@ function fEmo(name,cur){
   window.BBXMeal={
     setCiq:v=>{ try{ localStorage.setItem(CIQON,v==='off'?'off':'on'); }catch(e){} ciqSeg(); },
     setUsda:v=>{ try{ localStorage.setItem(USDAON,v==='off'?'off':'on'); }catch(e){} usdaSeg(); },
-    chatSend:t=>chatSend(t), chatAdd:(a,b)=>chatAdd(a,b), chatProd:(a,b)=>chatProd(a,b), chatClose:()=>{ $('mealChat').classList.remove('show'); $('mealChatBg').classList.remove('show'); }, chatClear:()=>{ chat.msgs=[]; chatSave(); chatRender(); }, chatGrow:el=>chatGrow(el),
+    chatSend:t=>chatSend(t), chatAdd:(a,b)=>chatAdd(a,b), chatProd:(a,b)=>chatProd(a,b), chatLk:(a,b)=>chatLk(a,b), chatClose:()=>{ $('mealChat').classList.remove('show'); $('mealChatBg').classList.remove('show'); }, chatClear:()=>{ chat.msgs=[]; chatSave(); chatRender(); }, chatGrow:el=>chatGrow(el),
     setIdeas:v=>{ try{ localStorage.setItem(IDPK,v==='plus'?'1':'0'); }catch(e){} ideasSeg(); },
     setTheme:v=>{ v=(v==='beta'||v==='beta3')?v:'normal'; try{ localStorage.setItem(THEMEKEY,v); }catch(e){} document.documentElement.classList.add('mt-beta'); document.documentElement.classList.toggle('mt-b2',v!=='normal'); document.documentElement.classList.toggle('mt-b3',v==='beta3'); themeSeg(); ideasSeg(); },
     setLens:v=>{ try{ localStorage.setItem(LENSKEY,v==='main'?'main':'auto'); }catch(e){} window.__camAuto=false; lensSeg(); },
