@@ -3813,7 +3813,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 12 h 35</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 12 h 40</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -3882,7 +3882,7 @@ window.BBXBk=(function(){
   <div id="mfMicro"></div>
   <div class="mf-qty" id="mfUq" style="display:none"><button type="button" onclick="BBXMeal.uqty(-1)" aria-label="Moins">−</button><div class="mf-in big"><input id="mfUn" type="text" inputmode="decimal" placeholder="1" aria-label="Nombre d’unités"><i id="mfUl">unité</i></div><button type="button" onclick="BBXMeal.uqty(1)" aria-label="Plus">+</button></div>
   <div class="mf-ug" id="mfUg" style="display:none"></div>
-  <div class="mf-mult" id="mfMult"><button type="button" onclick="BBXMeal.uset(2)">×2</button><button type="button" onclick="BBXMeal.uset(3)">×3</button><button type="button" onclick="BBXMeal.uset(4)">×4</button><button type="button" onclick="BBXMeal.uset(5)">×5</button><button type="button" onclick="BBXMeal.uset(6)">×6</button></div>
+  <div class="mf-mult" id="mfMult"><button type="button" onclick="BBXMeal.uset(2)">+2</button><button type="button" onclick="BBXMeal.uset(3)">+3</button><button type="button" onclick="BBXMeal.uset(4)">+4</button><button type="button" onclick="BBXMeal.uset(5)">+5</button><button type="button" onclick="BBXMeal.uset(6)">+6</button></div>
   <div class="mf-qty" id="mfGq"><button type="button" onclick="BBXMeal.qty(-1)" aria-label="Moins">−</button><div class="mf-in big"><input id="mfQty" type="text" inputmode="decimal" placeholder="100" aria-label="Quantité"><i id="mfQu">g</i></div><button type="button" onclick="BBXMeal.qty(1)" aria-label="Plus">+</button></div>
   <div class="mf-units" id="mfUnits" style="display:none"></div>
   <div class="mf-seg" id="mfSeg"><button type="button" class="on" onclick="BBXMeal.unit('g')">grammes</button><button type="button" onclick="BBXMeal.unit('ml')">millilitres</button></div><input type="hidden" id="mfUnit" value="g">
@@ -4249,7 +4249,7 @@ function fEmo(name,cur){
     if(fm.basis==='g') return; $('mfQty').value='100'; applyBasis('g'); fmUnitBtn();
   }
   function unitStep(dv){ const v=num($('mfBU').value)||fm.serving||0; $('mfBU').value=r1(Math.max(1,Math.round((v+dv)/5)*5||1)); unitSave(); }
-  function uset(n){ $('mfUn').value=n; $('mfQty').value=r1(n*fm.serving); fmPrev(); }
+  function uset(n){ const v=Math.round(((num($('mfUn').value)||0)+n)*100)/100; $('mfUn').value=r2(v); $('mfQty').value=r1(v*fm.serving); fmPrev(); }   // +2, +3… : ajoute à la quantité
   function uqty(dir){ const n=num($('mfUn').value)||0, st=n>=2?1:0.5; const v=Math.max(0.5,Math.round((n+dir*st)*100)/100); $('mfUn').value=r2(v); $('mfQty').value=r1(v*fm.serving); fmPrev(); }
   document.addEventListener('input',e=>{ const t=e.target; if(!t||!t.dataset||!t.dataset.s||!t.closest||!t.closest('#mfPrev')) return; const v=num(t.value), q=num($('mfQty').value), eff=q>0?q:100; $(t.dataset.s).value=isNaN(v)?'':String(+(v*100/eff).toFixed(2)); fmPrev(); });
   function ocrCta(){ const b=$('mfOcrCtaW'); if(!b) return; b.hidden=false;
