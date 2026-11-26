@@ -3606,6 +3606,11 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis::after{ display:none 
 
 /* titres des pages en Poppins */
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) .mc-head>b, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) .mc-head #hbTitle{ font-family:'Poppins',system-ui,sans-serif !important; font-weight:700 !important; letter-spacing:-.01em !important; }
+
+/* fiche produit : la 1re pilule de repas alignée sur le bord gauche de la carte blanche */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfChips{ padding-left:16px !important; padding-right:16px !important; scroll-padding-left:16px; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfChips>.mf-chip:first-child{ margin-left:0 !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfChips::before{ display:none !important; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3813,7 +3818,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 12 h 40</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 12 h 45</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
