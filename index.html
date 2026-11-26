@@ -3531,6 +3531,15 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span b{ width:100% !im
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span b input{ font-size:15px !important; width:3.6ch !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span b u{ font-size:11px !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span:nth-child(1) b input{ width:3.4ch !important; }
+
+/* fiche produit : uniquement le Nutri-Score, sous le nom, sans cadre */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfHealth{ display:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-nsl:not([hidden]){ order:5; display:flex !important; align-items:center; justify-content:center; gap:10px; margin:0 !important; padding:0 0 12px; background:#fff !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-nsl-t{ font:800 12px system-ui; color:#6B7280; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-nsl .mh-ns{ display:flex; gap:3px; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-nsl .mh-ns span{ width:22px; height:22px; border-radius:6px; display:grid; place-items:center; font:900 12px system-ui; color:#fff; background:var(--c); opacity:.35; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-nsl .mh-ns span.on{ opacity:1; width:28px; height:28px; margin:-3px 0; border-radius:8px; font-size:15px; }
+html:not(.mt-b3) #mealForm .mf-nsl{ display:none !important; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3738,7 +3747,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 09 h 50</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 10 h 05</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4649,6 +4658,10 @@ function fEmo(name,cur){
   }
   function renderHealth(h){
     const box=$('mfHealth'); fm.hv=h||null; if(!box) return;
+    { /* Bêta 3 : Nutri-Score seul, sous le nom du produit (sans cadre) */
+      let ns=document.getElementById('mfNsLine'); const nm=document.querySelector('#mealForm .mf-name');
+      if(!ns&&nm){ ns=document.createElement('div'); ns.id='mfNsLine'; ns.className='mf-nsl'; nm.insertAdjacentElement('afterend',ns); }
+      if(ns){ if(h&&h.ns){ ns.innerHTML='<span class="mf-nsl-t">Nutri-Score</span><span class="mh-ns">'+['a','b','c','d','e'].map(l=>'<span class="'+(h.ns===l?'on':'')+'" style="--c:'+NSC[l]+'">'+l.toUpperCase()+'</span>').join('')+'</span>'; ns.hidden=false; } else { ns.innerHTML=''; ns.hidden=true; } } }
     if(!h){ box.hidden=true; box.innerHTML=''; return; }
     const v=healthVerdict(h);
     const VT={good:['Plutôt bon pour la santé','Un bon choix à consommer régulièrement.'],mid:['À consommer avec modération','Correct, sans en faire la base de l’alimentation.'],bad:['Plutôt mauvais pour la santé','À limiter : à garder pour les occasions.']};
