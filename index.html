@@ -3577,6 +3577,10 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .fv-h #mfOcrCta:active{ transf
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUE2{ display:none !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis .mf-bin{ width:3.4ch !important; min-width:2.4ch; height:auto !important; padding:1px 3px !important; margin:0 1px !important; border:0 !important; border-bottom:2px dashed currentColor !important; border-radius:0 !important; background:transparent !important; box-shadow:none !important; color:inherit !important; font:inherit !important; text-align:center !important; outline:none; -webkit-appearance:none; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis .mf-bin:focus{ border-bottom-style:solid; background:rgba(127,127,127,.15); border-radius:6px 6px 0 0; }
+/* boutons « … g • Unité » / « Pour … g » : bleu clair */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis::before{ background:#E6F1FC !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis .bz{ color:#15171C !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis .bz.on{ background:#8EC5FF !important; color:#15171C !important; box-shadow:none !important; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3784,7 +3788,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 11 h 35</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 11 h 45</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4182,7 +4186,7 @@ function fEmo(name,cur){
     if(a&&document.activeElement!==a) a.value=has?r1(fm.serving):'';
     const t=$('mfBUt'), g=$('mfBGt'), b3=document.documentElement.classList.contains('mt-b3'), ae=document.activeElement;
     if(b3){   /* Bêta 3 : le poids se modifie directement dans le bouton */
-      if(t&&!(ae&&ae.closest&&ae.closest('#mfBUt'))) t.innerHTML=has?('À l’unité · <input class="mf-bin" data-k="u" type="text" inputmode="decimal" autocomplete="off" aria-label="Poids d’une unité" value="'+r1(fm.serving)+'"> '+u):'À l’unité · <input class="mf-bin" data-k="u" type="text" inputmode="decimal" autocomplete="off" aria-label="Poids d’une unité" placeholder="?"> '+u;
+      if(t&&!(ae&&ae.closest&&ae.closest('#mfBUt'))) t.innerHTML='<input class="mf-bin" data-k="u" type="text" inputmode="decimal" autocomplete="off" aria-label="Poids d’une unité" '+(has?'value="'+r1(fm.serving)+'"':'placeholder="?"')+'> '+u+' • Unité';
       if(g&&!(ae&&ae.closest&&ae.closest('#mfBGt'))) g.innerHTML='Pour <input class="mf-bin" data-k="g" type="text" inputmode="decimal" autocomplete="off" aria-label="Quantité en '+u+'" value="'+(fm.basis==='g'?(r1(num($('mfQty').value))||100):100)+'"> '+u;
     } else { if(t) t.textContent=has?('À l’unité · '+r1(fm.serving)+' '+u):'À l’unité'; if(g) g.textContent='Pour 100 '+u; } const uu=$('mfBUu'); if(uu) uu.textContent=u;
     const row=$('mfUE2'); if(row) row.hidden=!(fm.basis==='u'||!has); }
