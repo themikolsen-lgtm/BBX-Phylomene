@@ -3940,7 +3940,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 15 h 55</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 16 h 10</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4910,7 +4910,8 @@ function fEmo(name,cur){
     if(!chat.msgs.length) h='<div class="ch-hi"><div class="ch-av">💡</div><p><b>Salut !</b> Je suis ton assistant repas. Demande-moi une idée pour ce repas, une recette avec ce que tu as, un snack léger, une liste de courses… Je tiens compte de ce qu’il te reste aujourd’hui.</p></div>';
     const mn=MEALS[chat.m]?MEALS[chat.m][0]:'repas';
     chat.msgs.forEach((x,xi)=>{ if(x.hidden) return;
-      let btns=''; if(x.role==='model'&&Array.isArray(x.opts)&&x.opts.length){ btns='<div class="ch-add">'+x.opts.map((o,oi)=>{ const k=Math.round((o.aliments||[]).reduce((a,f)=>a+(+f.kcal||0)*(+f.g||0)/100,0)); const done=x.added&&x.added[oi];
+      if(x.role==='model'&&!x.err&&!x.opts&&!x.oc&&!x.live){ x.oc=1; try{ const o2=chatOptsFromText(x.text); if(o2.length) x.opts=o2; }catch(e){} }
+      let btns=''; if(x.role==='model'&&Array.isArray(x.opts)&&x.opts.length){ btns='<div class="ch-add">'+x.opts.map((o,oi)=>{ const k=Math.round(chatOptTot(o).k); const done=0;
         return '<button type="button" class="'+(done?'done':'')+'" '+(done?'disabled':'')+' onclick="BBXMeal.chatAdd('+xi+','+oi+')"><b>'+(done?'✓ Ajouté':'＋ Ajouter')+'</b><span>'+esc(o.titre||('Option '+(oi+1)))+(k?' · ≈ '+k+' kcal':'')+'</span></button>'; }).join('')+'<small>dans '+esc(mn)+'</small></div>'; }
       let prows=''; if(x.role==='model'&&Array.isArray(x.prods)&&x.prods.length){ prows='<div class="ch-prods">'+x.prods.map((it,pi)=>{ const ok=x.padded&&x.padded[pi];
           return '<div class="ch-prod"><span class="ch-pe">'+esc(fEmo(it.name,it.emoji))+'</span><span class="ch-pn"><b>'+esc(it.name)+'</b><small>'+Math.round(it.kcal)+' kcal / 100 '+esc(it.unit||'g')+'</small></span><button type="button" class="'+(ok?'done':'')+'" '+(ok?'disabled':'')+' onclick="BBXMeal.chatProd('+xi+','+pi+')" aria-label="Ajouter '+esc(it.name)+'">'+(ok?'✓':'+')+'</button></div>'; }).join('')+'</div>'; }
@@ -4964,6 +4965,7 @@ function fEmo(name,cur){
           else { /* 3) produit proche dans ta base (mots en moins) */ const w=nm.split(' '); for(let k=w.length-1;k>=1&&!hit;k--) hit=find(w.slice(0,k).join(' '));
             if(hit){ const g2=qg||(hit.serving>0?hit.serving:100); opts=[{titre:hit.name,aliments:[{nom:hit.name,g:g2,kcal:hit.kcal,prot:hit.prot||0,lip:hit.fat,gluc:hit.carb}]}]; } }
         } }catch(e){} }
+    if(!err&&!opts){ try{ const o2=chatOptsFromText(reply); if(o2.length) opts=o2; }catch(e){} }
     let prods=null; if(!err){ try{ prods=chatProds(reply); if(!prods.length) prods=null; }catch(e){} }
     chat.busy=false; chat.msgs.push({role:'model',text:reply,err:err||undefined,opts:opts||undefined,prods:prods||undefined}); chatSave(); chatRender(); }
   const chNorm=v=>String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’']/g,"'").replace(/\s+/g,' ').trim();
@@ -4994,15 +4996,27 @@ function fEmo(name,cur){
     if(!g){ const cm=before.match(/(\d+)\s*$/); if(cm&&fv.serving>0) g=+cm[1]*fv.serving; }
     const it={name:fv.name,kcal:fv.kcal,prot:fv.prot||0,fat:fv.fat,carb:fv.carb,serving:fv.serving||0,label:fv.label,portions:fv.portions,unit:fv.unit||'g',emoji:fEmo(fv.name,fv.emoji)};
     if(directAdd(chat.m,it,g||0)){ x.badd=x.badd||{}; x.badd[k]=1; chatSave(); chatRender(false); } }
-  function chatAdd(xi,oi){ const x=chat.msgs[xi]; const o=x&&x.opts&&x.opts[oi]; if(!o) return; const m=chat.m; let n=0;
-    const norm=v=>String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();
-    (o.aliments||[]).forEach(f=>{ const g=Math.max(1,Math.round(+f.g||0)); if(!f.nom||!g) return;
-      const tk=v=>norm(v).split(/[^a-z0-9]+/).filter(w=>w.length>2);
-      const fv=(FAV||[]).find(z=>norm(z.name)===norm(f.nom))||(()=>{ const want=tk(f.nom); if(want.length<1) return null; let best=null,bs=0; (FAV||[]).forEach(z=>{ const have=tk(z.name); const hit=want.filter(w=>have.some(h=>h.startsWith(w.slice(0,5)))).length; const sc=hit/want.length; if(sc>bs&&sc>=1&&z.kcal!=null){ bs=sc; best=z; } }); return best; })();   /* produit déjà connu : ses vraies valeurs */
-      const it=fv&&fv.kcal!=null?{name:fv.name,kcal:fv.kcal,prot:fv.prot||0,fat:fv.fat,carb:fv.carb,serving:fv.serving||0,label:fv.label,portions:fv.portions,unit:fv.unit||'g',emoji:fEmo(fv.name,fv.emoji)}
-        :{name:String(f.nom),kcal:+f.kcal||0,prot:+f.prot||0,fat:f.lip!=null?+f.lip:null,carb:f.gluc!=null?+f.gluc:null,serving:0,unit:'g',emoji:fEmo(f.nom,'')};
-      if(directAdd(m,it,g)) n++; });
-    if(n){ x.added=x.added||{}; x.added[oi]=1; chatSave(); chatRender(false); showToast('✓ '+n+' aliment'+(n>1?'s':'')+' ajouté'+(n>1?'s':'')+' à '+(MEALS[m]?MEALS[m][0]:''),null,1800); } }
+  /* recette proposée → fiche produit pré-remplie (nom, kcal, macros, quantité) ; on valide avec « Ajouter » */
+  function chatOptItem(f){ const fv=chatFindProd(f.nom||''); const g=Math.max(0,+f.g||0);
+    if(fv) return {g,k:fv.kcal*g/100,p:(fv.prot||0)*g/100,l:fv.fat!=null?fv.fat*g/100:null,c:fv.carb!=null?fv.carb*g/100:null};
+    return {g,k:(+f.kcal||0)*g/100,p:(+f.prot||0)*g/100,l:f.lip!=null?(+f.lip)*g/100:null,c:f.gluc!=null?(+f.gluc)*g/100:null}; }
+  function chatOptTot(o){ const T={g:0,k:0,p:0,l:0,c:0,ln:0,cn:0}; (o.aliments||[]).forEach(f=>{ const v=chatOptItem(f); T.g+=v.g; T.k+=v.k; T.p+=v.p; if(v.l!=null){T.l+=v.l;T.ln++;} if(v.c!=null){T.c+=v.c;T.cn++;} }); return T; }
+  function chatAdd(xi,oi){ const x=chat.msgs[xi]; const o=x&&x.opts&&x.opts[oi]; if(!o) return; const m=chat.m;
+    const T=chatOptTot(o); const g=Math.max(1,Math.round(T.g||100)), per=v=>v*100/g;
+    let name=String(o.titre||'Recette').replace(/^option\s*\d+\s*[:·-]?\s*/i,'').trim()||'Recette'; if(name.length>60) name=name.slice(0,57).trim()+'…';
+    x.added=x.added||{}; x.added[oi]=1; chatSave();
+    $('mealChat').classList.remove('show'); $('mealChatBg').classList.remove('show'); sr.fromForm=false;
+    openForm('add',m,null,{name,kcal:per(T.k),prot:per(T.p),fat:T.ln?per(T.l):null,carb:T.cn?per(T.c):null,serving:g,label:'recette',portions:[{label:'recette',g}],unit:'g',emoji:fEmo(name,'🍽️'),info:''});
+    $('mfQty').value=g; fm.lastAuto=g; try{ fmPrev(); }catch(e){} }
+  /* pas de ligne @@AJOUT@@ : on reconstruit une option par ligne de la liste à partir des produits en gras */
+  function chatOptsFromText(t){ const out=[];
+    String(t||'').split(/\n/).forEach(l=>{ if(out.length>=3||!/^\s*(?:[-•*]|\d+[.)])\s+/.test(l)) return; const al=[], names=[]; const re=/\*\*(.+?)\*\*/g; let m;
+      while((m=re.exec(l))){ const nm=m[1].trim(), fv=chatFindProd(nm); if(!fv) continue; const af=l.slice(m.index+m[0].length,m.index+m[0].length+30), bf=l.slice(Math.max(0,m.index-8),m.index);
+        const q=af.match(/^\s*\(?\s*(\d+(?:[.,]\d+)?)\s*(kg|g|ml|cl|l)\b/i); let g=0; if(q){ const v=parseFloat(q[1].replace(',','.')),u=q[2].toLowerCase(); g=u==='kg'||u==='l'?v*1000:u==='cl'?v*10:v; }
+        if(!g){ const c=bf.match(/(\d+)\s*$/); g=c&&fv.serving>0?+c[1]*fv.serving:(fv.serving>0?fv.serving:100); }
+        al.push({nom:fv.name,g,kcal:fv.kcal,prot:fv.prot||0,lip:fv.fat,gluc:fv.carb}); names.push(fv.name.replace(/\s*\(.*$/,'')); }
+      if(al.length) out.push({titre:names.join(' + '),aliments:al}); });
+    return out; }
   function chatGrow(el){ el.style.height='auto'; el.style.height=Math.min(120,el.scrollHeight)+'px'; }
   function openIdeas(m){ if(ideasPlusOn()) return chatOpen(m); return _openIdeasBase(m); }
   function _openIdeasBase(m){ ideaState.plus=ideasPlusOn(); { const h=document.querySelector('#mealIdeas .mc-head>b'); if(h) h.textContent=ideaState.plus?'Idées +':'Idées'; $('mealIdeas').classList.toggle('id-plus',ideaState.plus); } ideaState.m=m; ideaState.want=0; ideaState.taste=''; { const i=$('idWant'); if(i) i.value=''; } renderIdeas(); $('mealIdeas').scrollTop=0; $('mealIdeas').classList.add('show'); }
