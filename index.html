@@ -3554,13 +3554,8 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mc-head :is(.mf-hsr,.mf-hocr,
 /* fiche produit : pas de texte d'aide sous l'en-tête (les erreurs restent affichées) */
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfInfo:not(.err){ display:none !important; }
 
-/* fiche produit : repas sans picto ; bouton « scanner le tableau » rond à côté du titre Valeurs nutritionnelles */
+/* fiche produit : repas sans picto */
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-chip .mf-ce{ display:none !important; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfOcrCtaW{ display:none !important; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .fv-nut>.fv-h{ display:flex !important; align-items:center !important; justify-content:center !important; gap:10px !important; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .fv-h #mfOcrCta{ display:grid !important; place-items:center; flex:none; width:40px !important; height:40px !important; min-height:0 !important; padding:0 !important; margin:0 !important; border-radius:50% !important; border:1.5px dashed #16A34A !important; background:#EEF8EE !important; color:#15803D !important; font-size:0 !important; box-shadow:none !important; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .fv-h #mfOcrCta svg{ width:20px !important; height:20px !important; margin:0 !important; fill:none; stroke:currentColor; stroke-width:2.1; stroke-linejoin:round; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .fv-h #mfOcrCta:active{ transform:scale(.94); }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3768,7 +3763,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 10 h 30</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 10 h 35</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4190,7 +4185,6 @@ function fEmo(name,cur){
   function uqty(dir){ const n=num($('mfUn').value)||0, st=n>=2?1:0.5; const v=Math.max(0.5,Math.round((n+dir*st)*100)/100); $('mfUn').value=r2(v); $('mfQty').value=r1(v*fm.serving); fmPrev(); }
   document.addEventListener('input',e=>{ const t=e.target; if(!t||!t.dataset||!t.dataset.s||!t.closest||!t.closest('#mfPrev')) return; const v=num(t.value), q=num($('mfQty').value), eff=q>0?q:100; $(t.dataset.s).value=isNaN(v)?'':String(+(v*100/eff).toFixed(2)); fmPrev(); });
   function ocrCta(){ const b=$('mfOcrCtaW'); if(!b) return; b.hidden=false;
-    try{ const c=$('mfOcrCta'), h=document.querySelector('#mealForm .fv-nut>.fv-h'); if(c&&h){ if(document.documentElement.classList.contains('mt-b3')){ if(c.parentElement!==h) h.appendChild(c); } else if(c.parentElement!==b) b.appendChild(c); } }catch(e){}   /* Bêta 3 : bouton à côté de « Valeurs nutritionnelles » */
     return; const empty=['mfKcal','mfProt','mfFat','mfCarb'].every(id=>!String(($(id)||{}).value||'').trim()||+String($(id).value).replace(',','.')===0); b.hidden=!empty; }
   function fmPrev(){ try{ basisHi(); fmUnitBtn(); }catch(e){} try{ ocrCta(); }catch(e){}
     fmUnitBtn();
