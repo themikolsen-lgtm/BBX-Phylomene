@@ -3581,6 +3581,9 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis .mf-bin:focus{ border
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis::before{ background:#E6F1FC !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis .bz{ color:#15171C !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis .bz.on{ background:#8EC5FF !important; color:#15171C !important; box-shadow:none !important; }
+
+/* fiche produit, mode « Pour … g » : plus de compteur, de portions ni de choix g/ml (tout se règle dans le bouton) */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm :is(#mfGq,#mfUnits,#mfSeg){ display:none !important; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3788,7 +3791,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 11 h 50</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 11 h 55</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
