@@ -3513,6 +3513,15 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c .sx-l, html.mt
 
 /* produit ouvert (boutons visibles) : le nom peut passer sur 2 lignes */
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-it.open .my-nm b{ white-space:normal !important; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; }
+
+/* fiche produit : pilules (centre pâle + jauge fine + point) à la place des cercles */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span:not(:first-child){ position:relative !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span:not(:first-child) b{ width:92px !important; max-width:100%; height:52px !important; border-radius:999px !important; background:#F7F8F9 !important; background:color-mix(in srgb,var(--rc) 13%,#fff) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span:not(:first-child) b input, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span:not(:first-child) b u{ color:#15171C !important; color:color-mix(in srgb,var(--rc) 40%,#111) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span:not(:first-child) i{ font-size:13.5px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac svg.b3pg{ position:absolute; z-index:2; pointer-events:none; overflow:visible; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac svg.b3pg .f{ fill:none; stroke:var(--rc); stroke-width:3.4; stroke-linecap:round; transition:stroke-dasharray .4s ease; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac svg.b3pg .d{ fill:var(--rc); stroke:#fff; stroke-width:2; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3720,7 +3729,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 09 h 20</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 09 h 40</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4002,6 +4011,27 @@ function fEmo(name,cur){
   window.addEventListener('resize',()=>{ clearTimeout(window.__b3pgT); window.__b3pgT=setTimeout(b3PillPaint,120); });
   try{ document.fonts&&document.fonts.ready.then(()=>b3PillPaint()); }catch(e){}
   try{ const ro=new ResizeObserver(()=>{ clearTimeout(window.__b3pgR); window.__b3pgR=setTimeout(b3PillPaint,60); }); setTimeout(()=>document.querySelectorAll('#mealView .sum-full .sx-h b').forEach(b=>ro.observe(b)),300); }catch(e){}
+
+  /* Bêta 3 : pilules à jauge fine + point sur la fiche produit (à la place des cercles) */
+  function b3FormPills(){ try{
+    if(!document.documentElement.classList.contains('mt-b3')) return;
+    document.querySelectorAll('#mealForm .mf-mac>span:not(:first-child)').forEach(sp=>{
+      const b=sp.querySelector('b'); if(!b) return; const w=b.offsetWidth, ht=b.offsetHeight; if(!w||!ht) return;
+      const v=Math.max(0,Math.min(100,parseFloat(sp.style.getPropertyValue('--p'))||0));
+      let svg=sp.querySelector('svg.b3pg');
+      if(!svg){ svg=document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('class','b3pg'); svg.setAttribute('aria-hidden','true'); svg.innerHTML='<path class="f"/><circle class="d" r="4.2"/>'; sp.appendChild(svg); }
+      const s=2, r=(ht-2*s)/2, cx=w/2, d='M'+cx+' '+s+'H'+(w-s-r)+'A'+r+' '+r+' 0 0 1 '+(w-s-r)+' '+(ht-s)+'H'+(s+r)+'A'+r+' '+r+' 0 0 1 '+(s+r)+' '+s+'Z';
+      svg.style.left=(b.offsetLeft-5)+'px'; svg.style.top=(b.offsetTop-5)+'px';
+      svg.setAttribute('width',w+10); svg.setAttribute('height',ht+10); svg.setAttribute('viewBox','-5 -5 '+(w+10)+' '+(ht+10));
+      const f=svg.querySelector('.f'), dot=svg.querySelector('.d'); f.setAttribute('d',d);
+      const L=f.getTotalLength(), fl=L*v/100; f.setAttribute('stroke-dasharray',fl+' '+(L+1));
+      const pt=f.getPointAtLength(Math.max(0.01,fl)); dot.setAttribute('cx',pt.x); dot.setAttribute('cy',pt.y);
+      f.style.display=dot.style.display=v>0?'':'none'; sp.classList.add('b3pg-on');
+    });
+  }catch(e){} }
+  (function(){ const fm=document.getElementById('mealForm'); if(!fm) return; let t=0; const go=()=>{ clearTimeout(t); t=setTimeout(b3FormPills,40); };
+    try{ new MutationObserver(go).observe(fm,{subtree:true,attributes:true,attributeFilter:['style','class']}); }catch(e){}
+    window.addEventListener('resize',go); })();
   function B3P(){ return document.documentElement.classList.contains('mt-b3'); }   /* Bêta 3 : « +x » quand dépassé */
   function calc(){ setTimeout(()=>{ try{ habBtnState(); }catch(e){} },0);
     let K=0,P=0,F=0,C=0,TK=0,TP=0,unk=0; const HI=[], HM={};
