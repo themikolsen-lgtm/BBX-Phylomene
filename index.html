@@ -3631,6 +3631,11 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUq{ padding-top:var(--sp1) 
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUg:not([style*="none"]){ padding-bottom:var(--sp1) !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfMult{ padding-bottom:var(--sp2) !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-btns{ padding-top:var(--sp1) !important; padding-bottom:var(--sp3) !important; }
+
+/* bouton Suivi (accueil) : sans fond blanc ni bordure, même surface de clic */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-head .my-hr.my-pill{ background:transparent !important; border-color:transparent !important; box-shadow:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-suivi::after{ display:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-suivi:active{ opacity:.6; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3838,7 +3843,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 13 h 35</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 13 h 40</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
