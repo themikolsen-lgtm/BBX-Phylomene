@@ -3515,13 +3515,22 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-c .sx-l, html.mt
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-it.open .my-nm b{ white-space:normal !important; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; }
 
 /* fiche produit : pilules (centre pâle + jauge fine + point) à la place des cercles */
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span:not(:first-child){ position:relative !important; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span:not(:first-child) b{ width:92px !important; max-width:100%; height:52px !important; border-radius:999px !important; background:#F7F8F9 !important; background:color-mix(in srgb,var(--rc) 13%,#fff) !important; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span:not(:first-child) b input, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span:not(:first-child) b u{ color:#15171C !important; color:color-mix(in srgb,var(--rc) 40%,#111) !important; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span:not(:first-child) i{ font-size:13.5px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span{ position:relative !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span b{ width:92px !important; max-width:100%; height:52px !important; border-radius:999px !important; background:#F7F8F9 !important; background:color-mix(in srgb,var(--rc) 13%,#fff) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span b input, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span b u{ color:#15171C !important; color:color-mix(in srgb,var(--rc) 40%,#111) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span i{ font-size:13.5px !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac svg.b3pg{ position:absolute; z-index:2; pointer-events:none; overflow:visible; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac svg.b3pg .f{ fill:none; stroke:var(--rc); stroke-width:3.4; stroke-linecap:round; transition:stroke-dasharray .4s ease; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac svg.b3pg .d{ fill:var(--rc); stroke:#fff; stroke-width:2; }
+
+/* fiche produit : Calories en pilule à côté des 3 autres, comme sur l'accueil */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac{ grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:12px 6px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span:nth-child(1){ grid-column:auto !important; order:0 !important; flex-direction:column-reverse !important; justify-content:flex-start !important; background:none !important; border-radius:0 !important; padding:0 !important; height:auto !important; margin:0 !important; --rc:#6DD35A; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span:nth-child(1) i{ font-size:13.5px !important; color:#15171C !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span b{ width:100% !important; max-width:84px !important; height:50px !important; display:flex !important; align-items:center !important; justify-content:center !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span b input{ font-size:15px !important; width:3.6ch !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span b u{ font-size:11px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-mac>span:nth-child(1) b input{ width:3.4ch !important; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3729,7 +3738,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 09 h 40</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 09 h 50</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4015,9 +4024,10 @@ function fEmo(name,cur){
   /* Bêta 3 : pilules à jauge fine + point sur la fiche produit (à la place des cercles) */
   function b3FormPills(){ try{
     if(!document.documentElement.classList.contains('mt-b3')) return;
-    document.querySelectorAll('#mealForm .mf-mac>span:not(:first-child)').forEach(sp=>{
+    document.querySelectorAll('#mealForm .mf-mac>span').forEach((sp,ix)=>{
       const b=sp.querySelector('b'); if(!b) return; const w=b.offsetWidth, ht=b.offsetHeight; if(!w||!ht) return;
-      const v=Math.max(0,Math.min(100,parseFloat(sp.style.getPropertyValue('--p'))||0));
+      let v=Math.max(0,Math.min(100,parseFloat(sp.style.getPropertyValue('--p'))||0));
+      if(ix===0){ const k=parseFloat(String((sp.querySelector('input')||{}).value||'').replace(',','.'))||0, g=parseFloat((document.getElementById('mlKg')||{}).value)||2000; v=Math.max(0,Math.min(100,k/g*100)); }   /* kcal : part de l’objectif du jour */
       let svg=sp.querySelector('svg.b3pg');
       if(!svg){ svg=document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('class','b3pg'); svg.setAttribute('aria-hidden','true'); svg.innerHTML='<path class="f"/><circle class="d" r="4.2"/>'; sp.appendChild(svg); }
       const s=2, r=(ht-2*s)/2, cx=w/2, d='M'+cx+' '+s+'H'+(w-s-r)+'A'+r+' '+r+' 0 0 1 '+(w-s-r)+' '+(ht-s)+'H'+(s+r)+'A'+r+' '+r+' 0 0 1 '+(s+r)+' '+s+'Z';
