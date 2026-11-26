@@ -3642,6 +3642,9 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-suivi:active{ opacity:.6; 
 
 /* valeurs mangé / objectif sous les nutriments : pas d'italique */
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-l, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .sum-full .sx-l *{ font-style:normal !important; }
+
+/* logo BBX Meal un peu décalé vers la droite, comme les titres des pages */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealView .my-head .my-brand{ margin-left:8px !important; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3784,6 +3787,11 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
       <div class="cm-seg" id="themeSeg" role="group" aria-label="Thème"><button data-u="normal" onclick="BBXMeal.setTheme('normal')">Classique</button><button data-u="beta" onclick="BBXMeal.setTheme('beta')">Bêta</button><button data-u="beta3" onclick="BBXMeal.setTheme('beta3')">Normal</button></div>
       <div class="cm-d" id="themeD"></div></div>
   </div>
+  <div class="cf-sec" style="--c:#FFD36E"><div class="cf-h"><i>💡</i>Idées</div>
+    <div class="cm-box"><div class="cm-t">Version du bouton Idées</div>
+      <div class="cm-seg" id="ideasSeg" role="group" aria-label="Version des idées"><button data-u="base" onclick="BBXMeal.setIdeas('base')">Idées</button><button data-u="plus" onclick="BBXMeal.setIdeas('plus')">Idées +</button></div>
+      <div class="cm-d" id="ideasD"></div></div>
+  </div>
   <div class="cf-sec" style="--c:#7CB9FF"><div class="cf-h"><i>☁️</i>Synchronisation</div>
   <div class="cm-box" id="syncBox">
     <div class="cm-t">Sauvegarde en ligne (Supabase)</div>
@@ -3849,7 +3857,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 13 h 50</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 14 h 00</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4220,7 +4228,7 @@ function fEmo(name,cur){
   function refresh(){ saveDef(); save(); build(); calc(); renderCfg(); }
   function renderCfg(){
     usdaSeg();
-    themeSeg();
+    themeSeg(); ideasSeg();
     lensSeg();
     if(window.BBXSync) BBXSync.render();
     ciqSeg();
@@ -4742,13 +4750,46 @@ function fEmo(name,cur){
     const cnt={}, res=[]; for(const x of out){ const w=wordsOf(x.src.name)[0]||''; cnt[w]=(cnt[w]||0)+1; if(cnt[w]>2) continue; res.push(x); if(res.length>=16) break; }
     return res;
   }
+  function buildIdeasPlus(R,mi,want){   /* Idées + : copie de la version normale, à faire évoluer séparément */
+    const title=(MEALS[mi]&&MEALS[mi][0])||'', kind=mealKind(title), habs=HAB[title]||{};
+    const light=R.k<60, cap=Math.max(50,Math.min(R.k*0.5,250)), cands=[], seen=new Set();
+    const add=(src,mine)=>{ const n=normS(src.name); if(seen.has(n)) return; if(![src.kcal,src.prot,src.fat,src.carb].every(v=>v!=null&&!isNaN(v))) return; if(src.unit&&src.unit!=='g') return; seen.add(n); cands.push({src:src,mine:mine}); };
+    FAV.forEach(f=>add(f,true)); FOODS.forEach(f=>add(f,false));
+    const out=[];
+    cands.forEach(({src,mine})=>{
+      if(ideaState.taste){ const tt=tasteOf(src.name); if(tt!=='n'&&tt!==ideaState.taste) return; }
+      const base=src.serving>0?src.serving:100, kd=src.kcal; let best=null;
+      if(want>0){   // filtre : la portion la plus proche du nombre de kcal demandé
+        for(const mult of [0.5,1,1.5,2,3]){ const g=base*mult, k=kd*g/100; if(!best||Math.abs(k-want)<Math.abs(best.k-want)) best={g:g,mult:mult,k:k,p:src.prot*g/100,f:src.fat*g/100,c:src.carb*g/100}; }
+        const tol=Math.max(40,want*0.2); if(!best||Math.abs(best.k-want)>tol) return;
+        let sw=1-Math.abs(best.k-want)/tol+kindBonus(kind,src.name)+(mine?0.1:0); const hw=habs[src.name]; if(hw&&hw.n) sw+=Math.min(.3,hw.n*.06);
+        out.push({src:src,mine:mine,h:hlGet(src.name),v:best,sc:sw}); return;
+      }
+      for(const mult of [1,2,3,0.5]){   // une portion habituelle ; on double / triple seulement si elle est très légère, on la réduit si elle dépasse
+        const g=base*mult, k=kd*g/100, p=src.prot*g/100, f=src.fat*g/100, c=src.carb*g/100;
+        if(k>(light?60:cap)||p>R.p+2||f>R.f+2||c>R.c+3) continue;
+        best={g:g,mult:mult,k:k,p:p,f:f,c:c}; if(k>=70||mult===0.5) break;
+      }
+      if(!best||best.k<8) return;
+      const cov=(x,r)=>r>2?Math.min(1,x/r):0.3;
+      let sc=0.4*cov(best.p,R.p)+0.2*cov(best.c,R.c)+0.2*cov(best.f,R.f)+0.2*cov(best.k,R.k);
+      sc+=Math.max(0,Math.min(1,(200-kd)/200))*0.15+(mine?0.05:0);
+      sc+=kindBonus(kind,src.name); const hb2=habs[src.name]; if(hb2&&hb2.n) sc+=Math.min(.3,hb2.n*.06);
+      const h=hlGet(src.name); if(h){ sc+=({a:.1,b:.05,c:0,d:-.1,e:-.2}[h.ns]||0)-(h.nova===4?.1:0); }
+      if(best.p*4>=best.k*0.25) sc+=0.05;      // plutôt protéiné
+      out.push({src:src,mine:mine,h:h,v:best,sc:sc});
+    });
+    out.sort((a,b)=>b.sc-a.sc);
+    const cnt={}, res=[]; for(const x of out){ const w=wordsOf(x.src.name)[0]||''; cnt[w]=(cnt[w]||0)+1; if(cnt[w]>2) continue; res.push(x); if(res.length>=16) break; }
+    return res;
+  }
   function renderIdeas(){
     const T=dayTotals(), R={k:Math.max(0,S.kg-T.K),p:Math.max(0,S.pg-T.P),f:Math.max(0,S.fg-T.F),c:Math.max(0,S.cg-T.C)};
     $('idSub').textContent='Ajout dans : '+(MEALS[ideaState.m]?MEALS[ideaState.m][0]:'')+(R.k<60?' · objectifs presque atteints : options très légères':' · idées adaptées à ce repas et à tes restes du jour');
     $('idRem').innerHTML=[['k',r(R.k),'kcal'],['p',r(R.p),'g prot.'],['f',r(R.f),'g lip.'],['c',r(R.c),'g gluc.']].map(x=>'<span class="'+x[0]+'"><b>'+x[1]+'</b> '+x[2]+'</span>').join('')+'<small>restants aujourd’hui</small>';
     document.querySelectorAll('#idTaste [data-t]').forEach(x=>{ const on=(x.dataset.t||'')===(ideaState.taste||''); x.classList.toggle('on',on); x.setAttribute('aria-pressed',on); });
     const want=+ideaState.want||0; { const xb=$('idWantX'); if(xb) xb.hidden=!(want>0); }
-    const L=ideaState.list=buildIdeas(R,ideaState.m,want);
+    const L=ideaState.list=(ideaState.plus?buildIdeasPlus:buildIdeas)(R,ideaState.m,want);
     $('idList').innerHTML=L.length?L.map((x,i)=>{ const s=x.src,v=x.v, lbl=s.serving>0?s.label:'portion de 100 g', n=r2(v.g/(s.serving>0?s.serving:100));
       const chips=[]; if(R.p>2&&v.p>=2) chips.push('<span class="p">'+r(v.p/R.p*100)+' % des prot.</span>'); if(R.c>3&&v.c>=3) chips.push('<span class="c">'+r(v.c/R.c*100)+' % des gluc.</span>'); if(R.f>2&&v.f>=1.5) chips.push('<span class="f">'+r(v.f/R.f*100)+' % des lip.</span>');
       const hb=x.h?((x.h.ns?'<i class="hl-b" style="--c:'+NSC[x.h.ns]+'">'+x.h.ns.toUpperCase()+'</i>':'')+(x.h.nova?'<i class="hl-n" style="--c:'+NVC[x.h.nova]+'">'+x.h.nova+'</i>':'')):'';
@@ -4756,7 +4797,9 @@ function fEmo(name,cur){
   }
   function ideaTaste(t){ ideaState.taste=(t==='s'||t==='a')?t:''; renderIdeas(); $('mealIdeas').scrollTop=0; }
   function ideaWant(v,clr){ const n=parseInt(String(v).replace(/[^0-9]/g,''),10); ideaState.want=(n>0&&n<=3000)?n:0; if(clr){ const i=$('idWant'); if(i) i.value=''; } renderIdeas(); }
-  function openIdeas(m){ ideaState.m=m; ideaState.want=0; ideaState.taste=''; { const i=$('idWant'); if(i) i.value=''; } renderIdeas(); $('mealIdeas').scrollTop=0; $('mealIdeas').classList.add('show'); }
+  const IDPK='phy-ideasplus', ideasPlusOn=()=>{ try{ return localStorage.getItem(IDPK)==='1'; }catch(e){ return false; } };
+  function ideasSeg(){ const v=ideasPlusOn()?'plus':'base'; document.querySelectorAll('#ideasSeg [data-u]').forEach(b=>{ const o=b.dataset.u===v; b.classList.toggle('on',o); b.setAttribute('aria-pressed',o); }); const d=$('ideasD'); if(d) d.textContent=v==='plus'?'Idées + : nouvelle version (en cours de personnalisation).':'Idées : la version de base.'; }
+  function openIdeas(m){ ideaState.plus=ideasPlusOn(); { const h=document.querySelector('#mealIdeas .mc-head>b'); if(h) h.textContent=ideaState.plus?'Idées +':'Idées'; $('mealIdeas').classList.toggle('id-plus',ideaState.plus); } ideaState.m=m; ideaState.want=0; ideaState.taste=''; { const i=$('idWant'); if(i) i.value=''; } renderIdeas(); $('mealIdeas').scrollTop=0; $('mealIdeas').classList.add('show'); }
   function ideaPick(i,ev){
     const x=ideaState.list[i]; if(!x) return; const s=x.src;
     if(ev&&ev.target&&ev.target.closest&&ev.target.closest('.sr-go')){
@@ -6226,7 +6269,8 @@ function fEmo(name,cur){
   window.BBXMeal={
     setCiq:v=>{ try{ localStorage.setItem(CIQON,v==='off'?'off':'on'); }catch(e){} ciqSeg(); },
     setUsda:v=>{ try{ localStorage.setItem(USDAON,v==='off'?'off':'on'); }catch(e){} usdaSeg(); },
-    setTheme:v=>{ v=(v==='beta'||v==='beta3')?v:'normal'; try{ localStorage.setItem(THEMEKEY,v); }catch(e){} document.documentElement.classList.add('mt-beta'); document.documentElement.classList.toggle('mt-b2',v!=='normal'); document.documentElement.classList.toggle('mt-b3',v==='beta3'); themeSeg(); },
+    setIdeas:v=>{ try{ localStorage.setItem(IDPK,v==='plus'?'1':'0'); }catch(e){} ideasSeg(); },
+    setTheme:v=>{ v=(v==='beta'||v==='beta3')?v:'normal'; try{ localStorage.setItem(THEMEKEY,v); }catch(e){} document.documentElement.classList.add('mt-beta'); document.documentElement.classList.toggle('mt-b2',v!=='normal'); document.documentElement.classList.toggle('mt-b3',v==='beta3'); themeSeg(); ideasSeg(); },
     setLens:v=>{ try{ localStorage.setItem(LENSKEY,v==='main'?'main':'auto'); }catch(e){} window.__camAuto=false; lensSeg(); },
     setUsdaKey:v=>{ try{ v=String(v||'').trim(); if(v) localStorage.setItem(USDAKEY,v); else localStorage.removeItem(USDAKEY); }catch(e){} },
     fab:fabOpen, fabClose:fabClose, fabSel:fabSel, fabGo:fabGo,
