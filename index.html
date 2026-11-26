@@ -3550,6 +3550,9 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mc-head :is(.mf-hsr,.mf-hocr,
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mc-head :is(.mf-hsr,.mf-hocr,.mf-hscan) svg{ width:21px !important; height:21px !important; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mc-head :is(.mf-hsr,.mf-hocr,.mf-hscan):active{ transform:scale(.94); }
 @media (max-width:370px){ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mc-head :is(.mf-hsr,.mf-hocr,.mf-hscan,.mc-x){ width:40px !important; min-width:40px !important; height:40px !important; } html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mc-head>b{ font-size:18px !important; } }
+
+/* fiche produit : pas de texte d'aide sous l'en-tête (les erreurs restent affichées) */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfInfo:not(.err){ display:none !important; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3757,7 +3760,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 10 h 15</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 10 h 20</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
