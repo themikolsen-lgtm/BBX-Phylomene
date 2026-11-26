@@ -3925,7 +3925,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 17 h 00</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 17 h 10</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4932,8 +4932,19 @@ function fEmo(name,cur){
     }catch(e){ err=1; const msg=String(e&&e.message||e); reply=/connect|401|session|jwt/i.test(msg)?'Connecte-toi à ton compte (Réglages Meal › Synchronisation) pour utiliser l’assistant.':/quota/i.test(msg)?'Le quota gratuit du jour est atteint, réessaie demain.':'Je n’arrive pas à répondre pour le moment. Réessaie dans un instant.'; }
     let opts=null; if(!err){ const k=reply.indexOf('@@AJOUT@@'); if(k>=0){ const js=reply.slice(k+9).trim(); reply=reply.slice(0,k).trim(); try{ const a=js.indexOf('{'), b=js.lastIndexOf('}'); const o=JSON.parse(js.slice(a,b+1)); if(o&&Array.isArray(o.options)) opts=o.options.filter(z=>z&&Array.isArray(z.aliments)&&z.aliments.length).slice(0,3); }catch(e){} } }
     if(!err&&!opts&&foodish){ try{ const nm=t.replace(qm?qm[0]:'','').replace(/\b(de|d'|du|des|la|le|les|un|une)\b/gi,' ').replace(/\s+/g,' ').trim();
-        const hit=nm.length>=3?(localResults(nm)||[]).find(x=>x&&x.kcal!=null):null;
-        if(hit){ const g=qg||(hit.serving>0?hit.serving:100); opts=[{titre:hit.name,aliments:[{nom:hit.name,g:g,kcal:hit.kcal,prot:hit.prot||0,lip:hit.fat,gluc:hit.carb}]}]; } }catch(e){} }
+        const find=q=>q.length>=3?(localResults(q)||[]).find(x=>x&&x.kcal!=null):null;
+        let hit=find(nm);
+        /* 1) produit trouvé tel quel dans ta base */
+        if(hit){ const g=qg||(hit.serving>0?hit.serving:100); opts=[{titre:hit.name,aliments:[{nom:hit.name,g:g,kcal:hit.kcal,prot:hit.prot||0,lip:hit.fat,gluc:hit.carb}]}]; }
+        else {
+          /* 2) chiffres donnés par l'IA dans sa réponse (« environ 70 kcal et 3 g de protéines ») */
+          const num=re=>{ const m=reply.match(re); return m?parseFloat(m[1].replace(',','.')):null; };
+          const kc=num(/(\d+(?:[.,]\d+)?)\s*kcal/i), pr=num(/(\d+(?:[.,]\d+)?)\s*g\s*(?:de\s*)?prot/i), li=num(/(\d+(?:[.,]\d+)?)\s*g\s*(?:de\s*)?(?:lip|mati)/i), gl=num(/(\d+(?:[.,]\d+)?)\s*g\s*(?:de\s*)?gluc/i);
+          const g=qg||100, nice=nm.charAt(0).toUpperCase()+nm.slice(1);
+          if(kc!=null&&nm.length>=3) opts=[{titre:nice,aliments:[{nom:nice,g:g,kcal:kc*100/g,prot:pr!=null?pr*100/g:0,lip:li!=null?li*100/g:null,gluc:gl!=null?gl*100/g:null}]}];
+          else { /* 3) produit proche dans ta base (mots en moins) */ const w=nm.split(' '); for(let k=w.length-1;k>=1&&!hit;k--) hit=find(w.slice(0,k).join(' '));
+            if(hit){ const g2=qg||(hit.serving>0?hit.serving:100); opts=[{titre:hit.name,aliments:[{nom:hit.name,g:g2,kcal:hit.kcal,prot:hit.prot||0,lip:hit.fat,gluc:hit.carb}]}]; } }
+        } }catch(e){} }
     chat.busy=false; chat.msgs.push({role:'model',text:reply,err:err||undefined,opts:opts||undefined}); chatSave(); chatRender(); }
   function chatAdd(xi,oi){ const x=chat.msgs[xi]; const o=x&&x.opts&&x.opts[oi]; if(!o) return; const m=chat.m; let n=0;
     const norm=v=>String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();
