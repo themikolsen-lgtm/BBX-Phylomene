@@ -3600,11 +3600,8 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-btns #mfOk:active{ transfo
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUq{ margin-bottom:0 !important; padding-bottom:0 !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUq>button:active{ background:#F1F2F4 !important; }
 
-/* fiche produit : de « … g • Unité / Pour … g » jusqu'à « Ajouter », le bloc est collé en bas de l'écran */
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis{ margin-top:auto !important; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfPrev{ border-bottom-left-radius:26px !important; border-bottom-right-radius:26px !important; padding-bottom:18px !important; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis{ border-top-left-radius:26px !important; border-top-right-radius:26px !important; padding-top:18px !important; }
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis::before{ top:18px !important; }
+/* fiche produit : une seule carte blanche ; la zone des valeurs s'étire pour que quantité + Ajouter soient en bas de l'écran */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfPrev{ flex-grow:1 !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis::after{ display:none !important; }
 
 /* titres des pages en Poppins */
@@ -3816,7 +3813,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 12 h 30</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 12 h 35</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
