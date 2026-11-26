@@ -3695,6 +3695,15 @@ html.mt-beta body .cm-seg:has(>:nth-child(3)):not(:has(>:nth-child(4)))>*{ grid-
 #mealChat .ch-bar button svg{ width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
 html body:not(#b3x) #mealChat .mc-head>b, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealChat .mc-head>b{ color:#15171C !important; -webkit-text-fill-color:#15171C !important; opacity:1 !important; }
 html body:not(#b3x) #mealChat .mc-head .mc-x, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealChat .mc-head .mc-x{ color:#15171C !important; background:#fff !important; border:1px solid #E4E7EC !important; opacity:1 !important; }
+/* Idées + : boutons « Ajouter » sous les propositions */
+#mealChat .ch-add{ display:flex; flex-direction:column; gap:6px; margin-top:10px; }
+#mealChat .ch-add button{ display:flex; align-items:center; gap:8px; text-align:left; border:0; border-radius:16px; padding:10px 12px; background:#E8F8E4; color:#15171C; font:inherit; font-size:13.5px; cursor:pointer; }
+#mealChat .ch-add button b{ flex:none; color:#1E7A12; font-weight:800; }
+#mealChat .ch-add button span{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+#mealChat .ch-add button:active{ transform:scale(.98); }
+#mealChat .ch-add button.done{ background:#F1F2F4; color:#6B7280; }
+#mealChat .ch-add button.done b{ color:#6B7280; }
+#mealChat .ch-add small{ font-size:11px; color:#8A919E; padding-left:4px; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3916,7 +3925,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 15 h 15</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 16 h 15</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4861,9 +4870,9 @@ function fEmo(name,cur){
 
   /* ===== Idées + : assistant en discussion (Gemini via le serveur) ===== */
   function chatDay(){ const n=new Date(); return n.getFullYear()+'-'+(n.getMonth()+1)+'-'+n.getDate(); }
-  const CHK='phy-chat', chat={m:0,msgs:[],busy:false};
-  try{ const o=JSON.parse(localStorage.getItem(CHK)||'null'); if(o&&o.d===chatDay()) chat.msgs=(o.msgs||[]).slice(-30); }catch(e){}
-  function chatSave(){ try{ localStorage.setItem(CHK,JSON.stringify({d:chatDay(),msgs:chat.msgs.slice(-30)})); }catch(e){} }
+  const CHAUTO={}; const CHK='phy-chat', chat={m:0,msgs:[],busy:false};
+  try{ const o=JSON.parse(localStorage.getItem(CHK)||'null'); if(o&&o.d===chatDay()){ chat.msgs=(o.msgs||[]).slice(-30); Object.assign(CHAUTO,o.auto||{}); } }catch(e){}
+  function chatSave(){ try{ localStorage.setItem(CHK,JSON.stringify({d:chatDay(),msgs:chat.msgs.slice(-30),auto:CHAUTO})); }catch(e){} }
   function chatRemain(){ const T=dayTotals(); return {k:Math.max(0,S.kg-T.K),p:Math.max(0,S.pg-T.P),f:Math.max(0,S.fg-T.F),c:Math.max(0,S.cg-T.C),T}; }
   function chatCtx(){ const R=chatRemain(), T=R.T, now=new Date();
     const eaten=[]; MEALS.forEach(([t,ic,items],m)=>items.forEach((it,i)=>{ if(isDn(m,i)) eaten.push(t+' : '+it[0]); }));
@@ -4874,7 +4883,8 @@ function fEmo(name,cur){
       'Déjà mangé : '+r(T.K)+' kcal, '+r(T.P)+' g prot, '+r(T.F)+' g lip, '+r(T.C)+' g gluc',
       'Reste à manger : '+r(R.k)+' kcal, '+r(R.p)+' g prot, '+r(R.f)+' g lip, '+r(R.c)+' g gluc',
       'Aliments déjà mangés aujourd’hui : '+(eaten.join(' ; ')||'aucun'),
-      'Produits habituels : '+(fav.join(' ; ')||'—')].join('\n'); }
+      'Produits habituels : '+(fav.join(' ; ')||'—'),
+      'FORMAT OBLIGATOIRE : quand tu proposes des aliments ou des plats à manger (idées, options, recette), termine ta réponse par UNE ligne qui commence par @@AJOUT@@ suivie d’un JSON compact : {"options":[{"titre":"…","aliments":[{"nom":"…","g":120,"kcal":110,"prot":23,"lip":1.5,"gluc":0}]}]} — une option par idée (3 maximum, 5 aliments maximum chacune), g = quantité en grammes à manger, kcal/prot/lip/gluc = valeurs POUR 100 g. Reprends le nom EXACT d’un produit habituel quand tu l’utilises. Pas de cette ligne pour une simple explication. Ne mentionne jamais cette ligne dans le texte.'].join('\n'); }
   function chatFmt(t){ const e=esc(String(t||'')).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>'); const out=[]; let ul=null;
     e.split(/\n/).forEach(l=>{ const m=l.match(/^\s*(?:[-•*]|(\d+)[.)])\s+(.*)$/); if(m){ const tag=m[1]?'ol':'ul'; if(!ul||ul.t!==tag){ if(ul) out.push('</'+ul.t+'>'); ul={t:tag}; out.push('<'+tag+'>'); } out.push('<li>'+m[2]+'</li>'); } else { if(ul){ out.push('</'+ul.t+'>'); ul=null; } out.push(l.trim()?'<p>'+l+'</p>':''); } });
     if(ul) out.push('</'+ul.t+'>'); return out.join(''); }
@@ -4882,24 +4892,38 @@ function fEmo(name,cur){
     $('chRem').innerHTML=[['k',r(R.k),'kcal'],['p',r(R.p),'g prot.'],['f',r(R.f),'g lip.'],['c',r(R.c),'g gluc.']].map(x=>'<span class="'+x[0]+'"><b>'+x[1]+'</b> '+x[2]+'</span>').join('')+'<small>restants aujourd’hui · '+esc(MEALS[chat.m]?MEALS[chat.m][0]:'')+'</small>';
     const L=$('chList'); let h='';
     if(!chat.msgs.length) h='<div class="ch-hi"><div class="ch-av">💡</div><p><b>Salut !</b> Je suis ton assistant repas. Demande-moi une idée pour ce repas, une recette avec ce que tu as, un snack léger, une liste de courses… Je tiens compte de ce qu’il te reste aujourd’hui.</p></div>';
-    chat.msgs.forEach(x=>{ h+='<div class="ch-msg '+(x.role==='model'?'ai':'me')+(x.err?' err':'')+'">'+(x.role==='model'?chatFmt(x.text):'<p>'+esc(x.text).replace(/\n/g,'<br>')+'</p>')+'</div>'; });
+    const mn=MEALS[chat.m]?MEALS[chat.m][0]:'repas';
+    chat.msgs.forEach((x,xi)=>{ if(x.hidden) return;
+      let btns=''; if(x.role==='model'&&Array.isArray(x.opts)&&x.opts.length){ btns='<div class="ch-add">'+x.opts.map((o,oi)=>{ const k=Math.round((o.aliments||[]).reduce((a,f)=>a+(+f.kcal||0)*(+f.g||0)/100,0)); const done=x.added&&x.added[oi];
+        return '<button type="button" class="'+(done?'done':'')+'" '+(done?'disabled':'')+' onclick="BBXMeal.chatAdd('+xi+','+oi+')"><b>'+(done?'✓ Ajouté':'＋ Ajouter')+'</b><span>'+esc(o.titre||('Option '+(oi+1)))+(k?' · ≈ '+k+' kcal':'')+'</span></button>'; }).join('')+'<small>dans '+esc(mn)+'</small></div>'; }
+      h+='<div class="ch-msg '+(x.role==='model'?'ai':'me')+(x.err?' err':'')+'">'+(x.role==='model'?chatFmt(x.text):'<p>'+esc(x.text).replace(/\n/g,'<br>')+'</p>')+btns+'</div>'; });
     if(chat.busy) h+='<div class="ch-msg ai typing"><i></i><i></i><i></i></div>';
     L.innerHTML=h;
     const sug=['Une idée pour ce repas avec ce qu’il me reste','Une recette rapide riche en protéines','Un snack de moins de 200 kcal','Que manger ce soir ?'];
     $('chSugg').innerHTML=chat.msgs.length?'':sug.map(t=>'<button type="button" onclick="BBXMeal.chatSend(this.textContent)">'+esc(t)+'</button>').join('');
     $('chGo').disabled=chat.busy;
     if(scroll!==false) requestAnimationFrame(()=>{ L.scrollTop=L.scrollHeight; }); }
-  function chatOpen(m){ chat.m=m||0; chatRender(); $('mealChatBg').classList.add('show'); $('mealChat').classList.add('show'); setTimeout(()=>{ const L=$('chList'); L.scrollTop=L.scrollHeight; },50); }
-  async function chatSend(txt){ const inp=$('chIn'); const t=String(txt!=null?txt:inp.value).trim(); if(!t||chat.busy) return;
+  function chatOpen(m){ chat.m=m||0; chatRender(); $('mealChatBg').classList.add('show'); $('mealChat').classList.add('show');
+    { const mn=MEALS[chat.m]?MEALS[chat.m][0]:''; if(mn&&!CHAUTO[mn]&&!chat.busy){ CHAUTO[mn]=1; chatSave(); const R=chatRemain(); chatSend('Commence par me dire en une phrase ce qu’il me reste aujourd’hui ('+r(R.k)+' kcal, '+r(R.p)+' g de protéines) puis propose-moi 3 options pour mon '+mn.toLowerCase()+', adaptées à ces restes et de préférence avec mes produits habituels.',1); } } setTimeout(()=>{ const L=$('chList'); L.scrollTop=L.scrollHeight; },50); }
+  async function chatSend(txt,hidden){ const inp=$('chIn'); const t=String(txt!=null?txt:inp.value).trim(); if(!t||chat.busy) return;
     if(txt==null){ inp.value=''; chatGrow(inp); }
-    chat.msgs.push({role:'user',text:t}); chat.busy=true; chatRender(); chatSave();
+    chat.msgs.push(hidden?{role:'user',text:t,hidden:1}:{role:'user',text:t}); chat.busy=true; chatRender(); chatSave();
     let reply='', err=0;
     try{
       if(!window.BBXSync||!BBXSync.ai) throw new Error('Assistant indisponible');
       const res=await BBXSync.ai({chat:{messages:chat.msgs.filter(x=>!x.err).map(x=>({role:x.role,text:x.text})),ctx:chatCtx()}});
       if(res&&res.reply) reply=res.reply; else throw new Error((res&&res.error)||'Pas de réponse');
     }catch(e){ err=1; const msg=String(e&&e.message||e); reply=/connect|401|session|jwt/i.test(msg)?'Connecte-toi à ton compte (Réglages Meal › Synchronisation) pour utiliser l’assistant.':/quota/i.test(msg)?'Le quota gratuit du jour est atteint, réessaie demain.':'Je n’arrive pas à répondre pour le moment. Réessaie dans un instant.'; }
-    chat.busy=false; chat.msgs.push({role:'model',text:reply,err:err||undefined}); chatSave(); chatRender(); }
+    let opts=null; if(!err){ const k=reply.indexOf('@@AJOUT@@'); if(k>=0){ const js=reply.slice(k+9).trim(); reply=reply.slice(0,k).trim(); try{ const a=js.indexOf('{'), b=js.lastIndexOf('}'); const o=JSON.parse(js.slice(a,b+1)); if(o&&Array.isArray(o.options)) opts=o.options.filter(z=>z&&Array.isArray(z.aliments)&&z.aliments.length).slice(0,3); }catch(e){} } }
+    chat.busy=false; chat.msgs.push({role:'model',text:reply,err:err||undefined,opts:opts||undefined}); chatSave(); chatRender(); }
+  function chatAdd(xi,oi){ const x=chat.msgs[xi]; const o=x&&x.opts&&x.opts[oi]; if(!o) return; const m=chat.m; let n=0;
+    const norm=v=>String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();
+    (o.aliments||[]).forEach(f=>{ const g=Math.max(1,Math.round(+f.g||0)); if(!f.nom||!g) return;
+      const fv=(FAV||[]).find(z=>norm(z.name)===norm(f.nom));
+      const it=fv&&fv.kcal!=null?{name:fv.name,kcal:fv.kcal,prot:fv.prot||0,fat:fv.fat,carb:fv.carb,serving:fv.serving||0,label:fv.label,portions:fv.portions,unit:fv.unit||'g',emoji:fEmo(fv.name,fv.emoji)}
+        :{name:String(f.nom),kcal:+f.kcal||0,prot:+f.prot||0,fat:f.lip!=null?+f.lip:null,carb:f.gluc!=null?+f.gluc:null,serving:0,unit:'g',emoji:fEmo(f.nom,'')};
+      if(directAdd(m,it,g)) n++; });
+    if(n){ x.added=x.added||{}; x.added[oi]=1; chatSave(); chatRender(false); showToast('✓ '+n+' aliment'+(n>1?'s':'')+' ajouté'+(n>1?'s':'')+' à '+(MEALS[m]?MEALS[m][0]:''),null,1800); } }
   function chatGrow(el){ el.style.height='auto'; el.style.height=Math.min(120,el.scrollHeight)+'px'; }
   function openIdeas(m){ if(ideasPlusOn()) return chatOpen(m); return _openIdeasBase(m); }
   function _openIdeasBase(m){ ideaState.plus=ideasPlusOn(); { const h=document.querySelector('#mealIdeas .mc-head>b'); if(h) h.textContent=ideaState.plus?'Idées +':'Idées'; $('mealIdeas').classList.toggle('id-plus',ideaState.plus); } ideaState.m=m; ideaState.want=0; ideaState.taste=''; { const i=$('idWant'); if(i) i.value=''; } renderIdeas(); $('mealIdeas').scrollTop=0; $('mealIdeas').classList.add('show'); }
@@ -6372,7 +6396,7 @@ function fEmo(name,cur){
   window.BBXMeal={
     setCiq:v=>{ try{ localStorage.setItem(CIQON,v==='off'?'off':'on'); }catch(e){} ciqSeg(); },
     setUsda:v=>{ try{ localStorage.setItem(USDAON,v==='off'?'off':'on'); }catch(e){} usdaSeg(); },
-    chatSend:t=>chatSend(t), chatClose:()=>{ $('mealChat').classList.remove('show'); $('mealChatBg').classList.remove('show'); }, chatClear:()=>{ chat.msgs=[]; chatSave(); chatRender(); }, chatGrow:el=>chatGrow(el),
+    chatSend:t=>chatSend(t), chatAdd:(a,b)=>chatAdd(a,b), chatClose:()=>{ $('mealChat').classList.remove('show'); $('mealChatBg').classList.remove('show'); }, chatClear:()=>{ chat.msgs=[]; chatSave(); chatRender(); }, chatGrow:el=>chatGrow(el),
     setIdeas:v=>{ try{ localStorage.setItem(IDPK,v==='plus'?'1':'0'); }catch(e){} ideasSeg(); },
     setTheme:v=>{ v=(v==='beta'||v==='beta3')?v:'normal'; try{ localStorage.setItem(THEMEKEY,v); }catch(e){} document.documentElement.classList.add('mt-beta'); document.documentElement.classList.toggle('mt-b2',v!=='normal'); document.documentElement.classList.toggle('mt-b3',v==='beta3'); themeSeg(); ideasSeg(); },
     setLens:v=>{ try{ localStorage.setItem(LENSKEY,v==='main'?'main':'auto'); }catch(e){} window.__camAuto=false; lensSeg(); },
