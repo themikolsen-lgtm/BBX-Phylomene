@@ -3618,6 +3618,19 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUq{ margin-top:0 !important
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUq>button{ height:50px !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUg:not([style*="none"]){ padding:0 0 6px !important; margin-top:-4px !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfMult{ margin-top:0 !important; padding-top:2px !important; }
+
+/* fiche produit : espacements proportionnels à la hauteur de l'écran (responsive) */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm{ --sp1:clamp(4px,0.9vh,10px); --sp2:clamp(6px,1.6vh,18px); --sp3:clamp(8px,2.4vh,26px); }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mc-head{ margin-bottom:var(--sp2) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfChips{ margin-bottom:var(--sp2) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-name{ padding-top:var(--sp3) !important; padding-bottom:var(--sp1) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-nsl:not([hidden]){ padding-bottom:var(--sp2) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .fv-nut>.fv-h{ padding-top:var(--sp2) !important; padding-bottom:var(--sp1) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfPrev{ padding-top:var(--sp1) !important; padding-bottom:var(--sp2) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUq{ padding-top:var(--sp1) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUg:not([style*="none"]){ padding-bottom:var(--sp1) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfMult{ padding-bottom:var(--sp2) !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-btns{ padding-top:var(--sp1) !important; padding-bottom:var(--sp3) !important; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3825,7 +3838,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 13 h 25</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 13 h 35</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
