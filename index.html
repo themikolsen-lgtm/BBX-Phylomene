@@ -3732,6 +3732,10 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-nameview{ font-size:clamp(
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUq>button{ height:clamp(50px,6.6vh,64px) !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUq #mfUn{ font-size:clamp(36px,5vh,50px) !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-btns #mfOk{ height:clamp(52px,6.8vh,62px) !important; font-size:clamp(17px,2.2vh,19px) !important; }
+/* écran haut : « Scanner le tableau » passe sous « Valeurs nutritionnelles » */
+@media (min-height:760px){ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .fv-nut>.fv-h{ flex-direction:column !important; gap:clamp(8px,1.4vh,14px) !important; text-align:center !important; font-size:clamp(14px,1.9vh,16px) !important; }
+  html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .fv-h #mfOcrCta{ height:clamp(36px,4.8vh,44px) !important; padding:0 20px !important; }
+  html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .fv-h #mfOcrCta::after{ font-size:clamp(12.5px,1.7vh,14px); } }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3953,7 +3957,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 16 h 30</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 16 h 40</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
