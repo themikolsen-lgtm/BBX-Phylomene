@@ -3540,6 +3540,16 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-nsl .mh-ns{ display:flex; 
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-nsl .mh-ns span{ width:22px; height:22px; border-radius:6px; display:grid; place-items:center; font:900 12px system-ui; color:#fff; background:var(--c); opacity:.35; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-nsl .mh-ns span.on{ opacity:1; width:28px; height:28px; margin:-3px 0; border-radius:8px; font-size:15px; }
 html:not(.mt-b3) #mealForm .mf-nsl{ display:none !important; }
+
+/* fiche produit : les 3 grandes pilules (Scanner, Rechercher, Tableau) deviennent des boutons ronds en haut */
+html:not(.mt-b3) #mealForm .mc-head :is(.mf-hsr,.mf-hocr){ display:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfQuick{ display:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mc-head{ gap:8px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mc-head>b{ flex:1 1 auto; min-width:0; white-space:normal !important; line-height:1.1 !important; font-size:19px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mc-head :is(.mf-hsr,.mf-hocr,.mf-hscan){ display:grid !important; place-items:center; flex:none; width:44px !important; height:44px !important; padding:0 !important; margin:0 !important; border-radius:50% !important; background:#fff !important; border:1px solid var(--b3-line) !important; box-shadow:none !important; color:var(--b3-ink) !important; cursor:pointer; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mc-head :is(.mf-hsr,.mf-hocr,.mf-hscan) svg{ width:21px !important; height:21px !important; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mc-head :is(.mf-hsr,.mf-hocr,.mf-hscan):active{ transform:scale(.94); }
+@media (max-width:370px){ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mc-head :is(.mf-hsr,.mf-hocr,.mf-hscan,.mc-x){ width:40px !important; min-width:40px !important; height:40px !important; } html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mc-head>b{ font-size:18px !important; } }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3747,7 +3757,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 10 h 05</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 10 h 15</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -3786,7 +3796,7 @@ window.BBXBk=(function(){
   <div class="mf-btns" style="margin-top:20px"><button class="mc-big ib red" id="mnOk" onclick="BBXMeal.saveName()" aria-label="Créer le repas" title="Créer le repas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button><button class="mc-big ib " onclick="BBXMeal.closeName()" aria-label="Annuler" title="Annuler"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
 </div>
 <div id="mealForm" class="mc-ov mc-sheet" aria-label="Produit">
-  <div class="mc-head"><b id="mfTitle">Ajouter un produit</b><button class="mf-hscan" type="button" onclick="BBXMeal.scan('form')" aria-label="Scanner un code-barres" title="Scanner un code-barres"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M8 12h8"/></svg></button><button class="mc-x" onclick="BBXMeal.closeForm()" aria-label="Fermer">✕</button></div>
+  <div class="mc-head"><b id="mfTitle">Ajouter un produit</b><button class="mf-hsr" type="button" onclick="BBXMeal.search('form')" aria-label="Rechercher un produit" title="Rechercher un produit"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></button><button class="mf-hocr" type="button" onclick="BBXMeal.ocr()" aria-label="Photographier le tableau nutritionnel" title="Photographier le tableau nutritionnel"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4.5" width="16" height="15" rx="2.5"/><path d="M4 9.5h16M4 14.5h16M10 9.5v10"/></svg></button><button class="mf-hscan" type="button" onclick="BBXMeal.scan('form')" aria-label="Scanner un code-barres" title="Scanner un code-barres"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M8 12h8"/></svg></button><button class="mc-x" onclick="BBXMeal.closeForm()" aria-label="Fermer">✕</button></div>
   <div class="mf-quick" id="mfQuick"><button class="mc-big ib ibt red" onclick="BBXMeal.scan('form')" aria-label="Scanner un code-barres" title="Scanner un code-barres"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M7 12h10"/></svg></span><em>Scanner</em></button><button class="mc-big ib ibt " onclick="BBXMeal.search('form')" aria-label="Rechercher un produit" title="Rechercher un produit"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></span><em>Rechercher</em></button><button class="mc-big ib ibt" id="mfOcrBtn" onclick="BBXMeal.ocr()" aria-label="Photographier le tableau nutritionnel" title="Photographier le tableau nutritionnel"><span class="ibc"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M4 9.5h16M4 14.5h16M12 9.5V20"/></svg></span><em>Tableau</em></button><input type="file" id="mfOcrFile" accept="image/*" capture="environment" hidden></div>
   <div class="mf-info" id="mfInfo"></div>
   <section class="fv-card fv-prod">
