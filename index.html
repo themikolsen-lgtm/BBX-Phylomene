@@ -3925,7 +3925,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 16 h 45</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 17 h 00</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4910,9 +4910,14 @@ function fEmo(name,cur){
     if(txt==null){ inp.value=''; chatGrow(inp); }
     chat.msgs.push(hidden?{role:'user',text:t,hidden:1}:{role:'user',text:t}); chat.busy=true; chatRender(); chatSave();
     let reply='', err=0;
+    /* message qui ressemble à un aliment (« haricots fins Cassegrain 200 g ») → proposition d'ajout garantie */
+    const qm=t.match(/(\d+(?:[.,]\d+)?)\s*(kg|grammes?|grs?|g|ml|cl|l)\b/i);
+    const qg=qm?(()=>{ const v=parseFloat(qm[1].replace(',','.')), u=qm[2].toLowerCase(); return u==='kg'||u==='l'?v*1000:u==='cl'?v*10:v; })():0;
+    const foodish=!hidden&&!/\?/.test(t)&&t.split(/\s+/).length<=8;
     try{
       if(!window.BBXSync||!BBXSync.ai) throw new Error('Assistant indisponible');
       const hist=chat.msgs.filter(x=>!x.err).map(x=>({role:x.role,text:x.text}));
+      if(foodish&&hist.length) hist[hist.length-1].text+='\n\n(Consigne de l’appli : si ce message désigne un aliment ou un produit, c’est pour l’ajouter au repas. Réponds en 1 ligne avec les kcal et protéines pour cette quantité, puis termine OBLIGATOIREMENT par la ligne @@AJOUT@@ avec le JSON.)';
       if(BBXSync.aiStream){
         const live={role:'model',text:'',live:1}; let shown=false;
         reply=await BBXSync.aiStream({chat:{messages:hist,ctx:chatCtx(),stream:true}},all=>{ const k=all.indexOf('@@'); live.text=(k>=0?all.slice(0,k):all).trim(); if(!live.text) return;
@@ -4926,6 +4931,9 @@ function fEmo(name,cur){
       }
     }catch(e){ err=1; const msg=String(e&&e.message||e); reply=/connect|401|session|jwt/i.test(msg)?'Connecte-toi à ton compte (Réglages Meal › Synchronisation) pour utiliser l’assistant.':/quota/i.test(msg)?'Le quota gratuit du jour est atteint, réessaie demain.':'Je n’arrive pas à répondre pour le moment. Réessaie dans un instant.'; }
     let opts=null; if(!err){ const k=reply.indexOf('@@AJOUT@@'); if(k>=0){ const js=reply.slice(k+9).trim(); reply=reply.slice(0,k).trim(); try{ const a=js.indexOf('{'), b=js.lastIndexOf('}'); const o=JSON.parse(js.slice(a,b+1)); if(o&&Array.isArray(o.options)) opts=o.options.filter(z=>z&&Array.isArray(z.aliments)&&z.aliments.length).slice(0,3); }catch(e){} } }
+    if(!err&&!opts&&foodish){ try{ const nm=t.replace(qm?qm[0]:'','').replace(/\b(de|d'|du|des|la|le|les|un|une)\b/gi,' ').replace(/\s+/g,' ').trim();
+        const hit=nm.length>=3?(localResults(nm)||[]).find(x=>x&&x.kcal!=null):null;
+        if(hit){ const g=qg||(hit.serving>0?hit.serving:100); opts=[{titre:hit.name,aliments:[{nom:hit.name,g:g,kcal:hit.kcal,prot:hit.prot||0,lip:hit.fat,gluc:hit.carb}]}]; } }catch(e){} }
     chat.busy=false; chat.msgs.push({role:'model',text:reply,err:err||undefined,opts:opts||undefined}); chatSave(); chatRender(); }
   function chatAdd(xi,oi){ const x=chat.msgs[xi]; const o=x&&x.opts&&x.opts[oi]; if(!o) return; const m=chat.m; let n=0;
     const norm=v=>String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();
