@@ -3572,6 +3572,11 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .fv-h #mfOcrCta svg{ display:n
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .fv-h #mfOcrCta::after{ content:"Scanner le tableau"; font-size:12.5px; font-weight:800; font-family:inherit; white-space:nowrap; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .fv-h #mfOcrCta:active{ transform:scale(.96); }
 @media (max-width:370px){ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .fv-nut>.fv-h{ padding-left:16px !important; padding-right:16px !important; font-size:13.5px !important; } html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .fv-h #mfOcrCta{ padding:0 10px !important; } html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .fv-h #mfOcrCta::after{ font-size:12px; } }
+
+/* fiche produit : poids modifiable directement dans « À l’unité · … g » et « Pour … g » */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUE2{ display:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis .mf-bin{ width:3.4ch !important; min-width:2.4ch; height:auto !important; padding:1px 3px !important; margin:0 1px !important; border:0 !important; border-bottom:2px dashed currentColor !important; border-radius:0 !important; background:transparent !important; box-shadow:none !important; color:inherit !important; font:inherit !important; text-align:center !important; outline:none; -webkit-appearance:none; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis .mf-bin:focus{ border-bottom-style:solid; background:rgba(127,127,127,.15); border-radius:6px 6px 0 0; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3779,7 +3784,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 11 h 15</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 11 h 35</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4175,7 +4180,11 @@ function fEmo(name,cur){
   function unitLabel(){ const d=fm.portions&&fm.portions[0], l=(d&&d.label)||'unité'; return l.length>14?'unité':l; }
   function fmUnitBtn(){ const u=$('mfUnit').value||'g', a=$('mfBU'), has=fm.serving>0&&hasUnit();
     if(a&&document.activeElement!==a) a.value=has?r1(fm.serving):'';
-    const t=$('mfBUt'); if(t) t.textContent=has?('À l’unité · '+r1(fm.serving)+' '+u):'À l’unité'; const g=$('mfBGt'); if(g) g.textContent='Pour 100 '+u; const uu=$('mfBUu'); if(uu) uu.textContent=u;
+    const t=$('mfBUt'), g=$('mfBGt'), b3=document.documentElement.classList.contains('mt-b3'), ae=document.activeElement;
+    if(b3){   /* Bêta 3 : le poids se modifie directement dans le bouton */
+      if(t&&!(ae&&ae.closest&&ae.closest('#mfBUt'))) t.innerHTML=has?('À l’unité · <input class="mf-bin" data-k="u" type="text" inputmode="decimal" autocomplete="off" aria-label="Poids d’une unité" value="'+r1(fm.serving)+'"> '+u):'À l’unité · <input class="mf-bin" data-k="u" type="text" inputmode="decimal" autocomplete="off" aria-label="Poids d’une unité" placeholder="?"> '+u;
+      if(g&&!(ae&&ae.closest&&ae.closest('#mfBGt'))) g.innerHTML='Pour <input class="mf-bin" data-k="g" type="text" inputmode="decimal" autocomplete="off" aria-label="Quantité en '+u+'" value="'+(fm.basis==='g'?(r1(num($('mfQty').value))||100):100)+'"> '+u;
+    } else { if(t) t.textContent=has?('À l’unité · '+r1(fm.serving)+' '+u):'À l’unité'; if(g) g.textContent='Pour 100 '+u; } const uu=$('mfBUu'); if(uu) uu.textContent=u;
     const row=$('mfUE2'); if(row) row.hidden=!(fm.basis==='u'||!has); }
   function basisHi(){ const b=fm.basis; [...$('mfBasis').children].forEach(x=>{ x.classList.toggle('on',x.dataset.b===b); }); }
   function applyBasis(b){
@@ -4198,6 +4207,13 @@ function fEmo(name,cur){
     fm.unitEdited=true; $('mfQty').value=r1(n*gg); applyBasis('u'); fmUnitBtn();
     const nm=$('mfName').value.trim(); if(nm) portSet(nm,gg,$('mfUnit').value||'g');   // enregistré tout de suite dans la base commune
   }
+  (function(){ const done=e=>{ const i=e.target; if(!i||!i.classList||!i.classList.contains('mf-bin')) return; const v=num(i.value);
+      if(i.dataset.k==='u'){ $('mfBU').value=i.value; unitSave(); }
+      else if(v>0){ if(fm.basis!=='g') applyBasis('g'); $('mfQty').value=r1(v); fmPrev(); }
+      setTimeout(fmUnitBtn,0); };
+    document.addEventListener('change',done,true);
+    document.addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target&&e.target.classList&&e.target.classList.contains('mf-bin')){ e.preventDefault(); e.target.blur(); } },true);
+    document.addEventListener('focusin',e=>{ const i=e.target; if(i&&i.classList&&i.classList.contains('mf-bin')){ try{ i.select(); }catch(x){} } }); })();
   function gramIn(){ const v=$('mfBG').value; if(fm.basis!=='g') applyBasis('g'); $('mfQty').value=v; fmPrev(); }
   function setBasis(b,ev){
     if(b==='u'){ if(!hasUnit()){ fmUnitBtn(); try{ $('mfBU').focus(); }catch(e){} return; } if(fm.basis==='u') return; $('mfQty').value=r1(fm.serving); applyBasis('u'); fmUnitBtn(); return; }
