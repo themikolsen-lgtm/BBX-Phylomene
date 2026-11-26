@@ -891,7 +891,6 @@
   .wt-reset{ display:block; margin:12px auto 4px; background:none; border:none; color:#8E8E93; font:inherit; font-size:11px; font-weight:600; text-decoration:underline; cursor:pointer; padding:6px; }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap">
 <style>
 /* ===== THEME NOIR & ROUGE NÉON ===== */
 :root{ --bg:#050505; --ink:#F5F5F5; --muted:#8A8A90; --neon:#FF1F3D; --neon-2:#FF4D63; --neon-glow:rgba(255,31,61,.55); --card:#0E0E10; --card-2:#17171A; --line-r:rgba(255,31,61,.28); }
@@ -3604,8 +3603,8 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfUq>button:active{ backgroun
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfPrev{ flex-grow:1 !important; }
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfBasis::after{ display:none !important; }
 
-/* titres des pages en Poppins */
-html.mt-beta.mt-b2.mt-b3 body:not(#b3x) .mc-head>b, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) .mc-head #hbTitle{ font-family:'Poppins',system-ui,sans-serif !important; font-weight:700 !important; letter-spacing:-.01em !important; }
+/* titres des pages en Outfit (comme « Aujourd’hui ») */
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) .mc-head>b, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) .mc-head #hbTitle{ font-family:'Outfit','Montserrat',system-ui,sans-serif !important; font-weight:800 !important; letter-spacing:-.01em !important; }
 
 /* fiche produit : la 1re pilule de repas alignée sur le bord gauche de la carte blanche */
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfChips{ padding-left:16px !important; padding-right:16px !important; scroll-padding-left:16px; }
@@ -3818,7 +3817,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 13 h 05</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 13 h 10</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
