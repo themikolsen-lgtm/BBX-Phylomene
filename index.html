@@ -3556,6 +3556,12 @@ html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm #mfInfo:not(.err){ display:non
 
 /* fiche produit : repas sans picto */
 html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-chip .mf-ce{ display:none !important; }
+
+/* fiche produit : nom sur 2 lignes max puis « … » */
+html:not(.mt-b3) #mealForm .mf-nameview{ display:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm:not(.nm-edit) .mf-name #mfName:not(:placeholder-shown){ position:absolute !important; opacity:0 !important; pointer-events:none !important; width:1px !important; height:1px !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm.nm-edit .mf-nameview, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-nameview.empty{ display:none !important; }
+html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealForm .mf-nameview{ flex:1 1 auto; min-width:0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; text-align:center; font-size:22px !important; font-weight:800 !important; line-height:1.2 !important; font-family:inherit; color:#2A1A22; letter-spacing:-.01em; cursor:text; padding:2px 6px; word-break:break-word; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3763,7 +3769,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 10 h 35</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 10 h 45</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4067,6 +4073,13 @@ function fEmo(name,cur){
   (function(){ const fm=document.getElementById('mealForm'); if(!fm) return; let t=0; const go=()=>{ clearTimeout(t); t=setTimeout(b3FormPills,40); };
     try{ new MutationObserver(go).observe(fm,{subtree:true,attributes:true,attributeFilter:['style','class']}); }catch(e){}
     window.addEventListener('resize',go); })();
+
+  /* Bêta 3 : nom du produit sur 2 lignes max puis « … » (on touche pour modifier) */
+  (function(){ const inp=document.getElementById('mfName'); if(!inp) return; const v=document.createElement('div'); v.className='mf-nameview'; v.setAttribute('role','button'); v.setAttribute('aria-label','Modifier le nom'); inp.insertAdjacentElement('afterend',v);
+    const sync=()=>{ const t=inp.value||''; if(v.textContent!==t) v.textContent=t; v.classList.toggle('empty',!t); };
+    v.addEventListener('click',()=>{ document.getElementById('mealForm').classList.add('nm-edit'); inp.focus(); try{ inp.setSelectionRange(inp.value.length,inp.value.length); }catch(e){} });
+    inp.addEventListener('blur',()=>{ document.getElementById('mealForm').classList.remove('nm-edit'); sync(); });
+    inp.addEventListener('input',sync); setInterval(()=>{ if(document.getElementById('mealForm').classList.contains('show')) sync(); },400); sync(); })();
   function B3P(){ return document.documentElement.classList.contains('mt-b3'); }   /* Bêta 3 : « +x » quand dépassé */
   function calc(){ setTimeout(()=>{ try{ habBtnState(); }catch(e){} },0);
     let K=0,P=0,F=0,C=0,TK=0,TP=0,unk=0; const HI=[], HM={};
