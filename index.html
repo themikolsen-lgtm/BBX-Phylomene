@@ -3925,7 +3925,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 16 h 30</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 16 h 45</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4884,7 +4884,8 @@ function fEmo(name,cur){
       'Reste à manger : '+r(R.k)+' kcal, '+r(R.p)+' g prot, '+r(R.f)+' g lip, '+r(R.c)+' g gluc',
       'Aliments déjà mangés aujourd’hui : '+(eaten.join(' ; ')||'aucun'),
       'Produits habituels : '+(fav.join(' ; ')||'—'),
-      'FORMAT OBLIGATOIRE : quand tu proposes des aliments ou des plats à manger (idées, options, recette), termine ta réponse par UNE ligne qui commence par @@AJOUT@@ suivie d’un JSON compact : {"options":[{"titre":"…","aliments":[{"nom":"…","g":120,"kcal":110,"prot":23,"lip":1.5,"gluc":0}]}]} — une option par idée (3 maximum, 5 aliments maximum chacune), g = quantité en grammes à manger, kcal/prot/lip/gluc = valeurs POUR 100 g. Reprends le nom EXACT d’un produit habituel quand tu l’utilises. Pas de cette ligne pour une simple explication. Ne mentionne jamais cette ligne dans le texte.'].join('\n'); }
+      'FORMAT OBLIGATOIRE : quand tu proposes des aliments ou des plats à manger (idées, options, recette), termine ta réponse par UNE ligne qui commence par @@AJOUT@@ suivie d’un JSON compact : {"options":[{"titre":"…","aliments":[{"nom":"…","g":120,"kcal":110,"prot":23,"lip":1.5,"gluc":0}]}]} — une option par idée (3 maximum, 5 aliments maximum chacune), g = quantité en grammes à manger, kcal/prot/lip/gluc = valeurs POUR 100 g. Reprends le nom EXACT d’un produit habituel quand tu l’utilises. Pas de cette ligne pour une simple explication. Ne mentionne jamais cette ligne dans le texte.',
+      'AJOUT RAPIDE : si le message est (ou contient) simplement un aliment ou un produit, avec ou sans quantité (ex. « haricots fins Cassegrain 200 g », « 2 œufs », « une banane »), c’est qu’il veut l’ajouter à son repas : réponds en 1 à 2 lignes (ce que ça représente pour cette quantité : kcal et protéines) et propose-le avec la ligne @@AJOUT@@ (une seule option, titre = le nom du produit, g = la quantité donnée convertie en grammes, sinon une portion habituelle).'].join('\n'); }
   function chatFmt(t){ const e=esc(String(t||'')).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>'); const out=[]; let ul=null;
     e.split(/\n/).forEach(l=>{ const m=l.match(/^\s*(?:[-•*]|(\d+)[.)])\s+(.*)$/); if(m){ const tag=m[1]?'ol':'ul'; if(!ul||ul.t!==tag){ if(ul) out.push('</'+ul.t+'>'); ul={t:tag}; out.push('<'+tag+'>'); } out.push('<li>'+m[2]+'</li>'); } else { if(ul){ out.push('</'+ul.t+'>'); ul=null; } out.push(l.trim()?'<p>'+l+'</p>':''); } });
     if(ul) out.push('</'+ul.t+'>'); return out.join(''); }
@@ -4929,7 +4930,8 @@ function fEmo(name,cur){
   function chatAdd(xi,oi){ const x=chat.msgs[xi]; const o=x&&x.opts&&x.opts[oi]; if(!o) return; const m=chat.m; let n=0;
     const norm=v=>String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();
     (o.aliments||[]).forEach(f=>{ const g=Math.max(1,Math.round(+f.g||0)); if(!f.nom||!g) return;
-      const fv=(FAV||[]).find(z=>norm(z.name)===norm(f.nom));
+      const tk=v=>norm(v).split(/[^a-z0-9]+/).filter(w=>w.length>2);
+      const fv=(FAV||[]).find(z=>norm(z.name)===norm(f.nom))||(()=>{ const want=tk(f.nom); if(want.length<1) return null; let best=null,bs=0; (FAV||[]).forEach(z=>{ const have=tk(z.name); const hit=want.filter(w=>have.some(h=>h.startsWith(w.slice(0,5)))).length; const sc=hit/want.length; if(sc>bs&&sc>=1&&z.kcal!=null){ bs=sc; best=z; } }); return best; })();   /* produit déjà connu : ses vraies valeurs */
       const it=fv&&fv.kcal!=null?{name:fv.name,kcal:fv.kcal,prot:fv.prot||0,fat:fv.fat,carb:fv.carb,serving:fv.serving||0,label:fv.label,portions:fv.portions,unit:fv.unit||'g',emoji:fEmo(fv.name,fv.emoji)}
         :{name:String(f.nom),kcal:+f.kcal||0,prot:+f.prot||0,fat:f.lip!=null?+f.lip:null,carb:f.gluc!=null?+f.gluc:null,serving:0,unit:'g',emoji:fEmo(f.nom,'')};
       if(directAdd(m,it,g)) n++; });
