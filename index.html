@@ -3704,6 +3704,16 @@ html body:not(#b3x) #mealChat .mc-head .mc-x, html.mt-beta.mt-b2.mt-b3 body:not(
 #mealChat .ch-add button.done{ background:#F1F2F4; color:#6B7280; }
 #mealChat .ch-add button.done b{ color:#6B7280; }
 #mealChat .ch-add small{ font-size:11px; color:#8A919E; padding-left:4px; }
+/* Idées + : produits cités → lignes avec « + » */
+#mealChat .ch-prods{ display:flex; flex-direction:column; gap:6px; margin-top:10px; }
+#mealChat .ch-prod{ display:flex; align-items:center; gap:10px; background:#F7F8F9; border-radius:16px; padding:6px 6px 6px 8px; }
+#mealChat .ch-pe{ width:34px; height:34px; flex:none; border-radius:10px; background:#fff; display:grid; place-items:center; font-size:18px; }
+#mealChat .ch-pn{ flex:1; min-width:0; display:flex; flex-direction:column; line-height:1.2; }
+#mealChat .ch-pn b{ font-size:13.5px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+#mealChat .ch-pn small{ font-size:11px; color:#8A919E; }
+#mealChat .ch-prod button{ width:40px; height:40px; flex:none; border-radius:50%; border:0; background:#6DD35A; color:#fff; font-size:22px; font-weight:700; line-height:1; display:grid; place-items:center; cursor:pointer; }
+#mealChat .ch-prod button.done{ background:#E5E7EB; color:#6B7280; font-size:17px; }
+#mealChat .ch-prod button:active{ transform:scale(.92); }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3925,7 +3935,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 17 h 10</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 17 h 30</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4897,7 +4907,9 @@ function fEmo(name,cur){
     chat.msgs.forEach((x,xi)=>{ if(x.hidden) return;
       let btns=''; if(x.role==='model'&&Array.isArray(x.opts)&&x.opts.length){ btns='<div class="ch-add">'+x.opts.map((o,oi)=>{ const k=Math.round((o.aliments||[]).reduce((a,f)=>a+(+f.kcal||0)*(+f.g||0)/100,0)); const done=x.added&&x.added[oi];
         return '<button type="button" class="'+(done?'done':'')+'" '+(done?'disabled':'')+' onclick="BBXMeal.chatAdd('+xi+','+oi+')"><b>'+(done?'✓ Ajouté':'＋ Ajouter')+'</b><span>'+esc(o.titre||('Option '+(oi+1)))+(k?' · ≈ '+k+' kcal':'')+'</span></button>'; }).join('')+'<small>dans '+esc(mn)+'</small></div>'; }
-      h+='<div class="ch-msg '+(x.role==='model'?'ai':'me')+(x.err?' err':'')+'">'+(x.role==='model'?chatFmt(x.text):'<p>'+esc(x.text).replace(/\n/g,'<br>')+'</p>')+btns+'</div>'; });
+      let prows=''; if(x.role==='model'&&Array.isArray(x.prods)&&x.prods.length){ prows='<div class="ch-prods">'+x.prods.map((it,pi)=>{ const ok=x.padded&&x.padded[pi];
+          return '<div class="ch-prod"><span class="ch-pe">'+esc(fEmo(it.name,it.emoji))+'</span><span class="ch-pn"><b>'+esc(it.name)+'</b><small>'+Math.round(it.kcal)+' kcal / 100 '+esc(it.unit||'g')+'</small></span><button type="button" class="'+(ok?'done':'')+'" '+(ok?'disabled':'')+' onclick="BBXMeal.chatProd('+xi+','+pi+')" aria-label="Ajouter '+esc(it.name)+'">'+(ok?'✓':'+')+'</button></div>'; }).join('')+'</div>'; }
+      h+='<div class="ch-msg '+(x.role==='model'?'ai':'me')+(x.err?' err':'')+'">'+(x.role==='model'?chatFmt(x.text):'<p>'+esc(x.text).replace(/\n/g,'<br>')+'</p>')+prows+btns+'</div>'; });
     if(chat.busy) h+='<div class="ch-msg ai typing"><i></i><i></i><i></i></div>';
     L.innerHTML=h;
     const sug=['Une idée pour ce repas avec ce qu’il me reste','Une recette rapide riche en protéines','Un snack de moins de 200 kcal','Que manger ce soir ?'];
@@ -4922,8 +4934,10 @@ function fEmo(name,cur){
         const live={role:'model',text:'',live:1}; let shown=false;
         reply=await BBXSync.aiStream({chat:{messages:hist,ctx:chatCtx(),stream:true}},all=>{ const k=all.indexOf('@@'); live.text=(k>=0?all.slice(0,k):all).trim(); if(!live.text) return;
           if(!shown){ shown=true; chat.busy=false; chat.msgs.push(live); chatRender(); }
-          else { const els=document.querySelectorAll('#chList .ch-msg.ai'); const el=els[els.length-1]; if(el) el.innerHTML=chatFmt(live.text); const L=$('chList'); if(L.scrollHeight-L.scrollTop-L.clientHeight<140) L.scrollTop=L.scrollHeight; } });
+          else { const els=document.querySelectorAll('#chList .ch-msg.ai'); const el=els[els.length-1]; if(el) el.innerHTML=chatFmt(live.text); const L=$('chList'); if(L.scrollHeight-L.scrollTop-L.clientHeight<140) L.scrollTop=L.scrollHeight; } }
+        ).catch(async e=>{ if(/connect|401|quota/i.test(String(e&&e.message))) throw e; const r2=await BBXSync.ai({chat:{messages:hist,ctx:chatCtx()}}); return r2&&r2.reply||''; });
         { const i=chat.msgs.indexOf(live); if(i>=0) chat.msgs.splice(i,1); }
+        if(!reply||!String(reply).trim()){ const r2=await BBXSync.ai({chat:{messages:hist,ctx:chatCtx()}}); reply=r2&&r2.reply||''; }
         if(!reply||!String(reply).trim()) throw new Error('Pas de réponse');
       } else {
         const res=await BBXSync.ai({chat:{messages:hist,ctx:chatCtx()}});
@@ -4945,7 +4959,19 @@ function fEmo(name,cur){
           else { /* 3) produit proche dans ta base (mots en moins) */ const w=nm.split(' '); for(let k=w.length-1;k>=1&&!hit;k--) hit=find(w.slice(0,k).join(' '));
             if(hit){ const g2=qg||(hit.serving>0?hit.serving:100); opts=[{titre:hit.name,aliments:[{nom:hit.name,g:g2,kcal:hit.kcal,prot:hit.prot||0,lip:hit.fat,gluc:hit.carb}]}]; } }
         } }catch(e){} }
-    chat.busy=false; chat.msgs.push({role:'model',text:reply,err:err||undefined,opts:opts||undefined}); chatSave(); chatRender(); }
+    let prods=null; if(!err){ try{ prods=chatProds(reply); if(!prods.length) prods=null; }catch(e){} }
+    chat.busy=false; chat.msgs.push({role:'model',text:reply,err:err||undefined,opts:opts||undefined,prods:prods||undefined}); chatSave(); chatRender(); }
+  const chNorm=v=>String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’']/g,"'").replace(/\s+/g,' ').trim();
+  /* produits cités en gras dans la réponse → lignes avec « + » (comme dans la recherche) */
+  function chatProds(reply){ const out=[], seen=new Set();
+    (String(reply||'').match(/\*\*(.+?)\*\*/g)||[]).forEach(b=>{ if(out.length>=6) return; const nm=b.slice(2,-2).trim(); if(nm.length<3) return;
+      const n=chNorm(nm), n2=n.replace(/\s*\(\d+\)$/,''); if(seen.has(n2)) return;
+      let fv=(FAV||[]).find(z=>{ const zn=chNorm(z.name); return zn===n||zn===n2||zn.replace(/\s*\(\d+\)$/,'')===n2; });
+      if(!fv){ try{ fv=(localResults(nm)||[]).find(x=>x&&x.kcal!=null&&chNorm(x.name).replace(/\s*\(\d+\)$/,'')===n2); }catch(e){} }
+      if(fv&&fv.kcal!=null){ seen.add(n2); out.push({name:fv.name,kcal:fv.kcal,prot:fv.prot||0,fat:fv.fat,carb:fv.carb,serving:fv.serving||0,label:fv.label,portions:fv.portions,unit:fv.unit||'g',emoji:fv.emoji}); } });
+    return out; }
+  function chatProd(xi,pi){ const x=chat.msgs[xi], it=x&&x.prods&&x.prods[pi]; if(!it) return;
+    if(directAdd(chat.m,Object.assign({},it,{emoji:fEmo(it.name,it.emoji)}))){ x.padded=x.padded||{}; x.padded[pi]=1; chatSave(); chatRender(false); } }
   function chatAdd(xi,oi){ const x=chat.msgs[xi]; const o=x&&x.opts&&x.opts[oi]; if(!o) return; const m=chat.m; let n=0;
     const norm=v=>String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();
     (o.aliments||[]).forEach(f=>{ const g=Math.max(1,Math.round(+f.g||0)); if(!f.nom||!g) return;
@@ -6427,7 +6453,7 @@ function fEmo(name,cur){
   window.BBXMeal={
     setCiq:v=>{ try{ localStorage.setItem(CIQON,v==='off'?'off':'on'); }catch(e){} ciqSeg(); },
     setUsda:v=>{ try{ localStorage.setItem(USDAON,v==='off'?'off':'on'); }catch(e){} usdaSeg(); },
-    chatSend:t=>chatSend(t), chatAdd:(a,b)=>chatAdd(a,b), chatClose:()=>{ $('mealChat').classList.remove('show'); $('mealChatBg').classList.remove('show'); }, chatClear:()=>{ chat.msgs=[]; chatSave(); chatRender(); }, chatGrow:el=>chatGrow(el),
+    chatSend:t=>chatSend(t), chatAdd:(a,b)=>chatAdd(a,b), chatProd:(a,b)=>chatProd(a,b), chatClose:()=>{ $('mealChat').classList.remove('show'); $('mealChatBg').classList.remove('show'); }, chatClear:()=>{ chat.msgs=[]; chatSave(); chatRender(); }, chatGrow:el=>chatGrow(el),
     setIdeas:v=>{ try{ localStorage.setItem(IDPK,v==='plus'?'1':'0'); }catch(e){} ideasSeg(); },
     setTheme:v=>{ v=(v==='beta'||v==='beta3')?v:'normal'; try{ localStorage.setItem(THEMEKEY,v); }catch(e){} document.documentElement.classList.add('mt-beta'); document.documentElement.classList.toggle('mt-b2',v!=='normal'); document.documentElement.classList.toggle('mt-b3',v==='beta3'); themeSeg(); ideasSeg(); },
     setLens:v=>{ try{ localStorage.setItem(LENSKEY,v==='main'?'main':'auto'); }catch(e){} window.__camAuto=false; lensSeg(); },
