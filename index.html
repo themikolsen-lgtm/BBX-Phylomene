@@ -3654,10 +3654,16 @@ html.mt-beta body .cm-seg:has(>:nth-child(3)):not(:has(>:nth-child(4))){ display
 html.mt-beta body .cm-seg:has(>:nth-child(3)):not(:has(>:nth-child(4)))>*{ grid-column:auto !important; grid-row:1 !important; width:auto !important; min-width:0 !important; }
 
 /* ===== Idées + : assistant en discussion ===== */
-#mealChat{ display:flex; flex-direction:column; }
-#mealChat.show{ display:flex !important; }
+#mealChatBg{ position:fixed; inset:0; z-index:9249; background:rgba(15,17,21,.38); opacity:0; pointer-events:none; transition:opacity .25s ease; }
+#mealChatBg.show{ opacity:1; pointer-events:auto; }
+#mealChat{ position:fixed; left:0; right:0; bottom:0; z-index:9250; height:min(82vh,760px); max-width:640px; margin:0 auto; display:flex; flex-direction:column; background:#F4F6F3; border-radius:26px 26px 0 0; box-shadow:0 -10px 40px rgba(0,0,0,.18); transform:translateY(105%); visibility:hidden; transition:transform .32s cubic-bezier(.2,.8,.2,1),visibility 0s linear .32s; padding-top:4px; }
+#mealChat.show{ transform:none; visibility:visible; transition:transform .32s cubic-bezier(.2,.8,.2,1),visibility 0s; }
+#mealChat .ch-grab{ flex:none; width:40px; height:5px; border-radius:3px; background:#D5D9DE; margin:6px auto 2px; }
+#mealChat .mc-head{ display:flex; align-items:center; gap:8px; padding:6px 14px 10px 22px; }
+#mealChat .mc-head>b{ font-family:'Outfit','Montserrat',system-ui,sans-serif; font-size:20px; font-weight:800; flex:1; }
+#mealChat .mc-head .mc-x{ width:44px; height:44px; border-radius:50%; border:1px solid #E4E7EC; background:#fff; display:grid; place-items:center; font-size:16px; }
 #mealChat .mc-head{ flex:none; }
-#mealChat .ch-clr{ width:44px; height:44px; flex:none; border-radius:50%; border:1px solid #E4E7EC; background:#fff; display:grid; place-items:center; color:#15171C; margin-left:auto; cursor:pointer; }
+#mealChat .ch-clr{ width:44px; height:44px; flex:none; border-radius:50%; border:1px solid #E4E7EC; background:#fff; display:grid; place-items:center; color:#15171C; cursor:pointer; }
 #mealChat .ch-clr svg{ width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 #mealChat .ch-rem{ flex:none; display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:0 16px 8px; }
 #mealChat .ch-rem span{ font-size:12px; padding:4px 10px; border-radius:999px; background:#F1F2F4; color:#3A3F47; }
@@ -3687,6 +3693,8 @@ html.mt-beta body .cm-seg:has(>:nth-child(3)):not(:has(>:nth-child(4)))>*{ grid-
 #mealChat .ch-bar button{ width:42px; height:42px; flex:none; border-radius:50%; border:0; background:#6DD35A; color:#fff; display:grid; place-items:center; cursor:pointer; }
 #mealChat .ch-bar button:disabled{ opacity:.45; }
 #mealChat .ch-bar button svg{ width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+html body:not(#b3x) #mealChat .mc-head>b, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealChat .mc-head>b{ color:#15171C !important; -webkit-text-fill-color:#15171C !important; opacity:1 !important; }
+html body:not(#b3x) #mealChat .mc-head .mc-x, html.mt-beta.mt-b2.mt-b3 body:not(#b3x) #mealChat .mc-head .mc-x{ color:#15171C !important; background:#fff !important; border:1px solid #E4E7EC !important; opacity:1 !important; }
 </style>
 <style id="mhSub">.mh-sub{ display:none; }</style>
 <style id="srB2base">#mealSearch .sr-hb,#mealSearch .sr-tabs{ display:none; }</style>
@@ -3762,7 +3770,9 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
   <div class="id-taste" id="idTaste" role="group" aria-label="Filtre sucré ou salé"><button type="button" data-t="" class="on" onclick="BBXMeal.ideaTaste('')">Tout</button><button type="button" data-t="s" onclick="BBXMeal.ideaTaste('s')">🍓 Sucré</button><button type="button" data-t="a" onclick="BBXMeal.ideaTaste('a')">🧂 Salé</button></div>
   <div id="idList"></div>
 </div>
-<div id="mealChat" class="mc-ov mc-sheet" style="z-index:9250" aria-label="Assistant Idées +">
+<div id="mealChatBg" onclick="BBXMeal.chatClose()"></div>
+<div id="mealChat" role="dialog" aria-modal="true" aria-label="Assistant Idées +">
+  <div class="ch-grab" aria-hidden="true"></div>
   <div class="mc-head"><b>Idées +</b><button class="ch-clr" type="button" onclick="BBXMeal.chatClear()" aria-label="Nouvelle discussion" title="Nouvelle discussion"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/></svg></button><button class="mc-x" onclick="BBXMeal.chatClose()" aria-label="Fermer">✕</button></div>
   <div class="ch-rem" id="chRem"></div>
   <div class="ch-list" id="chList" aria-live="polite"></div>
@@ -3906,7 +3916,7 @@ html.mt-beta.mt-b2 body #mealForm .mf-ue2{ background:#fff; margin:0 !important;
     <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
     <div class="cm-d" id="bkMsg"></div></div>
   </details>
-  <div class="cf-ver"><span id="appVer">Version du 26/11 · 14 h 55</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
+  <div class="cf-ver"><span id="appVer">Version du 26/11 · 15 h 15</span><button type="button" onclick="try{location.replace(location.pathname+'?v='+Date.now())}catch(e){location.reload()}">Mettre à jour l’app</button></div>
   <div class="cf-clr"><button type="button" onclick="BBXClear()">🧹 Vider le cache</button><small>Tes données, tes copies de secours, ta connexion et ta sauvegarde en ligne sont conservées.</small></div>
 </div>
 <script>
@@ -4879,7 +4889,7 @@ function fEmo(name,cur){
     $('chSugg').innerHTML=chat.msgs.length?'':sug.map(t=>'<button type="button" onclick="BBXMeal.chatSend(this.textContent)">'+esc(t)+'</button>').join('');
     $('chGo').disabled=chat.busy;
     if(scroll!==false) requestAnimationFrame(()=>{ L.scrollTop=L.scrollHeight; }); }
-  function chatOpen(m){ chat.m=m||0; chatRender(); $('mealChat').classList.add('show'); setTimeout(()=>{ const L=$('chList'); L.scrollTop=L.scrollHeight; },50); }
+  function chatOpen(m){ chat.m=m||0; chatRender(); $('mealChatBg').classList.add('show'); $('mealChat').classList.add('show'); setTimeout(()=>{ const L=$('chList'); L.scrollTop=L.scrollHeight; },50); }
   async function chatSend(txt){ const inp=$('chIn'); const t=String(txt!=null?txt:inp.value).trim(); if(!t||chat.busy) return;
     if(txt==null){ inp.value=''; chatGrow(inp); }
     chat.msgs.push({role:'user',text:t}); chat.busy=true; chatRender(); chatSave();
@@ -6362,7 +6372,7 @@ function fEmo(name,cur){
   window.BBXMeal={
     setCiq:v=>{ try{ localStorage.setItem(CIQON,v==='off'?'off':'on'); }catch(e){} ciqSeg(); },
     setUsda:v=>{ try{ localStorage.setItem(USDAON,v==='off'?'off':'on'); }catch(e){} usdaSeg(); },
-    chatSend:t=>chatSend(t), chatClose:()=>$('mealChat').classList.remove('show'), chatClear:()=>{ chat.msgs=[]; chatSave(); chatRender(); }, chatGrow:el=>chatGrow(el),
+    chatSend:t=>chatSend(t), chatClose:()=>{ $('mealChat').classList.remove('show'); $('mealChatBg').classList.remove('show'); }, chatClear:()=>{ chat.msgs=[]; chatSave(); chatRender(); }, chatGrow:el=>chatGrow(el),
     setIdeas:v=>{ try{ localStorage.setItem(IDPK,v==='plus'?'1':'0'); }catch(e){} ideasSeg(); },
     setTheme:v=>{ v=(v==='beta'||v==='beta3')?v:'normal'; try{ localStorage.setItem(THEMEKEY,v); }catch(e){} document.documentElement.classList.add('mt-beta'); document.documentElement.classList.toggle('mt-b2',v!=='normal'); document.documentElement.classList.toggle('mt-b3',v==='beta3'); themeSeg(); ideasSeg(); },
     setLens:v=>{ try{ localStorage.setItem(LENSKEY,v==='main'?'main':'auto'); }catch(e){} window.__camAuto=false; lensSeg(); },
